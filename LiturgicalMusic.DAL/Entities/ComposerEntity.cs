@@ -1,0 +1,28 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
+namespace LiturgicalMusic.DAL
+{
+    [Table("Composers")]
+    public class ComposerEntity
+    {
+        public int Id { get; set; }
+
+        [Required, MaxLength(50)]
+        public string Name { get; set; }
+
+        [Required, MaxLength(50)]
+        public string Surname { get; set; }
+
+        [InverseProperty("Composer")]
+        public virtual ICollection<SongEntity> ComposedSongs { get; set; }
+
+        [InverseProperty("Arranger")]
+        public virtual ICollection<SongEntity> ArrangedSongs { get; set; }
+    }
+}

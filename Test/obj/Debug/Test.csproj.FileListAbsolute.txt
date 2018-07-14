@@ -1,0 +1,14 @@
+E:\vs projects\LiturgicalMusic\Test\bin\Debug\Test.exe.config
+E:\vs projects\LiturgicalMusic\Test\bin\Debug\Test.exe
+E:\vs projects\LiturgicalMusic\Test\bin\Debug\Test.pdb
+E:\vs projects\LiturgicalMusic\Test\bin\Debug\EntityFramework.dll
+E:\vs projects\LiturgicalMusic\Test\bin\Debug\EntityFramework.SqlServer.dll
+E:\vs projects\LiturgicalMusic\Test\bin\Debug\LiturgicalMusic.DAL.dll
+E:\vs projects\LiturgicalMusic\Test\bin\Debug\LiturgicalMusic.DAL.pdb
+E:\vs projects\LiturgicalMusic\Test\bin\Debug\EntityFramework.xml
+E:\vs projects\LiturgicalMusic\Test\bin\Debug\EntityFramework.SqlServer.xml
+E:\vs projects\LiturgicalMusic\Test\obj\Debug\Test.csprojResolveAssemblyReference.cache
+E:\vs projects\LiturgicalMusic\Test\obj\Debug\Test.exe
+E:\vs projects\LiturgicalMusic\Test\obj\Debug\Test.pdb
+E:\vs projects\LiturgicalMusic\Test\bin\Debug\Newtonsoft.Json.dll
+E:\vs projects\LiturgicalMusic\Test\bin\Debug\Newtonsoft.Json.xml
