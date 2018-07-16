@@ -11,3 +11,5 @@ E:\vs projects\LiturgicalMusic\LiturgicalMusic.DAL\obj\Debug\LiturgicalMusic.DAL
 E:\vs projects\LiturgicalMusic\LiturgicalMusic.DAL\obj\Debug\LiturgicalMusic.DAL.Migrations.InitialCreate.resources
 E:\vs projects\LiturgicalMusic\LiturgicalMusic.DAL\obj\Debug\LiturgicalMusic.DAL.csproj.GenerateResource.Cache
 E:\vs projects\LiturgicalMusic\LiturgicalMusic.DAL\obj\Debug\LiturgicalMusic.DAL.Migrations.FixAndAddNewTable.resources
+E:\vs projects\LiturgicalMusic\LiturgicalMusic.DAL\obj\Debug\LiturgicalMusic.DAL.Migrations.AddStanzaEntity.resources
+E:\vs projects\LiturgicalMusic\LiturgicalMusic.DAL\obj\Debug\LiturgicalMusic.DAL.Migrations.UpdateInstrumentalParts.resources

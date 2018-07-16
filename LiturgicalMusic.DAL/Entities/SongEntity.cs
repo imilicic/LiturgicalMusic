@@ -31,20 +31,18 @@ namespace LiturgicalMusic.DAL
         [Required, MaxLength(-1)]
         public string Code { get; set; }
 
-        [Required, MaxLength(-1)]
-        public string Lyrics { get; set; }
-
         [Required]
         public bool OtherParts { get; set; }
         public string Source { get; set; }
         public string OtherInformations { get; set; }
 
-        public virtual ComposerEntity Composer { get; set; }
-        public virtual ComposerEntity Arranger { get; set; }
+        public ComposerEntity Composer { get; set; }
+        public ComposerEntity Arranger { get; set; }
 
-        public virtual ICollection<ThemeEntity> ThemeCategories { get; set; }
-        public virtual ICollection<LiturgyEntity> LiturgyCategories { get; set; }
+        public ICollection<ThemeEntity> ThemeCategories { get; set; }
+        public ICollection<LiturgyEntity> LiturgyCategories { get; set; }
 
-        public virtual ICollection<InstrumentalPartEntity> InstrumentalParts { get; set; }
+        public ICollection<InstrumentalPartEntity> InstrumentalParts { get; set; }
+        public ICollection<StanzaEntity> Stanzas { get; set; }
     }
 }

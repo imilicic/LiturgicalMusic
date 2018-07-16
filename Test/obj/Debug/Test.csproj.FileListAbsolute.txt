@@ -12,3 +12,16 @@ E:\vs projects\LiturgicalMusic\Test\obj\Debug\Test.exe
 E:\vs projects\LiturgicalMusic\Test\obj\Debug\Test.pdb
 E:\vs projects\LiturgicalMusic\Test\bin\Debug\Newtonsoft.Json.dll
 E:\vs projects\LiturgicalMusic\Test\bin\Debug\Newtonsoft.Json.xml
+E:\vs projects\LiturgicalMusic\Test\bin\Debug\AutoMapper.dll
+E:\vs projects\LiturgicalMusic\Test\bin\Debug\LiturgicalMusic.Model.Common.dll
+E:\vs projects\LiturgicalMusic\Test\bin\Debug\LiturgicalMusic.Repository.Common.dll
+E:\vs projects\LiturgicalMusic\Test\bin\Debug\System.ValueTuple.dll
+E:\vs projects\LiturgicalMusic\Test\bin\Debug\LiturgicalMusic.Model.Common.pdb
+E:\vs projects\LiturgicalMusic\Test\bin\Debug\LiturgicalMusic.Repository.Common.pdb
+E:\vs projects\LiturgicalMusic\Test\bin\Debug\AutoMapper.pdb
+E:\vs projects\LiturgicalMusic\Test\bin\Debug\AutoMapper.xml
+E:\vs projects\LiturgicalMusic\Test\bin\Debug\System.ValueTuple.xml
+E:\vs projects\LiturgicalMusic\Test\bin\Debug\LiturgicalMusic.Model.dll
+E:\vs projects\LiturgicalMusic\Test\bin\Debug\LiturgicalMusic.Repository.dll
+E:\vs projects\LiturgicalMusic\Test\bin\Debug\LiturgicalMusic.Model.pdb
+E:\vs projects\LiturgicalMusic\Test\bin\Debug\LiturgicalMusic.Repository.pdb

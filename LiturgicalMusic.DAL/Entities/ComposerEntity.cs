@@ -20,9 +20,9 @@ namespace LiturgicalMusic.DAL
         public string Surname { get; set; }
 
         [InverseProperty("Composer")]
-        public virtual ICollection<SongEntity> ComposedSongs { get; set; }
+        public ICollection<SongEntity> ComposedSongs { get; set; }
 
         [InverseProperty("Arranger")]
-        public virtual ICollection<SongEntity> ArrangedSongs { get; set; }
+        public ICollection<SongEntity> ArrangedSongs { get; set; }
     }
 }

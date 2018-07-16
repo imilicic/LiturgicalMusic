@@ -1,0 +1,7 @@
+E:\vs projects\LiturgicalMusic\LiturgicalMusic.Repository.Common\bin\Debug\LiturgicalMusic.Repository.Common.dll
+E:\vs projects\LiturgicalMusic\LiturgicalMusic.Repository.Common\bin\Debug\LiturgicalMusic.Repository.Common.pdb
+E:\vs projects\LiturgicalMusic\LiturgicalMusic.Repository.Common\bin\Debug\LiturgicalMusic.Model.Common.dll
+E:\vs projects\LiturgicalMusic\LiturgicalMusic.Repository.Common\bin\Debug\LiturgicalMusic.Model.Common.pdb
+E:\vs projects\LiturgicalMusic\LiturgicalMusic.Repository.Common\obj\Debug\LiturgicalMusic.Repository.Common.csprojResolveAssemblyReference.cache
+E:\vs projects\LiturgicalMusic\LiturgicalMusic.Repository.Common\obj\Debug\LiturgicalMusic.Repository.Common.dll
+E:\vs projects\LiturgicalMusic\LiturgicalMusic.Repository.Common\obj\Debug\LiturgicalMusic.Repository.Common.pdb

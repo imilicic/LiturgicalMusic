@@ -33,6 +33,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper, Version=7.0.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.7.0.1\lib\net45\AutoMapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
       <Private>True</Private>
@@ -48,6 +52,11 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -67,6 +76,22 @@
     <ProjectReference Include="..\LiturgicalMusic.DAL\LiturgicalMusic.DAL.csproj">
       <Project>{9a71ec6d-6b2d-4bbb-91e5-e3e5c1329d2f}</Project>
       <Name>LiturgicalMusic.DAL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LiturgicalMusic.Model.Common\LiturgicalMusic.Model.Common.csproj">
+      <Project>{ea4e05f9-06d7-4b8a-8bd1-8b2ab36f9185}</Project>
+      <Name>LiturgicalMusic.Model.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LiturgicalMusic.Model\LiturgicalMusic.Model.csproj">
+      <Project>{b4376262-7454-429d-914f-98cfbcc93a24}</Project>
+      <Name>LiturgicalMusic.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LiturgicalMusic.Repository.Common\LiturgicalMusic.Repository.Common.csproj">
+      <Project>{3607313c-78b8-4b67-8df7-fd23a3f5725a}</Project>
+      <Name>LiturgicalMusic.Repository.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LiturgicalMusic.Repository\LiturgicalMusic.Repository.csproj">
+      <Project>{dc55353b-c10e-4dde-873b-eda4aea1b67b}</Project>
+      <Name>LiturgicalMusic.Repository</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

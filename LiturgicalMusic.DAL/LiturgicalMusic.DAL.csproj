@@ -52,6 +52,7 @@
     <Compile Include="Entities\ComposerEntity.cs" />
     <Compile Include="Entities\InstrumentalPartEntity.cs" />
     <Compile Include="Entities\LiturgyEntity.cs" />
+    <Compile Include="Entities\StanzaEntity.cs" />
     <Compile Include="Entities\SongEntity.cs" />
     <Compile Include="Entities\ThemeEntity.cs" />
     <Compile Include="Migrations\201807131415527_InitialCreate.cs" />
@@ -61,6 +62,14 @@
     <Compile Include="Migrations\201807140823543_FixAndAddNewTable.cs" />
     <Compile Include="Migrations\201807140823543_FixAndAddNewTable.Designer.cs">
       <DependentUpon>201807140823543_FixAndAddNewTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201807141817069_AddStanzaEntity.cs" />
+    <Compile Include="Migrations\201807141817069_AddStanzaEntity.Designer.cs">
+      <DependentUpon>201807141817069_AddStanzaEntity.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201807161613122_UpdateInstrumentalParts.cs" />
+    <Compile Include="Migrations\201807161613122_UpdateInstrumentalParts.Designer.cs">
+      <DependentUpon>201807161613122_UpdateInstrumentalParts.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="MusicContext.cs" />
@@ -76,6 +85,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201807140823543_FixAndAddNewTable.resx">
       <DependentUpon>201807140823543_FixAndAddNewTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201807141817069_AddStanzaEntity.resx">
+      <DependentUpon>201807141817069_AddStanzaEntity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201807161613122_UpdateInstrumentalParts.resx">
+      <DependentUpon>201807161613122_UpdateInstrumentalParts.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

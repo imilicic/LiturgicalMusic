@@ -21,6 +21,6 @@ namespace LiturgicalMusic.DAL
         [Required, MaxLength(50)]
         public string Name { get; set; }
 
-        public virtual ICollection<SongEntity> Songs { get; set; }
+        public ICollection<SongEntity> Songs { get; set; }
     }
 }

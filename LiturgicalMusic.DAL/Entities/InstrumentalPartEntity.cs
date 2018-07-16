@@ -16,12 +16,15 @@ namespace LiturgicalMusic.DAL
         [Required]
         public int Template { get; set; }
 
+        [Required,MaxLength(20)]
+        public string Position { get; set; }
+
         [Required, MaxLength(20)]
         public string Type { get; set; }
 
         [Required, MaxLength(-1)]
         public string Code { get; set; }
 
-        public virtual SongEntity Song { get; set; }
+        public SongEntity Song { get; set; }
     }
 }
