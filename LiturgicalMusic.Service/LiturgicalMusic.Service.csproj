@@ -4,17 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C8DBB8DA-CC57-49C5-BB08-597FC736D596}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{4081F72B-69AA-4B9F-BFAD-E7B4BC4244DE}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Test</RootNamespace>
-    <AssemblyName>Test</AssemblyName>
+    <RootNamespace>LiturgicalMusic.Service</RootNamespace>
+    <AssemblyName>LiturgicalMusic.Service</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -33,30 +30,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AutoMapper, Version=7.0.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
-      <HintPath>..\packages\AutoMapper.7.0.1\lib\net45\AutoMapper.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -65,25 +40,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="ComposerService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SongService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\LiturgicalMusic.DAL\LiturgicalMusic.DAL.csproj">
-      <Project>{9a71ec6d-6b2d-4bbb-91e5-e3e5c1329d2f}</Project>
-      <Name>LiturgicalMusic.DAL</Name>
-    </ProjectReference>
     <ProjectReference Include="..\LiturgicalMusic.Model.Common\LiturgicalMusic.Model.Common.csproj">
       <Project>{ea4e05f9-06d7-4b8a-8bd1-8b2ab36f9185}</Project>
       <Name>LiturgicalMusic.Model.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\LiturgicalMusic.Model\LiturgicalMusic.Model.csproj">
-      <Project>{b4376262-7454-429d-914f-98cfbcc93a24}</Project>
-      <Name>LiturgicalMusic.Model</Name>
     </ProjectReference>
     <ProjectReference Include="..\LiturgicalMusic.Repository.Common\LiturgicalMusic.Repository.Common.csproj">
       <Project>{3607313c-78b8-4b67-8df7-fd23a3f5725a}</Project>
@@ -96,10 +60,6 @@
     <ProjectReference Include="..\LiturgicalMusic.Service.Common\LiturgicalMusic.Service.Common.csproj">
       <Project>{cdba27c2-a77e-4726-a575-1e23451deac8}</Project>
       <Name>LiturgicalMusic.Service.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\LiturgicalMusic.Service\LiturgicalMusic.Service.csproj">
-      <Project>{4081f72b-69aa-4b9f-bfad-e7b4bc4244de}</Project>
-      <Name>LiturgicalMusic.Service</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -15,6 +15,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiturgicalMusic.Model.Commo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiturgicalMusic.Model", "LiturgicalMusic.Model\LiturgicalMusic.Model.csproj", "{B4376262-7454-429D-914F-98CFBCC93A24}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiturgicalMusic.Service", "LiturgicalMusic.Service\LiturgicalMusic.Service.csproj", "{4081F72B-69AA-4B9F-BFAD-E7B4BC4244DE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiturgicalMusic.Service.Common", "LiturgicalMusic.Service.Common\LiturgicalMusic.Service.Common.csproj", "{CDBA27C2-A77E-4726-A575-1E23451DEAC8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +49,14 @@ Global
 		{B4376262-7454-429D-914F-98CFBCC93A24}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B4376262-7454-429D-914F-98CFBCC93A24}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B4376262-7454-429D-914F-98CFBCC93A24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4081F72B-69AA-4B9F-BFAD-E7B4BC4244DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4081F72B-69AA-4B9F-BFAD-E7B4BC4244DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4081F72B-69AA-4B9F-BFAD-E7B4BC4244DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4081F72B-69AA-4B9F-BFAD-E7B4BC4244DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDBA27C2-A77E-4726-A575-1E23451DEAC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDBA27C2-A77E-4726-A575-1E23451DEAC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDBA27C2-A77E-4726-A575-1E23451DEAC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDBA27C2-A77E-4726-A575-1E23451DEAC8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

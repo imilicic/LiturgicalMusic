@@ -25,3 +25,7 @@ E:\vs projects\LiturgicalMusic\Test\bin\Debug\LiturgicalMusic.Model.dll
 E:\vs projects\LiturgicalMusic\Test\bin\Debug\LiturgicalMusic.Repository.dll
 E:\vs projects\LiturgicalMusic\Test\bin\Debug\LiturgicalMusic.Model.pdb
 E:\vs projects\LiturgicalMusic\Test\bin\Debug\LiturgicalMusic.Repository.pdb
+E:\vs projects\LiturgicalMusic\Test\bin\Debug\LiturgicalMusic.Service.Common.dll
+E:\vs projects\LiturgicalMusic\Test\bin\Debug\LiturgicalMusic.Service.dll
+E:\vs projects\LiturgicalMusic\Test\bin\Debug\LiturgicalMusic.Service.Common.pdb
+E:\vs projects\LiturgicalMusic\Test\bin\Debug\LiturgicalMusic.Service.pdb

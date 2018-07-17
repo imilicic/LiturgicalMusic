@@ -10,6 +10,8 @@ using LiturgicalMusic.Model;
 using LiturgicalMusic.Model.Common;
 using LiturgicalMusic.Repository;
 using LiturgicalMusic.Repository.Common;
+using LiturgicalMusic.Service;
+using LiturgicalMusic.Service.Common;
 using AutoMapper;
 
 namespace Test
@@ -69,6 +71,12 @@ namespace Test
 
             using (var db = new MusicContext())
             {
+                IComposerRepository composerRepository = new ComposerRepository(mapper);
+                IComposerService composerService = new ComposerService(composerRepository);
+
+                ISongRepository songRepository = new SongRepository(mapper);
+                ISongService songService = new SongService(songRepository);
+
                 //CREATE SONG 1
                 //SourceCode source = new SourceCode
                 //{
@@ -102,9 +110,7 @@ namespace Test
                 //};
 
                 //song.Arranger = mapper.Map<IComposer>(db.Composers.Where(c => c.Name.Equals("Đuro")).SingleOrDefault());
-
-                //ISongRepository songRepository = new SongRepository(mapper);
-                //song = songRepository.CreateSong(song);
+                //song = songService.CreateSong(song);
 
                 // CREATE SONG 2
                 //SourceCode source2 = new SourceCode
@@ -177,18 +183,14 @@ namespace Test
                 //    }
                 //};
 
-                //song.Arranger = mapper.Map<IComposer>(db.Composers.FirstOrDefault(c => c.Id.Equals(3)));
-
-                //ISongRepository songRepository = new SongRepository(mapper);
-                //song = songRepository.CreateSong(song);
+                //song.Arranger = mapper.Map<IComposer>(db.Composers.FirstOrDefault(c => c.Id.Equals(7)));
+                //song = songService.CreateSong(song);
 
                 // GET ALL SONGS
-                //ISongRepository songRepository = new SongRepository(mapper);
-                //List<ISong> songs = songRepository.GetAllSongs();
+                //List<ISong> songs = songService.GetAllSongs();
 
                 // GET SONG BY ID
-                //ISongRepository songRepository = new SongRepository(mapper);
-                //ISong song = songRepository.GetSongById(10);
+                //ISong song = songService.GetSongById(10);
 
                 // CREATE COMPOSER
                 //IComposer composer = new Composer
@@ -196,13 +198,10 @@ namespace Test
                 //    Name = "Franjo",
                 //    Surname = "Dugan"
                 //};
-
-                //IComposerRepository composerRepository = new ComposerRepository(mapper);
-                //composer = composerRepository.CreateComposer(composer);
+                //composer = composerService.CreateComposer(composer);
 
                 // GET COMPOSERS
-                //IComposerRepository composerRepository = new ComposerRepository(mapper);
-                //List<IComposer> composers = composerRepository.GetAllComposers();
+                //List<IComposer> composers = composerService.GetAllComposers();
             }
         }
     }
