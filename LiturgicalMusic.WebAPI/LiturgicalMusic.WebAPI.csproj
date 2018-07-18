@@ -125,6 +125,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
+    <Content Include="src\app\home\home.component.html" />
+    <Content Include="src\app\shared\navbar\navbar.component.html" />
+    <Content Include="src\app\song\song-search\song-search.component.html" />
     <Content Include="src\favicon.ico" />
     <Content Include="src\index.html" />
     <Content Include="src\styles.css" />
@@ -139,6 +142,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="App_Start\WebProfile.cs" />
     <Compile Include="Controllers\ComposerController.cs" />
+    <Compile Include="Controllers\SongController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -185,9 +189,19 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="src\app\app.component.spec.ts" />
+    <TypeScriptCompile Include="src\app\app-routing.module.ts" />
     <TypeScriptCompile Include="src\app\app.component.ts" />
     <TypeScriptCompile Include="src\app\app.module.ts" />
+    <TypeScriptCompile Include="src\app\home\home.component.ts" />
+    <TypeScriptCompile Include="src\app\shared\navbar\navbar.component.ts" />
+    <TypeScriptCompile Include="src\app\song\shared\models\composer.model.ts" />
+    <TypeScriptCompile Include="src\app\song\shared\models\instrumentalPart.model.ts" />
+    <TypeScriptCompile Include="src\app\song\shared\models\song.model.ts" />
+    <TypeScriptCompile Include="src\app\song\shared\models\stanza.model.ts" />
+    <TypeScriptCompile Include="src\app\song\shared\song.service.ts" />
+    <TypeScriptCompile Include="src\app\song\song-routing.module.ts" />
+    <TypeScriptCompile Include="src\app\song\song-search\song-search.component.ts" />
+    <TypeScriptCompile Include="src\app\song\song.module.ts" />
     <TypeScriptCompile Include="src\main.ts" />
   </ItemGroup>
   <ItemGroup>

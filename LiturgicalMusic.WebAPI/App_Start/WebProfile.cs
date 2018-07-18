@@ -13,6 +13,9 @@ namespace LiturgicalMusic.WebAPI.App_Start
         public WebProfile()
         {
             CreateMap<IComposer, ComposerController.ComposerModel>().ReverseMap();
+            CreateMap<ISong, SongController.SongModel>().ReverseMap();
+            CreateMap<IStanza, SongController.StanzaModel>().ReverseMap();
+            CreateMap<IInstrumentalPart, SongController.InstrumentalPartModel>().ReverseMap();
         }
     }
 }

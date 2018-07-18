@@ -1,0 +1,21 @@
+﻿Song search
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th class="col-md-3">Naziv</th>
+            <th class="col-md-2">Autor</th>
+            <th class="col-md-2">Harmonizirao</th>
+            <th class="col-md-2">Izvor</th>
+            <th class="col-md-3">Druge informacije</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let song of songs">
+            <td class="col-md-3">{{song.Title}}</td>
+            <td class="col-md-2">{{song.Composer?.Name}} {{song.Composer?.Surname}}</td>
+            <td class="col-md-2">{{song.Arranger?.Name}} {{song.Arranger?.Surname}}</td>
+            <td class="col-md-2">{{song.Source}}</td>
+            <td class="col-md-3">{{song.OtherInformation}}</td>
+        </tr>
+    </tbody>
+</table>
