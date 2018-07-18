@@ -1,13 +1,10 @@
 ﻿using AutoMapper;
-using LiturgicalMusic.Model.Common;
-using LiturgicalMusic.Repository;
-using LiturgicalMusic.Repository.Common;
-using LiturgicalMusic.Service;
 using LiturgicalMusic.Service.Common;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using LiturgicalMusic.Model.Common;
 
 namespace LiturgicalMusic.WebAPI.Controllers
 {
@@ -19,9 +16,6 @@ namespace LiturgicalMusic.WebAPI.Controllers
 
         public ComposerController()
         {
-            //this.Mapper = AutoMapper.Mapper.Instance;
-            //IComposerRepository repo = new ComposerRepository(Mapper);
-            //this.Service = new ComposerService(repo);
         }
 
         public ComposerController(IMapper mapper, IComposerService service)
