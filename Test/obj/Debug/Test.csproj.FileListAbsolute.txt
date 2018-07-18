@@ -29,3 +29,5 @@ E:\vs projects\LiturgicalMusic\Test\bin\Debug\LiturgicalMusic.Service.Common.dll
 E:\vs projects\LiturgicalMusic\Test\bin\Debug\LiturgicalMusic.Service.dll
 E:\vs projects\LiturgicalMusic\Test\bin\Debug\LiturgicalMusic.Service.Common.pdb
 E:\vs projects\LiturgicalMusic\Test\bin\Debug\LiturgicalMusic.Service.pdb
+E:\vs projects\LiturgicalMusic\Test\bin\Debug\Ninject.dll
+E:\vs projects\LiturgicalMusic\Test\bin\Debug\Ninject.xml

@@ -1,7 +1,0 @@
-E:\vs projects\LiturgicalMusic\LiturgicalMusic.Model\bin\Debug\LiturgicalMusic.Model.dll
-E:\vs projects\LiturgicalMusic\LiturgicalMusic.Model\bin\Debug\LiturgicalMusic.Model.pdb
-E:\vs projects\LiturgicalMusic\LiturgicalMusic.Model\bin\Debug\LiturgicalMusic.Model.Common.dll
-E:\vs projects\LiturgicalMusic\LiturgicalMusic.Model\bin\Debug\LiturgicalMusic.Model.Common.pdb
-E:\vs projects\LiturgicalMusic\LiturgicalMusic.Model\obj\Debug\LiturgicalMusic.Model.csprojResolveAssemblyReference.cache
-E:\vs projects\LiturgicalMusic\LiturgicalMusic.Model\obj\Debug\LiturgicalMusic.Model.dll
-E:\vs projects\LiturgicalMusic\LiturgicalMusic.Model\obj\Debug\LiturgicalMusic.Model.pdb

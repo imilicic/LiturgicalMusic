@@ -30,8 +30,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper, Version=7.0.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.7.0.1\lib\net45\AutoMapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -42,15 +51,27 @@
   <ItemGroup>
     <Compile Include="Composer.cs" />
     <Compile Include="InstrumentalPart.cs" />
+    <Compile Include="Mapping\ModelProfile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Song.cs" />
     <Compile Include="Stanza.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LiturgicalMusic.DAL\LiturgicalMusic.DAL.csproj">
+      <Project>{9a71ec6d-6b2d-4bbb-91e5-e3e5c1329d2f}</Project>
+      <Name>LiturgicalMusic.DAL</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LiturgicalMusic.Model.Common\LiturgicalMusic.Model.Common.csproj">
       <Project>{ea4e05f9-06d7-4b8a-8bd1-8b2ab36f9185}</Project>
       <Name>LiturgicalMusic.Model.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\LiturgicalMusic.Repository.Common\LiturgicalMusic.Repository.Common.csproj">
+      <Project>{3607313c-78b8-4b67-8df7-fd23a3f5725a}</Project>
+      <Name>LiturgicalMusic.Repository.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
