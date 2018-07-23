@@ -71,6 +71,10 @@
     <Compile Include="Migrations\201807161613122_UpdateInstrumentalParts.Designer.cs">
       <DependentUpon>201807161613122_UpdateInstrumentalParts.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201807201357457_FixedForeignKeys.cs" />
+    <Compile Include="Migrations\201807201357457_FixedForeignKeys.Designer.cs">
+      <DependentUpon>201807201357457_FixedForeignKeys.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="MusicContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -91,6 +95,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201807161613122_UpdateInstrumentalParts.resx">
       <DependentUpon>201807161613122_UpdateInstrumentalParts.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201807201357457_FixedForeignKeys.resx">
+      <DependentUpon>201807201357457_FixedForeignKeys.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

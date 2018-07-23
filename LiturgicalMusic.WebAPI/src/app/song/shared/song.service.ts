@@ -5,19 +5,29 @@ import "rxjs/add/operator/catch";
 import "rxjs/add/operator/map";
 import "rxjs/add/observable/throw";
 
+import { Song } from "./models/song.model";
+
 @Injectable()
 export class SongService {
     constructor(private http: Http) { }
 
-    getSongs(): Observable<any> {
+    createSong(song: Song): Observable<Song> {
+        let headers = new Headers({ 'Content-Type': 'application/json' });
+        let options = new RequestOptions({ headers: headers });
+        return this.http.post("/api/songs/create", JSON.stringify(song), options)
+            .map((response: Response) => <Song>response.json())
+            .catch(this.handleError);
+    }
+
+    getSongs(): Observable<Song[]> {
         let query = "/api/songs/search";
         return this.http.get(query)
-            .map((response: Response) => <any>response.json())
+            .map((response: Response) => <Song[]>response.json())
             .catch(this.handleError);
     }
 
     handleError(error: Response) {
         console.error(error);
-        return Observable.throw(error.json().error || "Server error");
+        return Observable.throw(error);
     }
 }

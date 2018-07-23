@@ -127,6 +127,9 @@
     <Content Include="Global.asax" />
     <Content Include="src\app\home\home.component.html" />
     <Content Include="src\app\shared\navbar\navbar.component.html" />
+    <Content Include="src\app\song\song-create\song-create-data\song-create-data.component.html" />
+    <Content Include="src\app\song\song-create\song-create-hymn\song-create-hymn.component.html" />
+    <Content Include="src\app\song\song-create\song-create.component.html" />
     <Content Include="src\app\song\song-search\song-search.component.html" />
     <Content Include="src\favicon.ico" />
     <Content Include="src\index.html" />
@@ -194,11 +197,15 @@
     <TypeScriptCompile Include="src\app\app.module.ts" />
     <TypeScriptCompile Include="src\app\home\home.component.ts" />
     <TypeScriptCompile Include="src\app\shared\navbar\navbar.component.ts" />
+    <TypeScriptCompile Include="src\app\song\shared\composer.service.ts" />
     <TypeScriptCompile Include="src\app\song\shared\models\composer.model.ts" />
     <TypeScriptCompile Include="src\app\song\shared\models\instrumentalPart.model.ts" />
     <TypeScriptCompile Include="src\app\song\shared\models\song.model.ts" />
     <TypeScriptCompile Include="src\app\song\shared\models\stanza.model.ts" />
     <TypeScriptCompile Include="src\app\song\shared\song.service.ts" />
+    <TypeScriptCompile Include="src\app\song\song-create\song-create-data\song-create-data.component.ts" />
+    <TypeScriptCompile Include="src\app\song\song-create\song-create-hymn\song-create-hymn.component.ts" />
+    <TypeScriptCompile Include="src\app\song\song-create\song-create.component.ts" />
     <TypeScriptCompile Include="src\app\song\song-routing.module.ts" />
     <TypeScriptCompile Include="src\app\song\song-search\song-search.component.ts" />
     <TypeScriptCompile Include="src\app\song\song.module.ts" />

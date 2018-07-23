@@ -1,0 +1,5 @@
+﻿<create-data (songData)="nextPage($event)" *ngIf="currentPage==1"></create-data>
+<create-hymn [song]="song" (songVoices)="createSong($event)" *ngIf="currentPage==2 && song.Type=='hymn'"></create-hymn>
+<div *ngIf="created">
+    Pjesma je spremljena!
+</div>

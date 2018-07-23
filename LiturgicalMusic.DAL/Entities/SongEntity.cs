@@ -36,6 +36,9 @@ namespace LiturgicalMusic.DAL
         public string Source { get; set; }
         public string OtherInformations { get; set; }
 
+        public int? ComposerId { get; set; }
+        public int? ArrangerId { get; set; }
+
         public ComposerEntity Composer { get; set; }
         public ComposerEntity Arranger { get; set; }
 

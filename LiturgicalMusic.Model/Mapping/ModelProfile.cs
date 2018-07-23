@@ -14,8 +14,10 @@ namespace LiturgicalMusic.Model.Mapping
         public ModelProfile()
         {
             CreateMap<ISong, SongEntity>()
-                    .ForMember(dest => dest.OtherParts, opt => opt.MapFrom(s => s.Stanzas.Count() > 0));
-            CreateMap<SongEntity, ISong>();
+                .ForMember(dest => dest.Template, opt => opt.MapFrom(s => Convert.ToInt32(s.Template, 2)))
+                .ForMember(dest => dest.OtherParts, opt => opt.MapFrom(s => s.Stanzas.Count() > 0));
+            CreateMap<SongEntity, ISong>()
+                .ForMember(dest => dest.Template, opt => opt.MapFrom(s => Convert.ToString(s.Template, 2).PadLeft(8,'0')));
             CreateMap<IStanza, StanzaEntity>().ReverseMap();
             CreateMap<IComposer, ComposerEntity>().ReverseMap();
             CreateMap<IInstrumentalPart, InstrumentalPartEntity>().ReverseMap();

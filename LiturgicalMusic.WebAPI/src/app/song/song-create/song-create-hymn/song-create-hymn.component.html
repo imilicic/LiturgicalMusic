@@ -1,0 +1,85 @@
+﻿<form [formGroup]="voiceForm" (ngSubmit)="createSong(voiceForm.value)" autocomplete="off" novalidate>
+    <div class="form-group" [ngClass]="{'has-error': key.touched && key.invalid, 'has-success': key.touched && key.valid}">
+        <label for="Key">Tonalitet</label>
+        <select formControlName="Key" id="Key" class="form-control">
+            <option value="ces \major">Ces dur</option>
+            <option value="c \major">C dur</option>
+            <option value="cis \major">Cis dur</option>
+            <option value="des \major">Des dur</option>
+            <option value="d \major">D dur</option>
+            <option value="es \major">Es dur</option>
+            <option value="e \major">E dur</option>
+            <option value="f \major">F dur</option>
+            <option value="fis \major">Fis dur</option>
+            <option value="ges \major">Ges dur</option>
+            <option value="g \major">G dur</option>
+            <option value="aes \major">As dur</option>
+            <option value="a \major">A dur</option>
+            <option value="bes \major">B dur</option>
+            <option value="b \major">H dur</option>
+            <option value="c \minor">c mol</option>
+            <option value="cis \minor">cis mol</option>
+            <option value="d \minor">d mol</option>
+            <option value="dis \minor">dis mol</option>
+            <option value="es \minor">es mol</option>
+            <option value="e \minor">e mol</option>
+            <option value="f \minor">f mol</option>
+            <option value="fis \minor">fis mol</option>
+            <option value="g \minor">g mol</option>
+            <option value="gis \minor">gis mol</option>
+            <option value="a \minor">a mol</option>
+            <option value="bes \minor">b mol</option>
+            <option value="b \minor">h mol</option>
+        </select>
+        <span class="help-block" *ngIf="key.touched && key.invalid">Obavezno!</span>
+    </div>
+    <div class="form-group" [ngClass]="{'has-error': (timeNumerator.touched && timeNumerator.invalid) || (timeDenominator.touched && timeDenominator.invalid), 'has-success': timeNumerator.touched && timeNumerator.valid && timeDenominator.touched && timeDenominator.valid}">
+        <label>Mjera</label>
+        <select formControlName="timeNumerator" class="form-control">
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+        </select>/
+        <select formControlName="timeDenominator" class="form-control">
+            <option value="2">2</option>
+            <option value="4">4</option>
+            <option value="8">8</option>
+        </select>
+        <span class="help-block" *ngIf="(timeNumerator.touched && timeNumerator.invalid) || (timeDenominator.touched && timeDenominator.invalid)">Obavezno!</span>
+    </div>
+    <h2 *ngIf="chosenVoicesOrgan.length > 0">Orgulje</h2>
+    <div *ngFor="let voice of chosenVoicesOrgan">
+        <h3>{{voice.voice}}</h3>
+        <div class="form-group">
+            <label for="{{voice.controlNameRelative}}">Relativno</label>
+            <input type="text" formControlName="{{voice.controlNameRelative}}" id="{{voice.controlNameRelative}}" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="{{voice.controlName}}">Note</label>
+            <textarea rows="5" cols="10" class="form-control" formControlName="{{voice.controlName}}" id="{{voice.controlName}}"></textarea>
+            <span class="help-block" *ngIf="voice.controlName.touched && voice.controlName.invalid">Obavezno!</span>
+        </div>
+    </div>
+    <h2 *ngIf="chosenVoicesVoice.length > 0">Glas</h2>
+    <div class="form-group" *ngFor="let voice of chosenVoicesVoice">
+        <h3>{{voice.voice}}</h3>
+        <div class="form-group">
+            <label for="{{voice.controlNameRelative}}">Relativno</label>
+            <input type="text" formControlName="{{voice.controlNameRelative}}" id="{{voice.controlNameRelative}}" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="{{voice.controlName}}">Note</label>
+            <textarea rows="5" cols="10" class="form-control" formControlName="{{voice.controlName}}" id="{{voice.controlName}}"></textarea>
+            <span class="help-block" *ngIf="voice.controlName.touched && voice.controlName.invalid">Obavezno!</span>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-default" [disabled]="voiceForm.invalid">Dodaj</button>
+</form>

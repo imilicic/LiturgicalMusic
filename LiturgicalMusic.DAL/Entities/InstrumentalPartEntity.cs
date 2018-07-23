@@ -25,6 +25,8 @@ namespace LiturgicalMusic.DAL
         [Required, MaxLength(-1)]
         public string Code { get; set; }
 
+        [Required]
+        public int SongId { get; set; }
         public SongEntity Song { get; set; }
     }
 }

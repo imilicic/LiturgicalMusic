@@ -15,6 +15,7 @@ namespace LiturgicalMusic.DAL
         public int Number { get; set; }
         public string Text { get; set; }
         [Key, Column(Order = 1)]
+        public int SongId { get; set; }
         public SongEntity Song { get; set; }
     }
 }
