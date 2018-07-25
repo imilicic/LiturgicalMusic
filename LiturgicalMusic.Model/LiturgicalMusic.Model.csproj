@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Code.cs" />
     <Compile Include="Composer.cs" />
     <Compile Include="InstrumentalPart.cs" />
     <Compile Include="Mapping\ModelProfile.cs" />

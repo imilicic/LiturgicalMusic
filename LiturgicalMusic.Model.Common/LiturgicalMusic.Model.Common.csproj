@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ICode.cs" />
     <Compile Include="IComposer.cs" />
     <Compile Include="IInstrumentalPart.cs" />
     <Compile Include="ISong.cs" />
