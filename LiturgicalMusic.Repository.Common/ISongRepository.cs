@@ -9,8 +9,8 @@ namespace LiturgicalMusic.Repository.Common
 {
     public interface ISongRepository
     {
-        ISong CreateSong(ISong song);
-        List<ISong> GetAllSongs();
-        ISong GetSongById(int songId);
+        Task<ISong> CreateSongAsync(ISong song);
+        Task<List<ISong>> GetAllSongsAsync();
+        Task<ISong> GetSongByIdAsync(int songId);
     }
 }

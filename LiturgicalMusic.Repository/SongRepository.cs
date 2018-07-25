@@ -1,16 +1,17 @@
-﻿using System;
+﻿using AutoMapper;
+using LiturgicalMusic.DAL;
+using LiturgicalMusic.Model;
+using LiturgicalMusic.Model.Common;
+using LiturgicalMusic.Repository.Common;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LiturgicalMusic.DAL;
-using LiturgicalMusic.Model.Common;
-using LiturgicalMusic.Model;
-using LiturgicalMusic.Repository.Common;
-using AutoMapper;
-using System.IO;
-using System.Diagnostics;
-using Newtonsoft.Json;
+using System.Data.Entity;
 
 namespace LiturgicalMusic.Repository
 {
@@ -23,7 +24,7 @@ namespace LiturgicalMusic.Repository
             this.Mapper = mapper;
         }
 
-        public ISong CreateSong(ISong song)
+        public async Task<ISong> CreateSongAsync(ISong song)
         {
             // create lilypond file
             string fileName = Path.GetRandomFileName();
@@ -239,14 +240,14 @@ namespace LiturgicalMusic.Repository
 
                     if (songEntity.Composer != null)
                     {
-                        ComposerEntity composerEntity = db.Composers.SingleOrDefault(c => c.Id.Equals(songEntity.Composer.Id));
+                        ComposerEntity composerEntity = await db.Composers.SingleOrDefaultAsync(c => c.Id.Equals(songEntity.Composer.Id));
 
                         songEntity.Composer = composerEntity;
                     }
 
                     if (songEntity.Arranger != null)
                     {
-                        ComposerEntity arrangerEntity = db.Composers.SingleOrDefault(c => c.Id.Equals(songEntity.Arranger.Id));
+                        ComposerEntity arrangerEntity = await db.Composers.SingleOrDefaultAsync(c => c.Id.Equals(songEntity.Arranger.Id));
 
                         songEntity.Arranger = arrangerEntity;
                     }
@@ -254,17 +255,17 @@ namespace LiturgicalMusic.Repository
                     if (songEntity.LiturgyCategories.Count() > 0)
                     {
                         List<int> liturgyIds = song.LiturgyCategories;
-                        songEntity.LiturgyCategories = db.LiturgyCategories.Where(l => liturgyIds.Contains(l.Id)).ToList();
+                        songEntity.LiturgyCategories = await db.LiturgyCategories.Where(l => liturgyIds.Contains(l.Id)).ToListAsync();
                     }
 
                     if (songEntity.ThemeCategories.Count() > 0)
                     {
                         List<int> themeIds = song.ThemeCategories;
-                        songEntity.ThemeCategories = db.ThemeCategories.Where(l => themeIds.Contains(l.Id)).ToList();
+                        songEntity.ThemeCategories = await db.ThemeCategories.Where(l => themeIds.Contains(l.Id)).ToListAsync();
                     }
 
                     db.Songs.Add(songEntity);
-                    db.SaveChanges();
+                    await db.SaveChangesAsync();
                 }
                 return Mapper.Map<ISong>(songEntity);
             }
@@ -342,39 +343,39 @@ namespace LiturgicalMusic.Repository
             return new List<List<string>> { staff1, staff2 };
         }
 
-        public List<ISong> GetAllSongs()
+        public async Task<List<ISong>> GetAllSongsAsync()
         {
             List<SongEntity> songEntities;
 
             using (var db = new MusicContext())
             {
-                songEntities = db.Songs
+                songEntities = await db.Songs
                     .Include("Composer")
                     .Include("Arranger")
                     .Include("ThemeCategories")
                     .Include("LiturgyCategories")
                     .Include("InstrumentalParts")
                     .Include("Stanzas")
-                    .ToList();
+                    .ToListAsync();
             }
 
             return Mapper.Map<List<ISong>>(songEntities);
         }
 
-        public ISong GetSongById(int songId)
+        public async Task<ISong> GetSongByIdAsync(int songId)
         {
             SongEntity songEntity;
 
             using (var db = new MusicContext())
             {
-                songEntity = db.Songs
+                songEntity = await db.Songs
                     .Include("Composer")
                     .Include("Arranger")
                     .Include("ThemeCategories")
                     .Include("LiturgyCategories")
                     .Include("InstrumentalParts")
                     .Include("Stanzas")
-                    .SingleOrDefault(s => s.Id.Equals(songId));
+                    .SingleOrDefaultAsync(s => s.Id.Equals(songId));
             }
 
             return Mapper.Map<ISong>(songEntity);

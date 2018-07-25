@@ -7,6 +7,7 @@ using LiturgicalMusic.Repository.Common;
 using LiturgicalMusic.DAL;
 using LiturgicalMusic.Model.Common;
 using AutoMapper;
+using System.Data.Entity;
 
 namespace LiturgicalMusic.Repository
 {
@@ -19,7 +20,7 @@ namespace LiturgicalMusic.Repository
             this.Mapper = mapper;
         }
 
-        public IComposer CreateComposer(IComposer composer)
+        public async Task<IComposer> CreateComposerAsync(IComposer composer)
         {
             ComposerEntity composerEntity;
 
@@ -27,17 +28,17 @@ namespace LiturgicalMusic.Repository
             {
                 composerEntity = Mapper.Map<ComposerEntity>(composer);
                 db.Composers.Add(composerEntity);
-                db.SaveChanges();
+                await db.SaveChangesAsync();
             }
             return Mapper.Map<IComposer>(composerEntity);
         }
-        public List<IComposer> GetAllComposers()
+        public async Task<List<IComposer>> GetAllComposersAsync()
         {
             List<ComposerEntity> composerEntities;
 
             using (var db = new MusicContext())
             {
-                composerEntities = db.Composers.ToList();
+                composerEntities = await db.Composers.ToListAsync();
             }
             return Mapper.Map<List<IComposer>>(composerEntities);
         }

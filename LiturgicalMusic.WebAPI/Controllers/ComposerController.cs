@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using LiturgicalMusic.Model.Common;
+using System.Threading.Tasks;
 
 namespace LiturgicalMusic.WebAPI.Controllers
 {
@@ -26,17 +27,18 @@ namespace LiturgicalMusic.WebAPI.Controllers
 
         [HttpGet]
         [Route("get")]
-        public HttpResponseMessage GetAllComposers()
+        public async Task<HttpResponseMessage> GetAllComposersAsync()
         {
-            List<ComposerModel> result = Mapper.Map<List<ComposerModel>>(Service.GetAllComposers());
+            List<IComposer> c = await Service.GetAllComposersAsync();
+            List<ComposerModel> result = Mapper.Map<List<ComposerModel>>(c);
             return Request.CreateResponse(HttpStatusCode.OK, result);
         }
 
         [HttpPost]
         [Route("create")]
-        public HttpResponseMessage CreateComposer([FromBody] ComposerModel composer)
+        public async Task<HttpResponseMessage> CreateComposerAsync([FromBody] ComposerModel composer)
         {
-            var result = Service.CreateComposer(Mapper.Map<IComposer>(composer));
+            var result = await Service.CreateComposerAsync(Mapper.Map<IComposer>(composer));
             return Request.CreateResponse(HttpStatusCode.OK, result);
         }
 

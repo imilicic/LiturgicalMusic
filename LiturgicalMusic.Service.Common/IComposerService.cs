@@ -9,7 +9,7 @@ namespace LiturgicalMusic.Service.Common
 {
     public interface IComposerService
     {
-        IComposer CreateComposer(IComposer composer);
-        List<IComposer> GetAllComposers();
+        Task<IComposer> CreateComposerAsync(IComposer composer);
+        Task<List<IComposer>> GetAllComposersAsync();
     }
 }

@@ -9,7 +9,7 @@ namespace LiturgicalMusic.Repository.Common
 {
     public interface IComposerRepository
     {
-        IComposer CreateComposer(IComposer composer);
-        List<IComposer> GetAllComposers();
+        Task<IComposer> CreateComposerAsync(IComposer composer);
+        Task<List<IComposer>> GetAllComposersAsync();
     }
 }

@@ -18,19 +18,22 @@ namespace LiturgicalMusic.Service
             this.Repository = repository;
         }
 
-        public ISong CreateSong(ISong song)
+        public async Task<ISong> CreateSongAsync(ISong song)
         {
-            return Repository.CreateSong(song);
+            ISong s = await Repository.CreateSongAsync(song);
+            return s;
         }
 
-        public List<ISong> GetAllSongs()
+        public async Task<List<ISong>> GetAllSongsAsync()
         {
-            return Repository.GetAllSongs();
+            List<ISong> s = await Repository.GetAllSongsAsync();
+            return s;
         }
 
-        public ISong GetSongById(int songId)
+        public async Task<ISong> GetSongByIdAsync(int songId)
         {
-            return Repository.GetSongById(songId);
+            ISong s = await Repository.GetSongByIdAsync(songId);
+            return s;
         }
     }
 }

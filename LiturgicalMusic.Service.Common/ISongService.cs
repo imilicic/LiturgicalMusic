@@ -9,8 +9,8 @@ namespace LiturgicalMusic.Service.Common
 {
     public interface ISongService
     {
-        ISong CreateSong(ISong song);
-        List<ISong> GetAllSongs();
-        ISong GetSongById(int songId);
+        Task<ISong> CreateSongAsync(ISong song);
+        Task<List<ISong>> GetAllSongsAsync();
+        Task<ISong> GetSongByIdAsync(int songId);
     }
 }
