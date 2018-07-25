@@ -132,6 +132,7 @@
     <Content Include="src\app\song\song-create\song-create-hymn\song-create-hymn.component.html" />
     <Content Include="src\app\song\song-create\song-create.component.html" />
     <Content Include="src\app\song\song-search\song-search.component.html" />
+    <Content Include="src\app\song\song-view\song-view.component.html" />
     <Content Include="src\favicon.ico" />
     <Content Include="src\index.html" />
     <Content Include="src\styles.css" />
@@ -210,6 +211,9 @@
     <TypeScriptCompile Include="src\app\song\song-create\song-create.component.ts" />
     <TypeScriptCompile Include="src\app\song\song-routing.module.ts" />
     <TypeScriptCompile Include="src\app\song\song-search\song-search.component.ts" />
+    <TypeScriptCompile Include="src\app\song\song-view\song-view-resolver.service.ts" />
+    <TypeScriptCompile Include="src\app\song\song-view\song-view-route-activator.service.ts" />
+    <TypeScriptCompile Include="src\app\song\song-view\song-view.component.ts" />
     <TypeScriptCompile Include="src\app\song\song.module.ts" />
     <TypeScriptCompile Include="src\main.ts" />
   </ItemGroup>

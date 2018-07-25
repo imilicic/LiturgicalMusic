@@ -40,7 +40,11 @@ namespace LiturgicalMusic.Repository
                 file.WriteLine(@"\header{");
                 file.WriteLine(String.Format(@"title = ""{0}""", song.Title));
                 file.WriteLine(String.Format(@"othersource = ""{0}""", song.OtherInformation));
-                file.WriteLine(String.Format(@"composer = ""{0} {1}""", song.Composer.Name, song.Composer.Surname));
+
+                if (song.Composer != null)
+                {
+                    file.WriteLine(String.Format(@"composer = ""{0} {1}""", song.Composer.Name, song.Composer.Surname));
+                }
 
                 if (song.Arranger != null)
                 {

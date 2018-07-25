@@ -31,6 +31,14 @@ namespace LiturgicalMusic.WebAPI.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, result);
         }
 
+        [HttpGet]
+        [Route("get")]
+        public HttpResponseMessage GetSongById(int songId)
+        {
+            SongModel result = Mapper.Map<SongModel>(Service.GetSongById(songId));
+            return Request.CreateResponse(HttpStatusCode.OK, result);
+        }
+
         [HttpPost]
         [Route("create")]
         public HttpResponseMessage CreateSong([FromBody] SongModel song)

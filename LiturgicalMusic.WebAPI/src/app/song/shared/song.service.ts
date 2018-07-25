@@ -19,6 +19,13 @@ export class SongService {
             .catch(this.handleError);
     }
 
+    getSongById(songId: number): Observable<Song> {
+        let query = "/api/songs/get?songId=" + songId;
+        return this.http.get(query)
+            .map((response: Response) => <Song>response.json())
+            .catch(this.handleError);
+    }
+
     getSongs(): Observable<Song[]> {
         let query = "/api/songs/search";
         return this.http.get(query)

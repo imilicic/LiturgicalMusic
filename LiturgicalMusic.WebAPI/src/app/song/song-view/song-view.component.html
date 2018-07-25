@@ -1,0 +1,15 @@
+﻿<table class="table table-striped">
+    <tr>
+        <td>Naziv</td>
+        <td>{{song.Title}}</td>
+    </tr>
+    <tr>
+        <td>Autor</td>
+        <td>{{song.Composer?.Name}} {{song.Composer?.Surname}}</td>
+    </tr>
+    <tr>
+        <td>Harmonizirao</td>
+        <td>{{song.Arranger?.Name}} {{song.Arranger?.Surname}}</td>
+    </tr>
+</table>
+<embed [src]="domSanitizer.bypassSecurityTrustResourceUrl(pdfFileName)" width="800" height="500"/>
