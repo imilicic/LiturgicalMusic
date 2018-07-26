@@ -11,5 +11,15 @@
         <td>Harmonizirao</td>
         <td>{{song.Arranger?.Name}} {{song.Arranger?.Surname}}</td>
     </tr>
+    <tr>
+        <td>Izvor</td>
+        <td>{{song.Source}}</td>
+    </tr>
+    <tr>
+        <td>Druge informacije</td>
+        <td>{{song.OtherInformations}}</td>
+    </tr>
 </table>
-<embed [src]="domSanitizer.bypassSecurityTrustResourceUrl(pdfFileName)" width="800" height="500"/>
+<div style="text-align:center;">
+    <embed [src]="domSanitizer.bypassSecurityTrustResourceUrl(pdfFileName)" width="800" height="500"/>
+</div>

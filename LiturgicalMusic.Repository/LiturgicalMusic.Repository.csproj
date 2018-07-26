@@ -68,6 +68,7 @@
   <ItemGroup>
     <Compile Include="ComposerRepository.cs" />
     <Compile Include="DIModule.cs" />
+    <Compile Include="Lilypond.cs" />
     <Compile Include="SongRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
