@@ -206,6 +206,7 @@
     <TypeScriptCompile Include="src\app\song\shared\models\song.model.ts" />
     <TypeScriptCompile Include="src\app\song\shared\models\stanza.model.ts" />
     <TypeScriptCompile Include="src\app\song\shared\song.service.ts" />
+    <TypeScriptCompile Include="src\app\song\song-create\song-create-data\song-create-data-resolver.service.ts" />
     <TypeScriptCompile Include="src\app\song\song-create\song-create-data\song-create-data.component.ts" />
     <TypeScriptCompile Include="src\app\song\song-create\song-create-hymn\song-create-hymn.component.ts" />
     <TypeScriptCompile Include="src\app\song\song-create\song-create.component.ts" />

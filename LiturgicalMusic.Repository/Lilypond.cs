@@ -7,11 +7,42 @@ using System.Threading.Tasks;
 using LiturgicalMusic.Model;
 using LiturgicalMusic.Model.Common;
 using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace LiturgicalMusic.Repository
 {
     public class Lilypond
     {
+        public static async Task<string> CreateFileAsync(ISong song, string path, string fileName, bool deleteTempFiles)
+        {
+            using (StreamWriter file = new StreamWriter(String.Format(@"{0}\{1}.ly", path, fileName)))
+            {
+                await file.WriteLineAsync(CreateHeader(song));
+                await file.WriteLineAsync(CreateVoices(song));
+                await file.WriteLineAsync(CreateScore(song));
+            }
+
+            using (StreamWriter file = new StreamWriter(String.Format(@"{0}\{1}.bat", path, fileName)))
+            {
+                file.WriteLine(String.Format("lilypond {0}.ly", fileName));
+            }
+
+            Process process = new Process();
+            process.StartInfo.WorkingDirectory = path;
+            process.StartInfo.FileName = String.Format("{0}.bat", fileName);
+            process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            process.Start();
+            process.WaitForExit();
+
+            if (deleteTempFiles)
+            {
+                File.Delete(String.Format(@"{0}\{1}.ly", path, fileName));
+                File.Delete(String.Format(@"{0}\{1}.bat", path, fileName));
+            }
+
+            return String.Format(@"{0}\{1}.pdf", path, fileName);
+        }
+
         public static string CreateHeader(ISong song)
         {
             StringBuilder header = new StringBuilder();

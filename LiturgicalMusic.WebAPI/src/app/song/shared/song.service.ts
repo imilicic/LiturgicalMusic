@@ -14,6 +14,7 @@ export class SongService {
     createSong(song: Song): Observable<Song> {
         let headers = new Headers({ 'Content-Type': 'application/json' });
         let options = new RequestOptions({ headers: headers });
+
         return this.http.post("/api/songs/create", JSON.stringify(song), options)
             .map((response: Response) => <Song>response.json())
             .catch(this.handleError);
@@ -36,5 +37,14 @@ export class SongService {
     handleError(error: Response) {
         console.error(error);
         return Observable.throw(error);
+    }
+
+    previewSong(song: Song) {
+        let headers = new Headers({ 'Content-Type': 'application/json'});
+        let options = new RequestOptions({ headers: headers });
+
+        return this.http.post("/api/songs/preview", JSON.stringify(song), options)
+            .map((response: Response) => <Song>response.json())
+            .catch(this.handleError);
     }
 }

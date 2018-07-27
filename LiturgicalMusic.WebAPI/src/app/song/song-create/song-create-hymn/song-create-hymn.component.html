@@ -1,4 +1,4 @@
-﻿<form [formGroup]="voiceForm" (ngSubmit)="createSong(voiceForm.value)" autocomplete="off" novalidate>
+﻿<form [formGroup]="voiceForm" (ngSubmit)="createSongEmit(voiceForm.value)" autocomplete="off" novalidate>
     <div class="form-group" [ngClass]="{'has-error': key.touched && key.invalid, 'has-success': key.touched && key.valid}">
         <label for="Key">Tonalitet</label>
         <select formControlName="Key" id="Key" class="form-control">
@@ -58,28 +58,35 @@
     <h2 *ngIf="chosenVoicesOrgan.length > 0">Orgulje</h2>
     <div *ngFor="let voice of chosenVoicesOrgan">
         <h3>{{voice.voice}}</h3>
-        <div class="form-group">
+        <div class="form-group" [ngClass]="{'has-error': hasError(voice.controlNameRelative), 'has-success': hasSuccess(voice.controlNameRelative)}">
             <label for="{{voice.controlNameRelative}}">Relativno</label>
             <input type="text" formControlName="{{voice.controlNameRelative}}" id="{{voice.controlNameRelative}}" class="form-control" />
+            <span class="help-block" *ngIf="hasError(voice.controlNameRelative)">Obavezno!</span>
         </div>
-        <div class="form-group">
+        <div class="form-group" [ngClass]="{'has-error': hasError(voice.controlName), 'has-success': hasSuccess(voice.controlName)}">
             <label for="{{voice.controlName}}">Note</label>
             <textarea rows="5" cols="10" class="form-control" formControlName="{{voice.controlName}}" id="{{voice.controlName}}"></textarea>
-            <span class="help-block" *ngIf="voice.controlName.touched && voice.controlName.invalid">Obavezno!</span>
+            <span class="help-block" *ngIf="hasError(voice.controlName)">Obavezno!</span>
         </div>
     </div>
     <h2 *ngIf="chosenVoicesVoice.length > 0">Glas</h2>
     <div class="form-group" *ngFor="let voice of chosenVoicesVoice">
         <h3>{{voice.voice}}</h3>
-        <div class="form-group">
+        <div class="form-group" [ngClass]="{'has-error': hasError(voice.controlNameRelative), 'has-success': hasSuccess(voice.controlNameRelative)}">
             <label for="{{voice.controlNameRelative}}">Relativno</label>
             <input type="text" formControlName="{{voice.controlNameRelative}}" id="{{voice.controlNameRelative}}" class="form-control" />
+            <span class="help-block" *ngIf="hasError(voice.controlNameRelative)">Obavezno!</span>
         </div>
-        <div class="form-group">
+        <div class="form-group" [ngClass]="{'has-error': hasError(voice.controlName), 'has-success': hasSuccess(voice.controlName)}">
             <label for="{{voice.controlName}}">Note</label>
             <textarea rows="5" cols="10" class="form-control" formControlName="{{voice.controlName}}" id="{{voice.controlName}}"></textarea>
-            <span class="help-block" *ngIf="voice.controlName.touched && voice.controlName.invalid">Obavezno!</span>
+            <span class="help-block" *ngIf="hasError(voice.controlName)">Obavezno!</span>
         </div>
     </div>
+    <div *ngIf="preview">
+        <img src="app/assets/image/spinner.gif" style="width:150px;" *ngIf="spinner"/>
+        <embed [src]="domSanitizer.bypassSecurityTrustResourceUrl(pdfFileName)" width="800" height="500" *ngIf="preview && !spinner"/>
+    </div>
+    <button type="button" class="btn btn-default" (click)="previewSong(voiceForm.value)" [disabled]="previewEnabled()">Pregledaj</button>
     <button type="submit" class="btn btn-default" [disabled]="voiceForm.invalid">Dodaj</button>
 </form>

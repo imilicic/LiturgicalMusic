@@ -12,5 +12,6 @@ namespace LiturgicalMusic.Service.Common
         Task<ISong> CreateSongAsync(ISong song);
         Task<List<ISong>> GetAllSongsAsync();
         Task<ISong> GetSongByIdAsync(int songId);
+        Task<ISong> PreviewSongAsync(ISong song);
     }
 }

@@ -26,100 +26,82 @@ namespace LiturgicalMusic.Repository
 
         public async Task<ISong> CreateSongAsync(ISong song)
         {
-            // create lilypond file
-            string fileName = Path.GetRandomFileName();
             string pathToWebAPI = @"E:\vs projects\LiturgicalMusic\LiturgicalMusic.WebAPI";
             string tempDir = String.Format(@"{0}\temp", pathToWebAPI);
             string srcDir = String.Format(@"{0}\src", pathToWebAPI);
+            string fileName = Path.GetRandomFileName();
+            string filePath = await Lilypond.CreateFileAsync(song, tempDir, fileName, true);
 
-            using (StreamWriter file = new StreamWriter(String.Format(@"{0}\{1}.ly", tempDir, fileName)))
-            {
-                await file.WriteLineAsync(Lilypond.CreateHeader(song));
-                await file.WriteLineAsync(Lilypond.CreateVoices(song));
-                await file.WriteLineAsync(Lilypond.CreateScore(song));
-            }
-
-            // create bat file and run ly file
-            using (StreamWriter file = new StreamWriter(String.Format(@"{0}\{1}.bat", tempDir, fileName)))
-            {
-                file.WriteLine(String.Format("lilypond {0}.ly", fileName));
-            }
-
-            Process process = new Process();
-            process.StartInfo.WorkingDirectory = tempDir;
-            process.StartInfo.FileName = String.Format("{0}.bat", fileName);
-            process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            process.Start();
-            process.WaitForExit();
-            
-            File.Delete(String.Format(@"{0}\{1}.ly", tempDir, fileName));
-            File.Delete(String.Format(@"{0}\{1}.bat", tempDir, fileName));
-            
-            if (!File.Exists(String.Format(@"{0}\{1}.pdf", tempDir, fileName))) // PDF not created so something is wrong...
+            if (!File.Exists(filePath)) // PDF not created so something is wrong...
             {
                 throw new Exception("Something went wrong!");
             }
-            else
+            
+            string songFileName = song.Title;
+
+            if (song.Composer != null)
             {
-                string songFileName = song.Title;
-
-                if (song.Composer != null)
-                {
-                    songFileName += song.Composer.Name + song.Composer.Surname;
-                }
-                else if (song.Arranger != null)
-                {
-                    songFileName += song.Arranger.Name + song.Arranger.Surname;
-                }
-                
-                string moveTo = String.Format(@"{0}\app\assets\pdf\{1}.pdf", srcDir, songFileName);
-
-                if (File.Exists(moveTo))
-                {
-                    File.Delete(moveTo);
-                }
-                
-                File.Move(String.Format(@"{0}\{1}.pdf", tempDir, fileName), moveTo);
-                File.Delete(String.Format(@"{0}\{1}.pdf", tempDir, fileName));
-
-                // DB
-                SongEntity songEntity;
-
-                using (var db = new MusicContext())
-                {
-                    songEntity = Mapper.Map<SongEntity>(song);
-
-                    if (songEntity.Composer != null)
-                    {
-                        ComposerEntity composerEntity = await db.Composers.SingleOrDefaultAsync(c => c.Id.Equals(songEntity.Composer.Id));
-
-                        songEntity.Composer = composerEntity;
-                    }
-
-                    if (songEntity.Arranger != null)
-                    {
-                        ComposerEntity arrangerEntity = await db.Composers.SingleOrDefaultAsync(c => c.Id.Equals(songEntity.Arranger.Id));
-
-                        songEntity.Arranger = arrangerEntity;
-                    }
-
-                    if (songEntity.LiturgyCategories.Count() > 0)
-                    {
-                        List<int> liturgyIds = song.LiturgyCategories;
-                        songEntity.LiturgyCategories = await db.LiturgyCategories.Where(l => liturgyIds.Contains(l.Id)).ToListAsync();
-                    }
-
-                    if (songEntity.ThemeCategories.Count() > 0)
-                    {
-                        List<int> themeIds = song.ThemeCategories;
-                        songEntity.ThemeCategories = await db.ThemeCategories.Where(l => themeIds.Contains(l.Id)).ToListAsync();
-                    }
-
-                    db.Songs.Add(songEntity);
-                    await db.SaveChangesAsync();
-                }
-                return Mapper.Map<ISong>(songEntity);
+                songFileName += song.Composer.Name + song.Composer.Surname;
             }
+            else if (song.Arranger != null)
+            {
+                songFileName += song.Arranger.Name + song.Arranger.Surname;
+            }
+
+            if (File.Exists(String.Format(@"{0}\{1}.ly", tempDir, songFileName)))
+            {
+                File.Delete(String.Format(@"{0}\{1}.ly", tempDir, songFileName));
+                File.Delete(String.Format(@"{0}\{1}.bat", tempDir, songFileName));
+            }
+
+            string moveTo = String.Format(@"{0}\app\assets\pdf\{1}.pdf", srcDir, songFileName);
+
+            if (File.Exists(moveTo))
+            {
+                File.Delete(moveTo);
+            }
+                
+            File.Move(filePath, moveTo);
+            File.Delete(filePath);
+
+            // DB
+            SongEntity songEntity;
+
+            using (var db = new MusicContext())
+            {
+                songEntity = Mapper.Map<SongEntity>(song);
+
+                if (songEntity.Composer != null)
+                {
+                    ComposerEntity composerEntity = await db.Composers.SingleOrDefaultAsync(c => c.Id.Equals(songEntity.Composer.Id));
+
+                    songEntity.Composer = composerEntity;
+                }
+
+                if (songEntity.Arranger != null)
+                {
+                    ComposerEntity arrangerEntity = await db.Composers.SingleOrDefaultAsync(c => c.Id.Equals(songEntity.Arranger.Id));
+
+                    songEntity.Arranger = arrangerEntity;
+                }
+
+                if (songEntity.LiturgyCategories.Count() > 0)
+                {
+                    List<int> liturgyIds = song.LiturgyCategories;
+                    songEntity.LiturgyCategories = await db.LiturgyCategories.Where(l => liturgyIds.Contains(l.Id)).ToListAsync();
+                }
+
+                if (songEntity.ThemeCategories.Count() > 0)
+                {
+                    List<int> themeIds = song.ThemeCategories;
+                    songEntity.ThemeCategories = await db.ThemeCategories.Where(l => themeIds.Contains(l.Id)).ToListAsync();
+                }
+
+                db.Songs.Add(songEntity);
+                await db.SaveChangesAsync();
+            }
+
+            return Mapper.Map<ISong>(songEntity);
         }
 
         public async Task<List<ISong>> GetAllSongsAsync()
@@ -158,6 +140,41 @@ namespace LiturgicalMusic.Repository
             }
 
             return Mapper.Map<ISong>(songEntity);
+        }
+
+        public async Task<ISong> PreviewSongAsync(ISong song)
+        {
+            string pathToWebAPI = @"E:\vs projects\LiturgicalMusic\LiturgicalMusic.WebAPI";
+            string tempDir = String.Format(@"{0}\temp", pathToWebAPI);
+            string srcDir = String.Format(@"{0}\src", pathToWebAPI);
+            string fileName = song.Title;
+
+            if (song.Composer != null)
+            {
+                fileName += song.Composer.Name + song.Composer.Surname;
+            }
+            else if (song.Arranger != null)
+            {
+                fileName += song.Arranger.Name + song.Arranger.Surname;
+            }
+
+            string filePath = await Lilypond.CreateFileAsync(song, tempDir, fileName, false);
+
+            if (!File.Exists(filePath)) // PDF not created so something is wrong...
+            {
+                throw new Exception("Something went wrong!");
+            }
+
+            string moveTo = String.Format(@"{0}\app\assets\pdf\{1}.pdf", srcDir, fileName);
+
+            if (File.Exists(moveTo))
+            {
+                File.Delete(moveTo);
+            }
+
+            File.Move(filePath, moveTo);
+
+            return song;
         }
     }
 }

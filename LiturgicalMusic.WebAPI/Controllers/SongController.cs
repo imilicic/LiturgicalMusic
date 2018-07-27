@@ -14,9 +14,8 @@ namespace LiturgicalMusic.WebAPI.Controllers
     {
         protected IMapper Mapper { get; private set; }
         protected ISongService Service { get; private set; }
-        public SongController()
-        {
-        }
+
+        public SongController() { }
 
         public SongController(IMapper mapper, ISongService service)
         {
@@ -44,10 +43,18 @@ namespace LiturgicalMusic.WebAPI.Controllers
 
         [HttpPost]
         [Route("create")]
-        public async Task<HttpResponseMessage> CreateSong([FromBody] SongModel song)
+        public async Task<HttpResponseMessage> CreateSongAsync([FromBody] SongModel song)
         {
             ISong resultSong = await Service.CreateSongAsync(Mapper.Map<ISong>(song));
             return Request.CreateResponse(HttpStatusCode.OK, Mapper.Map<SongModel>(resultSong));
+        }
+
+        [HttpPost]
+        [Route("preview")]
+        public async Task<HttpResponseMessage> PreviewSongAsync([FromBody] SongModel song)
+        {
+            ISong s = await Service.PreviewSongAsync(Mapper.Map<ISong>(song));
+            return Request.CreateResponse(HttpStatusCode.OK, Mapper.Map<SongModel>(s));
         }
 
         public class SongModel

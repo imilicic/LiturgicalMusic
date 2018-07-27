@@ -1,8 +1,8 @@
 ﻿import { Component, OnInit, Output, EventEmitter } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
+import { ActivatedRoute } from "@angular/router";
 
 import { Composer } from "../../shared/models/composer.model";
-import { ComposerService } from "../../shared/composer.service";
 import { Song } from "../../shared/models/song.model";
 
 @Component({
@@ -29,14 +29,10 @@ export class SongCreateDataComponent implements OnInit {
     liturgyCategories: FormControl;
     songForm: FormGroup;
 
-    constructor(private composerService: ComposerService) { }
+    constructor(private route: ActivatedRoute) { }
 
     ngOnInit() {
-        this.composerService.getComposers()
-            .subscribe(result => {
-                this.composers = result;
-            });
-
+        this.composers = this.route.snapshot.data["composers"];
         let templateValue: string = this.templateVoices.map(b => String(+b)).join("");
 
         this.arranger = new FormControl();
