@@ -29,6 +29,7 @@ export class SongCreateHymnComponent implements OnInit {
     constructor(private domSanitizer: DomSanitizer, private songService: SongService) { }
 
     ngOnInit() {
+        window.scrollTo(0, 0);
         this.pdfFileName = "app/assets/pdf/" + this.song.Title;
 
         if (this.song.Composer != null) {

@@ -93,6 +93,22 @@ export class SongCreateDataComponent implements OnInit {
         this.songData.emit(newSong);
     }
 
+    voicesInvalid() {
+        return !this.templateVoices.some(b => b);
+    }
+
+    partsInvalid() {
+        for (let i = 0; i < this.otherParts.length; i++) {
+            if (this.otherParts[i]) {
+                if (!this.partVoices[i].some(b => b)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     otherPartsCheck(id: number) {
         this.otherParts[id] = !this.otherParts[id];
     }
