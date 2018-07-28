@@ -45,7 +45,8 @@ namespace LiturgicalMusic.WebAPI.Controllers
         [Route("create")]
         public async Task<HttpResponseMessage> CreateSongAsync([FromBody] SongModel song)
         {
-            ISong resultSong = await Service.CreateSongAsync(Mapper.Map<ISong>(song));
+            ISong s = Mapper.Map<ISong>(song);
+            ISong resultSong = await Service.CreateSongAsync(s);
             return Request.CreateResponse(HttpStatusCode.OK, Mapper.Map<SongModel>(resultSong));
         }
 
@@ -61,7 +62,7 @@ namespace LiturgicalMusic.WebAPI.Controllers
         {
             public int Id { get; set; }
             public string Title { get; set; }
-            public string Template { get; set; }
+            public List<bool> Template { get; set; }
             public string Type { get; set; }
             public string Code { get; set; }
             public string Source { get; set; }
@@ -93,7 +94,7 @@ namespace LiturgicalMusic.WebAPI.Controllers
             public string Position { get; set; }
             public string Type { get; set; }
             public string Code { get; set; }
-            public int Template { get; set; }
+            public List<bool> Template { get; set; }
         }
     }
 }

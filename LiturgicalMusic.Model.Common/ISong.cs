@@ -10,7 +10,7 @@ namespace LiturgicalMusic.Model.Common
     {
         int Id { get; set; }
         string Title { get; set; }
-        string Template { get; set; }
+        List<bool> Template { get; set; }
         string Type { get; set; }
         string Code { get; set; }
         string Source { get; set; }

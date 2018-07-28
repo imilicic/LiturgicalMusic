@@ -4,6 +4,7 @@ import { DomSanitizer } from "@angular/platform-browser";
 
 import { Song } from "../../shared/models/song.model";
 import { SongService } from "../../shared/song.service";
+import { InstrumentalPart } from "../../shared/models/instrumentalPart.model";
 
 @Component({
     selector: "create-hymn",
@@ -13,6 +14,7 @@ export class SongCreateHymnComponent implements OnInit {
     @Input() song: Song;
     @Output() songVoices = new EventEmitter();
     chosenVoicesOrgan: any[] = [];
+    chosenVoicesParts: any[][] = [];
     chosenVoicesVoice: any[] = [];
     pdfFileName: string;
     preview: boolean = false;
@@ -38,9 +40,9 @@ export class SongCreateHymnComponent implements OnInit {
         this.pdfFileName += ".pdf";
 
         let controls: any = {};
-        this.song.Template.split("").forEach((b, i) => {
+        this.song.Template.forEach((b, i) => {
             if (i <= 3) { // SATB voice
-                if (parseInt(b)) {
+                if (b) {
                     this.chosenVoicesVoice.push({
                         voice: this.voices[i],
                         controlName: "Voice" + this.voices[i],
@@ -51,7 +53,7 @@ export class SongCreateHymnComponent implements OnInit {
                     controls["Voice" + this.voices[i] + "Relative"] = new FormControl("", Validators.required);
                 }
             } else { // SATB organ
-                if (parseInt(b)) {
+                if (b) {
                     this.chosenVoicesOrgan.push({
                         voice: this.voices[i-4],
                         controlName: "Organ" + this.voices[i-4],
@@ -63,6 +65,26 @@ export class SongCreateHymnComponent implements OnInit {
                 }
             }
         });
+        
+        if (this.song.InstrumentalParts != undefined) {
+            this.song.InstrumentalParts.forEach(p => {
+                let voices: any = [];
+                p.Template.forEach((b, i) => {
+                    if (b) {
+                        voices.push({
+                            voice: this.voices[i],
+                            controlName: p.Position + "Part" + this.voices[i],
+                            controlNameRelative: p.Position + "Part" + this.voices[i] + "Relative",
+                            partName: p.Position
+                        });
+
+                        controls[p.Position + "Part" + this.voices[i]] = new FormControl("", Validators.required);
+                        controls[p.Position + "Part" + this.voices[i] + "Relative"] = new FormControl("", Validators.required);
+                    }
+                });
+                this.chosenVoicesParts.push(voices);
+            });
+        }
 
         this.key = new FormControl("", Validators.required);
         this.timeNumerator = new FormControl("", Validators.required);
@@ -75,40 +97,49 @@ export class SongCreateHymnComponent implements OnInit {
         this.voiceForm = new FormGroup(controls);
     }
 
+    private prependToCode(code: any, copyFrom: any, instrument: string, keepSameKey: boolean = true) {
+        this.voices.forEach(v => {
+            if (copyFrom[instrument + v]) {
+                if (v == "Soprano" || v == "Alto") {
+                    if (keepSameKey) {
+                        code[instrument + v] = "\\clef \"treble\" \\keyTime " + copyFrom[instrument + v];
+                    } else {
+                        code[v] = "\\clef \"treble\" \\keyTime " + copyFrom[instrument + v];
+                    }
+                } else {
+                    if (keepSameKey) {
+                        code[instrument + v] = "\\clef \"bass\" \\keyTime " + copyFrom[instrument + v];
+                    } else {
+                        code[v] = "\\clef \"bass\" \\keyTime " + copyFrom[instrument + v];
+                    }
+                }
+
+                if (keepSameKey) {
+                    code[instrument + v + "Relative"] = copyFrom[instrument + v + "Relative"];
+                } else {
+                    code[v + "Relative"] = copyFrom[instrument + v + "Relative"];
+                }
+            }
+        });
+    }
+
     createSong(formValues: any) {
-        let time: string = formValues.timeNumerator + "/" + formValues.timeDenominator;
-        formValues = JSON.parse(JSON.stringify(formValues)); // deep copy
+        let code = {};
+        let instrumentalParts: InstrumentalPart[] = [];
 
-        formValues["Time"] = time;
-        delete formValues["timeNumerator"];
-        delete formValues["timeDenominator"];
+        code["Time"] = formValues.timeNumerator + "/" + formValues.timeDenominator;
+        code["Key"] = formValues.Key;
 
-        if (formValues["OrganSoprano"]) {
-            formValues["OrganSoprano"] = "\\clef \"treble\" \\keyTime " + formValues["OrganSoprano"];
-        }
-        if (formValues["OrganAlto"]) {
-            formValues["OrganAlto"] = "\\clef \"treble\" \\keyTime " + formValues["OrganAlto"];
-        }
-        if (formValues["OrganTenor"]) {
-            formValues["OrganTenor"] = "\\clef \"bass\" \\keyTime " + formValues["OrganTenor"];
-        }
-        if (formValues["OrganBass"]) {
-            formValues["OrganBass"] = "\\clef \"bass\" \\keyTime " + formValues["OrganBass"];
-        }
-        if (formValues["VoiceSoprano"]) {
-            formValues["VoiceSoprano"] = "\\clef \"treble\" \\keyTime " + formValues["VoiceSoprano"];
-        }
-        if (formValues["VoiceAlto"]) {
-            formValues["VoiceAlto"] = "\\clef \"treble\" \\keyTime " + formValues["VoiceAlto"];
-        }
-        if (formValues["VoiceTenor"]) {
-            formValues["VoiceTenor"] = "\\clef \"bass\" \\keyTime " + formValues["VoiceTenor"];
-        }
-        if (formValues["VoiceBass"]) {
-            formValues["VoiceBass"] = "\\clef \"bass\" \\keyTime " + formValues["VoiceBass"];
-        }
+        this.prependToCode(code, formValues, "Organ");
+        this.prependToCode(code, formValues, "Voice");
 
-        this.song.Code = JSON.stringify(formValues);
+        this.song.InstrumentalParts.forEach(part => {
+            let newPart: any = {};
+            this.prependToCode(newPart, formValues, part.Position + "Part", false);
+            part.Code = JSON.stringify(newPart);
+        });
+
+        this.song.Code = JSON.stringify(code);
     }
 
     createSongEmit(formValues: any) {

@@ -5,7 +5,7 @@ import { Composer } from "./composer.model";
 export class Song {
     Id: number;
     Title: string;
-    Template: string;
+    Template: boolean[];
     Type: string;
     Code: string;
     Source: string;

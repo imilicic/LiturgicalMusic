@@ -57,7 +57,12 @@
     </div>
     <h2 *ngIf="chosenVoicesOrgan.length > 0">Orgulje</h2>
     <div *ngFor="let voice of chosenVoicesOrgan">
-        <h3>{{voice.voice}}</h3>
+        <div [ngSwitch]="voice.voice">
+            <h3 *ngSwitchCase="'Soprano'">Sopran</h3>
+            <h3 *ngSwitchCase="'Alto'">Alt</h3>
+            <h3 *ngSwitchCase="'Tenor'">Tenor</h3>
+            <h3 *ngSwitchCase="'Bass'">Bas</h3>
+        </div>
         <div class="form-group" [ngClass]="{'has-error': hasError(voice.controlNameRelative), 'has-success': hasSuccess(voice.controlNameRelative)}">
             <label for="{{voice.controlNameRelative}}">Relativno</label>
             <input type="text" formControlName="{{voice.controlNameRelative}}" id="{{voice.controlNameRelative}}" class="form-control" />
@@ -71,7 +76,12 @@
     </div>
     <h2 *ngIf="chosenVoicesVoice.length > 0">Glas</h2>
     <div class="form-group" *ngFor="let voice of chosenVoicesVoice">
-        <h3>{{voice.voice}}</h3>
+        <div [ngSwitch]="voice.voice">
+            <h3 *ngSwitchCase="'Soprano'">Sopran</h3>
+            <h3 *ngSwitchCase="'Alto'">Alt</h3>
+            <h3 *ngSwitchCase="'Tenor'">Tenor</h3>
+            <h3 *ngSwitchCase="'Bass'">Bas</h3>
+        </div>
         <div class="form-group" [ngClass]="{'has-error': hasError(voice.controlNameRelative), 'has-success': hasSuccess(voice.controlNameRelative)}">
             <label for="{{voice.controlNameRelative}}">Relativno</label>
             <input type="text" formControlName="{{voice.controlNameRelative}}" id="{{voice.controlNameRelative}}" class="form-control" />
@@ -81,6 +91,31 @@
             <label for="{{voice.controlName}}">Note</label>
             <textarea rows="5" cols="10" class="form-control" formControlName="{{voice.controlName}}" id="{{voice.controlName}}"></textarea>
             <span class="help-block" *ngIf="hasError(voice.controlName)">Obavezno!</span>
+        </div>
+    </div>
+    <div *ngFor="let part of chosenVoicesParts; let i = index">
+        <div [ngSwitch]="part[0].partName">
+            <h2 *ngSwitchCase="'prelude'">Predigra</h2>
+            <h2 *ngSwitchCase="'interlude'">Međuigra</h2>
+            <h2 *ngSwitchCase="'coda'">Završetak</h2>
+        </div>
+        <div *ngFor="let voice of part">
+            <div [ngSwitch]="voice.voice">
+                <h3 *ngSwitchCase="'Soprano'">Sopran</h3>
+                <h3 *ngSwitchCase="'Alto'">Alt</h3>
+                <h3 *ngSwitchCase="'Tenor'">Tenor</h3>
+                <h3 *ngSwitchCase="'Bass'">Bas</h3>
+            </div>
+            <div class="form-group" [ngClass]="{'has-error': hasError(voice.controlNameRelative), 'has-success': hasSuccess(voice.controlNameRelative)}">
+                <label for="{{voice.controlNameRelative}}">Relativno</label>
+                <input type="text" formControlName="{{voice.controlNameRelative}}" id="{{voice.controlNameRelative}}" class="form-control" />
+                <span class="help-block" *ngIf="hasError(voice.controlNameRelative)">Obavezno!</span>
+            </div>
+            <div class="form-group" [ngClass]="{'has-error': hasError(voice.controlName), 'has-success': hasSuccess(voice.controlName)}">
+                <label for="{{voice.controlName}}">Note</label>
+                <textarea rows="5" cols="10" class="form-control" formControlName="{{voice.controlName}}" id="{{voice.controlName}}"></textarea>
+                <span class="help-block" *ngIf="hasError(voice.controlName)">Obavezno!</span>
+            </div>
         </div>
     </div>
     <div *ngIf="preview">

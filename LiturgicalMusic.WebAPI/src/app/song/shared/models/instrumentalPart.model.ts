@@ -3,5 +3,5 @@
     Position: string;
     Type: string;
     Code: string;
-    Template: number;
+    Template: boolean[];
 }

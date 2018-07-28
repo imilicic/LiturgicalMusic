@@ -48,10 +48,10 @@ namespace LiturgicalMusic.Repository
                 songFileName += song.Arranger.Name + song.Arranger.Surname;
             }
 
-            if (File.Exists(String.Format(@"{0}\{1}.ly", tempDir, songFileName)))
+            if (File.Exists(String.Format(@"{0}\{1}.ly", tempDir, songFileName.GetHashCode().ToString())))
             {
-                File.Delete(String.Format(@"{0}\{1}.ly", tempDir, songFileName));
-                File.Delete(String.Format(@"{0}\{1}.bat", tempDir, songFileName));
+                File.Delete(String.Format(@"{0}\{1}.ly", tempDir, songFileName.GetHashCode().ToString()));
+                File.Delete(String.Format(@"{0}\{1}.bat", tempDir, songFileName.GetHashCode().ToString()));
             }
 
             string moveTo = String.Format(@"{0}\app\assets\pdf\{1}.pdf", srcDir, songFileName);
@@ -147,16 +147,19 @@ namespace LiturgicalMusic.Repository
             string pathToWebAPI = @"E:\vs projects\LiturgicalMusic\LiturgicalMusic.WebAPI";
             string tempDir = String.Format(@"{0}\temp", pathToWebAPI);
             string srcDir = String.Format(@"{0}\src", pathToWebAPI);
-            string fileName = song.Title;
+            string songFileName = song.Title;
+            string fileName;
 
             if (song.Composer != null)
             {
-                fileName += song.Composer.Name + song.Composer.Surname;
+                songFileName += song.Composer.Name + song.Composer.Surname;
             }
             else if (song.Arranger != null)
             {
-                fileName += song.Arranger.Name + song.Arranger.Surname;
+                songFileName += song.Arranger.Name + song.Arranger.Surname;
             }
+
+            fileName = songFileName.GetHashCode().ToString();
 
             string filePath = await Lilypond.CreateFileAsync(song, tempDir, fileName, false);
 
@@ -165,7 +168,7 @@ namespace LiturgicalMusic.Repository
                 throw new Exception("Something went wrong!");
             }
 
-            string moveTo = String.Format(@"{0}\app\assets\pdf\{1}.pdf", srcDir, fileName);
+            string moveTo = String.Format(@"{0}\app\assets\pdf\{1}.pdf", srcDir, songFileName);
 
             if (File.Exists(moveTo))
             {

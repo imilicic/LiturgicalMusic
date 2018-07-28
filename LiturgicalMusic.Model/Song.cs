@@ -11,7 +11,7 @@ namespace LiturgicalMusic.Model
     {
         public int Id { get; set; }
         public string Title { get; set; }
-        public string Template { get; set; }
+        public List<bool> Template { get; set; }
         public string Type { get; set; }
         public string Code { get; set; }
         public string Source { get; set; }

@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
 
 import { Composer } from "../../shared/models/composer.model";
+import { InstrumentalPart } from "../../shared/models/instrumentalPart.model";
 import { Song } from "../../shared/models/song.model";
 
 @Component({
@@ -12,8 +13,11 @@ import { Song } from "../../shared/models/song.model";
 export class SongCreateDataComponent implements OnInit {
     composers: Composer[] = [];
     createdSong: Song;
-    templateVoices: boolean[] = [false, false, false, false, true, true, true, true];
+    otherParts: boolean[] = [false, false, false];
+    partNames: string[] = ["prelude", "interlude", "coda"];
+    partVoices: boolean[][] = [[false, false, false, false], [false, false, false, false], [false, false, false, false]];
     @Output() songData = new EventEmitter();
+    templateVoices: boolean[] = [false, false, false, false, true, true, true, true];
 
     arranger: FormControl;
     composer: FormControl;
@@ -33,13 +37,12 @@ export class SongCreateDataComponent implements OnInit {
 
     ngOnInit() {
         this.composers = this.route.snapshot.data["composers"];
-        let templateValue: string = this.templateVoices.map(b => String(+b)).join("");
 
         this.arranger = new FormControl();
         this.composer = new FormControl();
         this.otherInformation = new FormControl();
         this.source = new FormControl();
-        this.template = new FormControl(templateValue, Validators.required);
+        this.template = new FormControl(this.templateVoices, Validators.required);
         this.title = new FormControl("", Validators.required);
         this.type = new FormControl("", Validators.required);
 
@@ -72,13 +75,33 @@ export class SongCreateDataComponent implements OnInit {
             LiturgyCategories: undefined
         }
 
+        if (this.otherParts.some(b => b)) {
+            newSong.InstrumentalParts = [];
+
+            this.otherParts.forEach((b, i) => {
+                if (b) {
+                    let part = new InstrumentalPart();
+                    part.Position = this.partNames[i];
+                    part.Template = this.partVoices[i];
+                    part.Id = undefined;
+                    part.Type = newSong.Type;
+
+                    newSong.InstrumentalParts.push(part);
+                }
+            });
+        }
         this.songData.emit(newSong);
     }
 
-    updateTemplate(event: any, position: any) {
-        this.templateVoices[position] = !this.templateVoices[position];
-        let templateValue: string = this.templateVoices.map(b => String(+b)).join("");
+    otherPartsCheck(id: number) {
+        this.otherParts[id] = !this.otherParts[id];
+    }
 
-        this.template.setValue(templateValue);
+    updateTemplate(position: number) {
+        this.templateVoices[position] = !this.templateVoices[position];
+    }
+
+    updatePartTemplate(part: number, position: number) {
+        this.partVoices[part][position] = !this.partVoices[part][position];
     }
 }

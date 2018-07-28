@@ -13,6 +13,6 @@ namespace LiturgicalMusic.Model
         public string Position { get; set; }
         public string Type { get; set; }
         public string Code { get; set; }
-        public int Template { get; set; }
+        public List<bool> Template { get; set; }
     }
 }

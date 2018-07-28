@@ -9,38 +9,38 @@
         <fieldset>
             <legend>Glasovi orgulja</legend>
             <div class="form-check">
-                <input type="checkbox" id="organS" [checked]="templateVoices[4]" (change)="updateTemplate($event, 4)"/>
+                <input type="checkbox" id="organS" [checked]="templateVoices[4]" (change)="updateTemplate(4)"/>
                 <label for="organS" class="control-label">Sopran</label>
             </div>
             <div class="form-check">
-                <input type="checkbox" id="organA" [checked]="templateVoices[5]" (change)="updateTemplate($event, 5)"/>
+                <input type="checkbox" id="organA" [checked]="templateVoices[5]" (change)="updateTemplate(5)"/>
                 <label for="organA" class="control-label">Alt</label>
             </div>
             <div class="form-check">
-                <input type="checkbox" id="organT" [checked]="templateVoices[6]" (change)="updateTemplate($event, 6)"/>
+                <input type="checkbox" id="organT" [checked]="templateVoices[6]" (change)="updateTemplate(6)"/>
                 <label for="organT" class="control-label">Tenor</label>
             </div>
             <div class="form-check">
-                <input type="checkbox" id="organB" [checked]="templateVoices[7]" (change)="updateTemplate($event, 7)"/>
+                <input type="checkbox" id="organB" [checked]="templateVoices[7]" (change)="updateTemplate(7)"/>
                 <label for="organB" class="control-label">Bas</label>
             </div>
         </fieldset>
         <fieldset>
             <legend>Ljudski glasovi</legend>
             <div class="form-check form-check-inline">
-                <input type="checkbox" id="voiceS" [checked]="templateVoices[0]" (change)="updateTemplate($event, 0)"/>
+                <input type="checkbox" id="voiceS" [checked]="templateVoices[0]" (change)="updateTemplate(0)"/>
                 <label for="voiceS" class="control-label">Sopran</label>
             </div>
             <div class="form-check form-check-inline">
-                <input type="checkbox" id="voiceA" [checked]="templateVoices[1]" (change)="updateTemplate($event, 1)"/>
+                <input type="checkbox" id="voiceA" [checked]="templateVoices[1]" (change)="updateTemplate(1)"/>
                 <label for="voiceA" class="control-label">Alt</label>
             </div>
             <div class="form-check form-check-inline">
-                <input type="checkbox" id="voiceT" [checked]="templateVoices[2]" (change)="updateTemplate($event, 2)"/>
+                <input type="checkbox" id="voiceT" [checked]="templateVoices[2]" (change)="updateTemplate(2)"/>
                 <label for="voiceT" class="control-label">Tenor</label>
             </div>
             <div class="form-check form-check-inline">
-                <input type="checkbox" id="voiceB" [checked]="templateVoices[3]" (change)="updateTemplate($event, 3)"/>
+                <input type="checkbox" id="voiceB" [checked]="templateVoices[3]" (change)="updateTemplate(3)"/>
                 <label for="voiceB" class="control-label">Bas</label>
             </div>
         </fieldset>
@@ -74,6 +74,51 @@
             <option [value]="null">Nepoznat</option>
             <option *ngFor="let cmp of composers" [value]="cmp.Id">{{cmp.Name}} {{cmp.Surname}}</option>
         </select>
+    </div>
+    <div class="form-group">
+        <fieldset>
+            <legend>Ostali dijelovi</legend>
+            <div class="check-box">
+                <label>
+                    <input type="checkbox" (click)="otherPartsCheck(0)" [checked]="otherParts[0]"/> Predigra
+                </label>
+            </div>
+            <div class="check-box">
+                <label>
+                    <input type="checkbox" (click)="otherPartsCheck(1)" [checked]="otherParts[1]"/> Međuigra
+                </label>
+            </div>
+            <div class="check-box">
+                <label>
+                    <input type="checkbox" (click)="otherPartsCheck(2)" [checked]="otherParts[2]"/> Završetak
+                </label>
+            </div>
+        </fieldset>
+    </div>
+    <div class="form-group" *ngFor="let part of otherParts; let i = index">
+        <fieldset *ngIf="part">
+            <legend [ngSwitch]="partNames[i]">
+                <span *ngSwitchCase="'prelude'">Glasovi za predigru</span>
+                <span *ngSwitchCase="'interlude'">Glasovi za međuigru</span>
+                <span *ngSwitchCase="'coda'">Glasovi za završetak</span>
+            </legend>
+            <div class="form-check form-check-inline">
+                <input type="checkbox" (click)="updatePartTemplate(i, 0)" [checked]="partVoices[i][0]"/>
+                <label for="voiceS" class="control-label">Sopran</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input type="checkbox" (click)="updatePartTemplate(i, 1)" [checked]="partVoices[i][1]"/>
+                <label for="voiceA" class="control-label">Alt</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input type="checkbox" (click)="updatePartTemplate(i, 2)" [checked]="partVoices[i][2]"/>
+                <label for="voiceT" class="control-label">Tenor</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input type="checkbox" (click)="updatePartTemplate(i, 3)" [checked]="partVoices[i][3]"/>
+                <label for="voiceB" class="control-label">Bas</label>
+            </div>
+        </fieldset>
     </div>
     <div>
         <button type="submit" class="btn btn-default" [disabled]="songForm.invalid">Dodaj</button>
