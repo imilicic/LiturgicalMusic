@@ -2,18 +2,20 @@
 import { RouterModule } from "@angular/router";
 
 import { SongCreateComponent } from "./song-create/song-create.component";
-import { SongCreateDataResolverService } from "./song-create/song-create-data/song-create-data-resolver.service";
+import { ComposerResolverService } from "./shared/composer-resolver.service";
 import { SongSearchComponent } from "./song-search/song-search.component";
+import { SongUpdateComponent } from "./song-update/song-update.component";
 import { SongViewComponent } from "./song-view/song-view.component";
-import { SongViewRouteActivatorService } from "./song-view/song-view-route-activator.service";
-import { SongViewResolverService } from "./song-view/song-view-resolver.service";
+import { SongRouteActivatorService } from "./shared/song-route-activator.service";
+import { SongResolverService } from "./shared/song-resolver.service";
 
 @NgModule({
     imports: [
         RouterModule.forChild([
-            { path: "search/:songId", component: SongViewComponent, canActivate: [SongViewRouteActivatorService], resolve: { song: SongViewResolverService } },
+            { path: "search/:songId", component: SongViewComponent, canActivate: [SongRouteActivatorService], resolve: { song: SongResolverService } },
             { path: "search", component: SongSearchComponent },
-            { path: "create", component: SongCreateComponent, resolve: { composers: SongCreateDataResolverService } }
+            { path: "create/:songId", component: SongUpdateComponent, canActivate: [SongRouteActivatorService], resolve: { composers: ComposerResolverService, song: SongResolverService } },
+            { path: "create", component: SongCreateComponent, resolve: { composers: ComposerResolverService } }
         ])
     ]
 })

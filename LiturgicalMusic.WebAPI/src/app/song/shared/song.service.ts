@@ -47,4 +47,13 @@ export class SongService {
             .map((response: Response) => <Song>response.json())
             .catch(this.handleError);
     }
+
+    updateSong(song: Song) {
+        let headers = new Headers({ 'Content-Type': 'application/json' });
+        let options = new RequestOptions({ headers: headers });
+
+        return this.http.put("/api/songs/create", JSON.stringify(song), options)
+            .map((response: Response) => <Song>response.json())
+            .catch(this.handleError);
+    }
 }

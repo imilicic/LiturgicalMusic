@@ -1,0 +1,6 @@
+﻿<h2 *ngIf="!spinner">Promijeni pjesmu</h2>
+<song-data [song]="song" (songData)="nextPage($event)" *ngIf="currentPage==1"></song-data>
+<hymn [song]="song" (songVoices)="updateSong($event)" *ngIf="currentPage==2"></hymn>
+<div *ngIf="spinner" style="text-align: center;">
+    Pričekajte <img src="app/assets/image/spinner.gif" style="width:150px;" />
+</div>

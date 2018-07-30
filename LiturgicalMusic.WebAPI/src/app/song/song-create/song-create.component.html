@@ -1,5 +1,6 @@
-﻿<create-data (songData)="nextPage($event)" *ngIf="currentPage==1"></create-data>
-<create-hymn [song]="song" (songVoices)="createSong($event)" *ngIf="currentPage==2 && song.Type=='hymn'"></create-hymn>
+﻿<h2 *ngIf="!spinner">Dodaj pjesmu</h2>
+<song-data (songData)="nextPage($event)" *ngIf="currentPage==1"></song-data>
+<hymn [song]="song" (songVoices)="createSong($event)" *ngIf="currentPage==2 && song.Type=='hymn'"></hymn>
 <div *ngIf="spinner" style="text-align: center;">
-    <img src="app/assets/image/spinner.gif" style="width:150px;"/>
+    Pričekajte <img src="app/assets/image/spinner.gif" style="width:150px;"/>
 </div>

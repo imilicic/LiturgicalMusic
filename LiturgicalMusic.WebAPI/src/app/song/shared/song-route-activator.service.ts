@@ -5,7 +5,7 @@ import { SongService } from "../shared/song.service";
 import { Song } from "../shared/models/song.model";
 
 @Injectable()
-export class SongViewRouteActivatorService implements CanActivate {
+export class SongRouteActivatorService implements CanActivate {
     constructor(private songService: SongService, private router: Router) { }
 
     canActivate(route: ActivatedRouteSnapshot) {

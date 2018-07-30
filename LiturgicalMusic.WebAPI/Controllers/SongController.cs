@@ -50,6 +50,15 @@ namespace LiturgicalMusic.WebAPI.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, Mapper.Map<SongModel>(resultSong));
         }
 
+        [HttpPut]
+        [Route("create")]
+        public async Task<HttpResponseMessage> UpdateSongAsync([FromBody] SongModel song)
+        {
+            ISong s = Mapper.Map<ISong>(song);
+            ISong resultSong = await Service.UpdateSongAsync(s);
+            return Request.CreateResponse(HttpStatusCode.OK, Mapper.Map<SongModel>(resultSong));
+        }
+
         [HttpPost]
         [Route("preview")]
         public async Task<HttpResponseMessage> PreviewSongAsync([FromBody] SongModel song)

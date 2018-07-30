@@ -179,5 +179,97 @@ namespace LiturgicalMusic.Repository
 
             return song;
         }
+
+        public async Task<ISong> UpdateSongAsync(ISong song)
+        {
+            string pathToWebAPI = @"E:\vs projects\LiturgicalMusic\LiturgicalMusic.WebAPI";
+            string tempDir = String.Format(@"{0}\temp", pathToWebAPI);
+            string srcDir = String.Format(@"{0}\src", pathToWebAPI);
+            string fileName = Path.GetRandomFileName();
+            string filePath = await Lilypond.CreateFileAsync(song, tempDir, fileName, true);
+
+            if (!File.Exists(filePath)) // PDF not created so something is wrong...
+            {
+                throw new Exception("Something went wrong!");
+            }
+
+            string songFileName = song.Title;
+
+            if (song.Composer != null)
+            {
+                songFileName += song.Composer.Name + song.Composer.Surname;
+            }
+            else if (song.Arranger != null)
+            {
+                songFileName += song.Arranger.Name + song.Arranger.Surname;
+            }
+
+            if (File.Exists(String.Format(@"{0}\{1}.ly", tempDir, songFileName.GetHashCode().ToString())))
+            {
+                File.Delete(String.Format(@"{0}\{1}.ly", tempDir, songFileName.GetHashCode().ToString()));
+                File.Delete(String.Format(@"{0}\{1}.bat", tempDir, songFileName.GetHashCode().ToString()));
+            }
+
+            string moveTo = String.Format(@"{0}\app\assets\pdf\{1}.pdf", srcDir, songFileName);
+
+            if (File.Exists(moveTo))
+            {
+                File.Delete(moveTo);
+            }
+
+            File.Move(filePath, moveTo);
+            File.Delete(filePath);
+
+            // DB
+            SongEntity songEntity;
+
+            using (var db = new MusicContext())
+            {
+                songEntity = Mapper.Map<SongEntity>(song);
+
+                List<InstrumentalPartEntity> parts = db.InstrumentalParts.Where(p => p.SongId.Equals(songEntity.Id)).ToList();
+
+                foreach (InstrumentalPartEntity part in parts)
+                {
+                    if (songEntity.InstrumentalParts.SingleOrDefault(p => p.Position.Equals(part.Position)) == null)
+                    {
+                        db.InstrumentalParts.Remove(part);
+                    }
+                }
+
+                foreach (InstrumentalPartEntity part in songEntity.InstrumentalParts)
+                {
+                    InstrumentalPartEntity dbPart = await db.InstrumentalParts.SingleOrDefaultAsync(p => p.Id.Equals(part.Id));
+
+                    if (dbPart != null)
+                    {
+                        dbPart.Code = part.Code;
+                        dbPart.Position = part.Position;
+                        dbPart.Template = part.Template;
+                        dbPart.Type = part.Type;
+                    } else
+                    {
+                        part.SongId = songEntity.Id;
+                        db.InstrumentalParts.Add(part);
+                    }
+                }
+
+                SongEntity dbSong = await db.Songs.SingleOrDefaultAsync(s => s.Id.Equals(songEntity.Id));
+
+                dbSong.ArrangerId = songEntity.ArrangerId;
+                dbSong.Code = songEntity.Code;
+                dbSong.ComposerId = songEntity.ComposerId;
+                dbSong.OtherInformations = songEntity.OtherInformations;
+                dbSong.OtherParts = songEntity.OtherParts;
+                dbSong.Source = songEntity.Source;
+                dbSong.Template = songEntity.Template;
+                dbSong.Title = songEntity.Title;
+                dbSong.Type = songEntity.Type;
+
+                await db.SaveChangesAsync();
+            }
+
+            return Mapper.Map<ISong>(songEntity);
+        }
     }
 }

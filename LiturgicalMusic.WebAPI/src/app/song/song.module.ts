@@ -3,17 +3,18 @@ import { NgModule } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 
+import { ComposerResolverService } from "./shared/composer-resolver.service";
 import { ComposerService } from "./shared/composer.service";
+import { HymnComponent } from "./shared/hymn/hymn.component";
 import { SongCreateComponent } from "./song-create/song-create.component";
-import { SongCreateDataComponent } from "./song-create/song-create-data/song-create-data.component";
-import { SongCreateDataResolverService } from "./song-create/song-create-data/song-create-data-resolver.service";
-import { SongCreateHymnComponent } from "./song-create/song-create-hymn/song-create-hymn.component";
+import { SongDataComponent } from "./shared/song-data/song-data.component";
+import { SongResolverService } from "./shared/song-resolver.service";
+import { SongRouteActivatorService } from "./shared/song-route-activator.service";
 import { SongRoutingModule } from "./song-routing.module";
 import { SongSearchComponent } from "./song-search/song-search.component";
 import { SongService } from "./shared/song.service";
+import { SongUpdateComponent } from "./song-update/song-update.component";
 import { SongViewComponent } from "./song-view/song-view.component";
-import { SongViewResolverService } from "./song-view/song-view-resolver.service";
-import { SongViewRouteActivatorService } from "./song-view/song-view-route-activator.service";
 
 @NgModule({
     imports: [
@@ -23,18 +24,19 @@ import { SongViewRouteActivatorService } from "./song-view/song-view-route-activ
         SongRoutingModule
     ],
     declarations: [
+        HymnComponent,
         SongCreateComponent,
-        SongCreateDataComponent,
-        SongCreateHymnComponent,
+        SongDataComponent,
         SongSearchComponent,
+        SongUpdateComponent,
         SongViewComponent
     ],
     providers: [
+        ComposerResolverService,
         ComposerService,
-        SongCreateDataResolverService,
-        SongService,
-        SongViewResolverService,
-        SongViewRouteActivatorService
+        SongResolverService,
+        SongRouteActivatorService,
+        SongService
     ]
 })
 export class SongModule { }

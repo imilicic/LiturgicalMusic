@@ -23,7 +23,7 @@ namespace LiturgicalMusic.Model.Mapping
             CreateMap<IInstrumentalPart, InstrumentalPartEntity>()
                 .ForMember(dest => dest.Template, opt => opt.MapFrom(s => Convert.ToInt32(s.Template.Select(c => Convert.ToInt32(c).ToString()).Aggregate((x, y) => x + y), 2)));
             CreateMap<InstrumentalPartEntity, IInstrumentalPart>()
-                .ForMember(dest => dest.Template, opt => opt.MapFrom(s => Convert.ToString(s.Template, 2).PadLeft(8, '0').Select(c => c.ToString() == "1").ToList()));
+                .ForMember(dest => dest.Template, opt => opt.MapFrom(s => Convert.ToString(s.Template, 2).PadLeft(4, '0').Select(c => c.ToString() == "1").ToList()));
             CreateMap<int, LiturgyEntity>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(s => s));
             CreateMap<LiturgyEntity, int>();

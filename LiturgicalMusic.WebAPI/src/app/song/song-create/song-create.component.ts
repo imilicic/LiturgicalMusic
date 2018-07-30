@@ -9,7 +9,7 @@ import { SongService } from "../shared/song.service";
 })
 export class SongCreateComponent {
     currentPage: number = 1;
-    song: Song;
+    song: Song = undefined;
     spinner: boolean = false;
 
     constructor(private router: Router, private songService: SongService) { }

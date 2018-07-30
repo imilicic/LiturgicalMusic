@@ -2,11 +2,11 @@
 import { Resolve } from "@angular/router";
 import { Observable } from "rxjs/Observable";
 
-import { Composer } from "../../shared/models/composer.model";
-import { ComposerService } from "../../shared/composer.service";
+import { Composer } from "./models/composer.model";
+import { ComposerService } from "./composer.service";
 
 @Injectable()
-export class SongCreateDataResolverService implements Resolve<Composer[]> {
+export class ComposerResolverService implements Resolve<Composer[]> {
     constructor(private composerService: ComposerService) { }
 
     resolve(): Observable<Composer[]> {

@@ -1,5 +1,5 @@
 ﻿<form [formGroup]="voiceForm" (ngSubmit)="createSongEmit(voiceForm.value)" autocomplete="off" novalidate>
-    <div class="form-group" [ngClass]="{'has-error': key.touched && key.invalid, 'has-success': key.touched && key.valid}">
+    <div class="form-group" [ngClass]="{'has-error': key.touched && key.invalid, 'has-success': key.value!=null && key.valid}">
         <label for="Key">Tonalitet</label>
         <select formControlName="Key" id="Key" class="form-control">
             <option value="ces \major">Ces dur</option>
@@ -33,7 +33,7 @@
         </select>
         <span class="help-block" *ngIf="key.touched && key.invalid">Obavezno!</span>
     </div>
-    <div class="form-group" [ngClass]="{'has-error': (timeNumerator.touched && timeNumerator.invalid) || (timeDenominator.touched && timeDenominator.invalid), 'has-success': timeNumerator.touched && timeNumerator.valid && timeDenominator.touched && timeDenominator.valid}">
+    <div class="form-group" [ngClass]="{'has-error': (timeNumerator.touched && timeNumerator.invalid) || (timeDenominator.touched && timeDenominator.invalid), 'has-success': (timeNumerator.value!=null && timeNumerator.valid && timeDenominator.value!=null && timeDenominator.valid)}">
         <label>Mjera</label>
         <select formControlName="timeNumerator" class="form-control">
             <option value="2">2</option>
@@ -125,5 +125,5 @@
         <embed [src]="domSanitizer.bypassSecurityTrustResourceUrl(pdfFileName)" width="800" height="500" *ngIf="preview && !spinner"/>
     </div>
     <button type="button" class="btn btn-default" (click)="previewSong(voiceForm.value)" [disabled]="previewEnabled()">Pregledaj</button>
-    <button type="submit" class="btn btn-default" [disabled]="voiceForm.invalid">Dodaj</button>
+    <button type="submit" class="btn btn-default" [disabled]="voiceForm.invalid">Spremi</button>
 </form>

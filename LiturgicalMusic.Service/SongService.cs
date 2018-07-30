@@ -41,5 +41,11 @@ namespace LiturgicalMusic.Service
             ISong s = await Repository.PreviewSongAsync(song);
             return s;
         }
+
+        public async Task<ISong> UpdateSongAsync(ISong song)
+        {
+            ISong s = await Repository.UpdateSongAsync(song);
+            return s;
+        }
     }
 }

@@ -7,10 +7,10 @@ import { SongService } from "../../shared/song.service";
 import { InstrumentalPart } from "../../shared/models/instrumentalPart.model";
 
 @Component({
-    selector: "create-hymn",
-    templateUrl: "./song-create-hymn.component.html"
+    selector: "hymn",
+    templateUrl: "./hymn.component.html"
 })
-export class SongCreateHymnComponent implements OnInit {
+export class HymnComponent implements OnInit {
     @Input() song: Song;
     @Output() songVoices = new EventEmitter();
     chosenVoicesOrgan: any[] = [];
@@ -29,12 +29,26 @@ export class SongCreateHymnComponent implements OnInit {
     constructor(private domSanitizer: DomSanitizer, private songService: SongService) { }
 
     ngOnInit() {
+        let key: string = "";
+        let timeNumerator: number = undefined;
+        let timeDenominator: number = undefined;
+        let code: any = undefined;
+
+        if (this.song.Code != undefined) {
+            code = JSON.parse(this.song.Code);
+            let time: string = code.Time.split("/");
+
+            timeNumerator = parseInt(time[0]);
+            timeDenominator = parseInt(time[1]);
+            key = code.Key;
+        }
+
         window.scrollTo(0, 0);
         this.pdfFileName = "app/assets/pdf/" + this.song.Title;
 
-        if (this.song.Composer != null) {
+        if (this.song.Composer != undefined) {
             this.pdfFileName += this.song.Composer.Name + this.song.Composer.Surname;
-        } else if (this.song.Arranger != null) {
+        } else if (this.song.Arranger != undefined) {
             this.pdfFileName += this.song.Arranger.Name + this.song.Arranger.Surname;
         }
 
@@ -44,34 +58,69 @@ export class SongCreateHymnComponent implements OnInit {
         this.song.Template.forEach((b, i) => {
             if (i <= 3) { // SATB voice
                 if (b) {
+                    let voice: string = undefined;
+                    let voiceRelative: string = undefined;
+
                     this.chosenVoicesVoice.push({
                         voice: this.voices[i],
                         controlName: "Voice" + this.voices[i],
                         controlNameRelative: "Voice" + this.voices[i] + "Relative"
                     });
 
-                    controls["Voice" + this.voices[i]] = new FormControl("", Validators.required);
-                    controls["Voice" + this.voices[i] + "Relative"] = new FormControl("", Validators.required);
+                    if (code != undefined) {
+                        voice = code["Voice" + this.voices[i]];
+
+                        if (voice != undefined) {
+                            voice = voice.split("keyTime ")[1];
+                        }
+
+                        voiceRelative = code["Voice" + this.voices[i] + "Relative"];
+                    }
+
+                    controls["Voice" + this.voices[i]] = new FormControl(voice, Validators.required);
+                    controls["Voice" + this.voices[i] + "Relative"] = new FormControl(voiceRelative, Validators.required);
                 }
             } else { // SATB organ
                 if (b) {
+                    let voice: string = undefined;
+                    let voiceRelative: string = undefined;
+
                     this.chosenVoicesOrgan.push({
                         voice: this.voices[i-4],
                         controlName: "Organ" + this.voices[i-4],
                         controlNameRelative: "Organ" + this.voices[i-4] + "Relative"
                     });
 
-                    controls["Organ" + this.voices[i - 4]] = new FormControl("", Validators.required);
-                    controls["Organ" + this.voices[i - 4] + "Relative"] = new FormControl("", Validators.required);
+                    if (code != undefined) {
+                        voice = code["Organ" + this.voices[i - 4]];
+
+                        if (voice != undefined) {
+                            voice = voice.split("keyTime ")[1];
+                        }
+
+                        voiceRelative = code["Organ" + this.voices[i - 4] + "Relative"];
+                    }
+
+                    controls["Organ" + this.voices[i - 4]] = new FormControl(voice, Validators.required);
+                    controls["Organ" + this.voices[i - 4] + "Relative"] = new FormControl(voiceRelative, Validators.required);
                 }
             }
         });
-        
+
         if (this.song.InstrumentalParts != undefined) {
             this.song.InstrumentalParts.forEach(p => {
                 let voices: any = [];
+                let partCode: any = undefined;
+
+                if (p.Code != undefined) {
+                    partCode = JSON.parse(p.Code);
+                }
+
                 p.Template.forEach((b, i) => {
                     if (b) {
+                        let voice: string = undefined;
+                        let voiceRelative: string = undefined;
+
                         voices.push({
                             voice: this.voices[i],
                             controlName: p.Position + "Part" + this.voices[i],
@@ -79,17 +128,27 @@ export class SongCreateHymnComponent implements OnInit {
                             partName: p.Position
                         });
 
-                        controls[p.Position + "Part" + this.voices[i]] = new FormControl("", Validators.required);
-                        controls[p.Position + "Part" + this.voices[i] + "Relative"] = new FormControl("", Validators.required);
+                        if (partCode != undefined) {
+                            voice = partCode[this.voices[i]];
+
+                            if (voice != undefined) {
+                                voice = voice.split("keyTime ")[1];
+                            }
+
+                            voiceRelative = partCode[this.voices[i] + "Relative"];
+                        }
+
+                        controls[p.Position + "Part" + this.voices[i]] = new FormControl(voice, Validators.required);
+                        controls[p.Position + "Part" + this.voices[i] + "Relative"] = new FormControl(voiceRelative, Validators.required);
                     }
                 });
                 this.chosenVoicesParts.push(voices);
             });
         }
 
-        this.key = new FormControl("", Validators.required);
-        this.timeNumerator = new FormControl("", Validators.required);
-        this.timeDenominator = new FormControl("", Validators.required);
+        this.key = new FormControl(key, Validators.required);
+        this.timeNumerator = new FormControl(timeNumerator, Validators.required);
+        this.timeDenominator = new FormControl(timeDenominator, Validators.required);
 
         controls["Key"] = this.key;
         controls["timeNumerator"] = this.timeNumerator;
@@ -98,9 +157,9 @@ export class SongCreateHymnComponent implements OnInit {
         this.voiceForm = new FormGroup(controls);
     }
 
-    private prependToCode(code: any, copyFrom: any, instrument: string, keepSameKey: boolean = true) {
-        this.voices.forEach(v => {
-            if (copyFrom[instrument + v]) {
+    private prependToCode(code: any, copyFrom: any, instrument: string, template: boolean[], keepSameKey: boolean = true) {
+        this.voices.forEach((v, i) => {
+            if (template[i]) {
                 if (v == "Soprano" || v == "Alto") {
                     if (keepSameKey) {
                         code[instrument + v] = "\\clef \"treble\" \\keyTime " + copyFrom[instrument + v];
@@ -126,20 +185,21 @@ export class SongCreateHymnComponent implements OnInit {
 
     createSong(formValues: any) {
         let code = {};
-        let instrumentalParts: InstrumentalPart[] = [];
 
         code["Time"] = formValues.timeNumerator + "/" + formValues.timeDenominator;
         code["Key"] = formValues.Key;
 
-        this.prependToCode(code, formValues, "Organ");
-        this.prependToCode(code, formValues, "Voice");
+        this.prependToCode(code, formValues, "Voice", this.song.Template.slice(0, 4));
+        this.prependToCode(code, formValues, "Organ", this.song.Template.slice(4, 8));
 
-        this.song.InstrumentalParts.forEach(part => {
-            let newPart: any = {};
-            this.prependToCode(newPart, formValues, part.Position + "Part", false);
-            part.Code = JSON.stringify(newPart);
-        });
-
+        if (this.song.InstrumentalParts != undefined) {
+            this.song.InstrumentalParts.forEach(part => {
+                let newPart: any = {};
+                this.prependToCode(newPart, formValues, part.Position + "Part", part.Template, false);
+                part.Code = JSON.stringify(newPart);
+            });
+        }
+        
         this.song.Code = JSON.stringify(code);
     }
 
@@ -153,7 +213,7 @@ export class SongCreateHymnComponent implements OnInit {
     }
 
     hasSuccess(name: string) {
-        return this.voiceForm.controls[name].touched && this.voiceForm.controls[name].valid;
+        return this.voiceForm.controls[name].value != undefined && this.voiceForm.controls[name].valid;
     }
 
     previewEnabled() {

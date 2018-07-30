@@ -6,7 +6,7 @@ import { Song } from "../shared/models/song.model";
 import { SongService } from "../shared/song.service";
 
 @Injectable()
-export class SongViewResolverService implements Resolve<Song>{
+export class SongResolverService implements Resolve<Song>{
     constructor(private songService: SongService, private router: Router) { }
 
     resolve(route: ActivatedRouteSnapshot): Observable<Song> {
