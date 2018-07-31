@@ -21,7 +21,7 @@ export class SongDataComponent implements OnInit {
 
     arranger: FormControl;
     composer: FormControl;
-    otherInformation: FormControl;
+    otherInformations: FormControl;
     source: FormControl;
     template: FormControl;
     title: FormControl;
@@ -39,7 +39,7 @@ export class SongDataComponent implements OnInit {
         this.composers = this.route.snapshot.data["composers"];
         let arrangerId: number = undefined;
         let composerId: number = undefined;
-        let otherInformation: string = undefined;
+        let otherInformations: string = undefined;
         let source: string = undefined;
         let title: string = undefined;
         let type: string = undefined;
@@ -53,7 +53,7 @@ export class SongDataComponent implements OnInit {
                 composerId = this.song.Composer.Id;
             }
 
-            otherInformation = this.song.OtherInformation;
+            otherInformations = this.song.OtherInformations;
             source = this.song.Source;
             this.templateVoices = this.song.Template;
             title = this.song.Title;
@@ -70,7 +70,7 @@ export class SongDataComponent implements OnInit {
 
         this.arranger = new FormControl(arrangerId);
         this.composer = new FormControl(composerId);
-        this.otherInformation = new FormControl(otherInformation);
+        this.otherInformations = new FormControl(otherInformations);
         this.source = new FormControl(source);
         this.template = new FormControl(this.templateVoices, Validators.required);
         this.title = new FormControl(title, Validators.required);
@@ -79,7 +79,7 @@ export class SongDataComponent implements OnInit {
         this.songForm = new FormGroup({
             arranger: this.arranger,
             composer: this.composer,
-            otherInformation: this.otherInformation,
+            otherInformations: this.otherInformations,
             source: this.source,
             template: this.template,
             title: this.title,
@@ -93,7 +93,7 @@ export class SongDataComponent implements OnInit {
         newSong.Arranger = this.composers.find(c => c.Id == formValues.arranger);
         newSong.Composer = this.composers.find(c => c.Id == formValues.composer);
         newSong.InstrumentalParts = undefined;
-        newSong.OtherInformation = formValues.otherInformation;
+        newSong.OtherInformations = formValues.otherInformations;
         newSong.Source = formValues.source;
         newSong.Template = formValues.template;
         newSong.Title = formValues.title;

@@ -13,7 +13,7 @@ namespace LiturgicalMusic.DAL.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201807131415527_InitialCreate"; }
+            get { return "201807311017441_InitialCreate"; }
         }
         
         string IMigrationMetadata.Source

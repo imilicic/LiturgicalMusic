@@ -14,7 +14,7 @@ namespace LiturgicalMusic.Model.Common
         string Type { get; set; }
         string Code { get; set; }
         string Source { get; set; }
-        string OtherInformation { get; set; }
+        string OtherInformations { get; set; }
         List<IStanza> Stanzas { get; set; }
         IComposer Composer { get; set; }
         IComposer Arranger { get; set; }

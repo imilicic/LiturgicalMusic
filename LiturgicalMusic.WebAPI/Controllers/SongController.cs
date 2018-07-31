@@ -75,7 +75,7 @@ namespace LiturgicalMusic.WebAPI.Controllers
             public string Type { get; set; }
             public string Code { get; set; }
             public string Source { get; set; }
-            public string OtherInformation { get; set; }
+            public string OtherInformations { get; set; }
             public List<StanzaModel> Stanzas { get; set; }
             public ComposerModel Composer { get; set; }
             public ComposerModel Arranger { get; set; }

@@ -9,7 +9,7 @@ export class Song {
     Id: number;
     InstrumentalParts: InstrumentalPart[];
     LiturgyCategories: number[];
-    OtherInformation: string;
+    OtherInformations: string;
     Source: string;
     Stanzas: Stanza[];
     Template: boolean[];
@@ -35,7 +35,7 @@ export class Song {
             }
 
             this.LiturgyCategories = Array.from(song.LiturgyCategories);
-            this.OtherInformation = song.OtherInformation;
+            this.OtherInformations = song.OtherInformations;
             this.Source = song.Source;
 
             if (song.Stanzas != undefined) {

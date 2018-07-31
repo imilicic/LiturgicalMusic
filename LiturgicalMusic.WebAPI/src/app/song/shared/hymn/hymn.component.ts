@@ -2,9 +2,10 @@
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { DomSanitizer } from "@angular/platform-browser";
 
+import { InstrumentalPart } from "../../shared/models/instrumentalPart.model";
 import { Song } from "../../shared/models/song.model";
 import { SongService } from "../../shared/song.service";
-import { InstrumentalPart } from "../../shared/models/instrumentalPart.model";
+import { Stanza } from "../../shared/models/stanza.model";
 
 @Component({
     selector: "hymn",
@@ -16,6 +17,7 @@ export class HymnComponent implements OnInit {
     chosenVoicesOrgan: any[] = [];
     chosenVoicesParts: any[][] = [];
     chosenVoicesVoice: any[] = [];
+    lyrics: any[] = [];
     pdfFileName: string;
     preview: boolean = false;
     spinner: boolean = false;
@@ -155,6 +157,42 @@ export class HymnComponent implements OnInit {
         controls["timeDenominator"] = this.timeDenominator;
 
         this.voiceForm = new FormGroup(controls);
+
+        if (this.song.Stanzas != null) {
+            this.song.Stanzas.forEach(stanza => {
+                let controlName: string = 'stanza' + (this.lyrics.length + 1);
+
+                this.lyrics.push({
+                    control: new FormControl(stanza.Text, Validators.required),
+                    controlName: controlName
+                });
+
+                this.voiceForm.addControl(controlName, this.lyrics[this.lyrics.length - 1].control);
+            });
+        } else {
+            this.lyrics.push({
+                control: new FormControl("", Validators.required),
+                controlName: 'stanza1'
+            });
+
+            this.voiceForm.addControl("stanza1", this.lyrics[0].control);
+        }
+    }
+
+    appendStanza() {
+        this.lyrics.push({
+            controlName: 'stanza' + (this.lyrics.length + 1),
+            control: new FormControl("", Validators.required)
+        });
+
+        this.voiceForm.addControl(this.lyrics[this.lyrics.length - 1].controlName, this.lyrics[this.lyrics.length - 1].control);
+    }
+
+    deleteStanza() {
+        if (this.lyrics.length > 1) {
+            let stanza: any = this.lyrics.pop();
+            this.voiceForm.removeControl(stanza.controlName);
+        }
     }
 
     private prependToCode(code: any, copyFrom: any, instrument: string, template: boolean[], keepSameKey: boolean = true) {
@@ -201,6 +239,18 @@ export class HymnComponent implements OnInit {
         }
         
         this.song.Code = JSON.stringify(code);
+        this.song.Stanzas = [];
+
+        this.lyrics.forEach((l, i) => {
+            let stanza: Stanza = new Stanza();
+
+            stanza = {
+                Number: i + 1,
+                Text: formValues[l.controlName]
+            };
+
+            this.song.Stanzas.push(stanza);
+        });
     }
 
     createSongEmit(formValues: any) {

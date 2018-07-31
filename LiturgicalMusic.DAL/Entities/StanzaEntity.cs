@@ -11,10 +11,15 @@ namespace LiturgicalMusic.DAL
     [Table("Stanzas")]
     public class StanzaEntity
     {
-        [Key, Column(Order = 0)]
+        public int Id { get; set; }
+
+        [Required]
         public int Number { get; set; }
+
+        [Required, MaxLength(-1)]
         public string Text { get; set; }
-        [Key, Column(Order = 1)]
+
+        [Required]
         public int SongId { get; set; }
         public SongEntity Song { get; set; }
     }

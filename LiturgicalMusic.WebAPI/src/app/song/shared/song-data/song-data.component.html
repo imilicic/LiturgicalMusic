@@ -65,18 +65,18 @@
         <input type="text" formControlName="source" class="form-control" id="source" placeholder="Izvor..." />
     </div>
     <div class="form-group">
-        <label for="otherInformation" class="control-label">Druge informacije</label>
-        <input type="text" formControlName="otherInformation" class="form-control" id="otherInformation" placeholder="Druge informacije..." />
+        <label for="otherInformations" class="control-label">Druge informacije</label>
+        <input type="text" formControlName="otherInformations" class="form-control" id="otherInformations" placeholder="Druge informacije..." />
     </div>
     <div class="form-group">
-        <label for="composer">Autor</label>
+        <label for="composer" class="control-label">Autor</label>
         <select class="form-control" formControlName="composer" id="composer">
             <option [value]="null">Nepoznat</option>
             <option *ngFor="let cmp of composers" [value]="cmp.Id">{{cmp.Name}} {{cmp.Surname}}</option>
         </select>
     </div>
     <div class="form-group">
-        <label for="arranger">Harmonizirao</label>
+        <label for="arranger" class="control-label">Harmonizirao</label>
         <select class="form-control" formControlName="arranger" id="arranger">
             <option [value]="null">Nepoznat</option>
             <option *ngFor="let cmp of composers" [value]="cmp.Id">{{cmp.Name}} {{cmp.Surname}}</option>

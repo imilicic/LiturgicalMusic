@@ -227,6 +227,7 @@ namespace LiturgicalMusic.Repository
             {
                 songEntity = Mapper.Map<SongEntity>(song);
 
+                // CRUD Instrumental part
                 List<InstrumentalPartEntity> parts = db.InstrumentalParts.Where(p => p.SongId.Equals(songEntity.Id)).ToList();
 
                 foreach (InstrumentalPartEntity part in parts)
@@ -247,13 +248,41 @@ namespace LiturgicalMusic.Repository
                         dbPart.Position = part.Position;
                         dbPart.Template = part.Template;
                         dbPart.Type = part.Type;
-                    } else
+                    }
+                    else
                     {
                         part.SongId = songEntity.Id;
                         db.InstrumentalParts.Add(part);
                     }
                 }
 
+                // CRUD stanzas
+                List<StanzaEntity> stanzas = await db.Stanzas.Where(s => s.SongId.Equals(songEntity.Id)).ToListAsync();
+
+                foreach (StanzaEntity stanza in stanzas)
+                {
+                    if (songEntity.Stanzas.SingleOrDefault(s => s.Id.Equals(stanza.Id)) == null)
+                    {
+                        db.Stanzas.Remove(stanza);
+                    }
+                }
+
+                foreach (StanzaEntity stanza in songEntity.Stanzas)
+                {
+                    StanzaEntity dbStanza = await db.Stanzas.SingleOrDefaultAsync(s => s.Id.Equals(stanza.Id));
+
+                    if (dbStanza != null)
+                    {
+                        dbStanza.Text = stanza.Text;
+                    }
+                    else
+                    {
+                        stanza.SongId = songEntity.Id;
+                        db.Stanzas.Add(stanza);
+                    }
+                }
+
+                // UPDATE song
                 SongEntity dbSong = await db.Songs.SingleOrDefaultAsync(s => s.Id.Equals(songEntity.Id));
 
                 dbSong.ArrangerId = songEntity.ArrangerId;
