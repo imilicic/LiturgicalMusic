@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using LiturgicalMusic.Service.Common;
 using LiturgicalMusic.Model.Common;
 using LiturgicalMusic.Repository.Common;
+using LiturgicalMusic.Common;
 
 namespace LiturgicalMusic.Service
 {
@@ -24,12 +25,6 @@ namespace LiturgicalMusic.Service
             return s;
         }
 
-        public async Task<List<ISong>> GetAllSongsAsync()
-        {
-            List<ISong> s = await Repository.GetAllSongsAsync();
-            return s;
-        }
-
         public async Task<ISong> GetSongByIdAsync(int songId)
         {
             ISong s = await Repository.GetSongByIdAsync(songId);
@@ -39,6 +34,12 @@ namespace LiturgicalMusic.Service
         public async Task<ISong> PreviewSongAsync(ISong song)
         {
             ISong s = await Repository.PreviewSongAsync(song);
+            return s;
+        }
+
+        public async Task<List<ISong>> SearchSongsAsync(IFilter filter)
+        {
+            List<ISong> s = await Repository.SearchSongsAsync(filter);
             return s;
         }
 

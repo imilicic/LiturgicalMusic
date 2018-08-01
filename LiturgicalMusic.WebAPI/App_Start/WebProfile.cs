@@ -5,6 +5,7 @@ using AutoMapper;
 using System.Web;
 using LiturgicalMusic.Model.Common;
 using LiturgicalMusic.WebAPI.Controllers;
+using LiturgicalMusic.Common;
 
 namespace LiturgicalMusic.WebAPI.App_Start
 {
@@ -16,6 +17,7 @@ namespace LiturgicalMusic.WebAPI.App_Start
             CreateMap<ISong, SongController.SongModel>().ReverseMap();
             CreateMap<IStanza, SongController.StanzaModel>().ReverseMap();
             CreateMap<IInstrumentalPart, SongController.InstrumentalPartModel>().ReverseMap();
+            CreateMap<IFilter, SongController.FilterModel>().ReverseMap();
         }
     }
 }

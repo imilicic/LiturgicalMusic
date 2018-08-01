@@ -1,20 +1,35 @@
-﻿<table class="table table-striped">
-    <thead>
-        <tr>
-            <th class="col-md-3">Naziv</th>
-            <th class="col-md-2">Autor</th>
-            <th class="col-md-2">Harmonizirao</th>
-            <th class="col-md-2">Izvor</th>
-            <th class="col-md-3">Druge informacije</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let song of songs">
-            <td class="col-md-3"><a [routerLink]="[song.Id]">{{song.Title}}</a></td>
-            <td class="col-md-2">{{song.Composer?.Name}} {{song.Composer?.Surname}}</td>
-            <td class="col-md-2">{{song.Arranger?.Name}} {{song.Arranger?.Surname}}</td>
-            <td class="col-md-2">{{song.Source}}</td>
-            <td class="col-md-3">{{song.OtherInformation}}</td>
-        </tr>
-    </tbody>
-</table>
+﻿<h2>Pretraživanje pjesama</h2>
+<form [formGroup]="searchForm" (ngSubmit)="searchSongs(searchForm.value)" novalidate>
+    <div class="form-group">
+        <label class="control-label" for="title">Naziv</label>
+        <input class="form-control" formControlName="title" id="title" type="text" />
+    </div>
+    <button class="btn btn-default">Pretraži</button>
+    <span *ngIf="spinner">
+        <img src="app/assets/image/spinner.gif" style="width: 100px;"/>
+    </span>
+</form>
+<div *ngIf="songs && !spinner">
+    <h3 *ngIf="songs.length==0">Nema rezultata</h3>
+    <h3 *ngIf="songs.length>0">Rezultati pretraživanja</h3>
+    <table class="table table-striped" *ngIf="songs.length>0">
+        <thead>
+            <tr>
+                <th class="col-md-3">Naziv</th>
+                <th class="col-md-2">Autor</th>
+                <th class="col-md-2">Harmonizirao</th>
+                <th class="col-md-2">Izvor</th>
+                <th class="col-md-3">Druge informacije</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let song of songs">
+                <td class="col-md-3"><a [routerLink]="[song.Id]">{{song.Title}}</a></td>
+                <td class="col-md-2">{{song.Composer?.Name}} {{song.Composer?.Surname}}</td>
+                <td class="col-md-2">{{song.Arranger?.Name}} {{song.Arranger?.Surname}}</td>
+                <td class="col-md-2">{{song.Source}}</td>
+                <td class="col-md-3">{{song.OtherInformation}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

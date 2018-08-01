@@ -73,6 +73,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LiturgicalMusic.Common\LiturgicalMusic.Common.csproj">
+      <Project>{6041f2f9-6109-4a3f-a883-ef9881089f91}</Project>
+      <Name>LiturgicalMusic.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LiturgicalMusic.DAL\LiturgicalMusic.DAL.csproj">
       <Project>{9a71ec6d-6b2d-4bbb-91e5-e3e5c1329d2f}</Project>
       <Name>LiturgicalMusic.DAL</Name>

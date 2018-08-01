@@ -38,7 +38,7 @@ namespace LiturgicalMusic.Repository
 
             using (var db = new MusicContext())
             {
-                composerEntities = await db.Composers.ToListAsync();
+                composerEntities = await db.Composers.OrderBy(c => c.Surname).ToListAsync();
             }
             return Mapper.Map<List<IComposer>>(composerEntities);
         }

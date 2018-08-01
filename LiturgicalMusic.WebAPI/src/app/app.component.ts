@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
     selector: 'liturgical-music',
     template: `
         <nav-bar></nav-bar>
-        <div class = "container">
+        <div class="container">
             <router-outlet></router-outlet>
         </div>
     `

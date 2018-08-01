@@ -5,6 +5,7 @@ import "rxjs/add/operator/catch";
 import "rxjs/add/operator/map";
 import "rxjs/add/observable/throw";
 
+import { Filter } from "./models/filter.model";
 import { Song } from "./models/song.model";
 
 @Injectable()
@@ -27,8 +28,9 @@ export class SongService {
             .catch(this.handleError);
     }
 
-    getSongs(): Observable<Song[]> {
-        let query = "/api/songs/search";
+    searchSongs(filter: Filter): Observable<Song[]> {
+        let query = "/api/songs/search?title=" + filter.Title;
+
         return this.http.get(query)
             .map((response: Response) => <Song[]>response.json())
             .catch(this.handleError);

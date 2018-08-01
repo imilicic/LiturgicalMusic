@@ -45,6 +45,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LiturgicalMusic.Common\LiturgicalMusic.Common.csproj">
+      <Project>{6041f2f9-6109-4a3f-a883-ef9881089f91}</Project>
+      <Name>LiturgicalMusic.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LiturgicalMusic.Model.Common\LiturgicalMusic.Model.Common.csproj">
       <Project>{ea4e05f9-06d7-4b8a-8bd1-8b2ab36f9185}</Project>
       <Name>LiturgicalMusic.Model.Common</Name>

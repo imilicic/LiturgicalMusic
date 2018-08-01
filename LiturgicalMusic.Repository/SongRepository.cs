@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.Entity;
+using LiturgicalMusic.Common;
 
 namespace LiturgicalMusic.Repository
 {
@@ -48,10 +49,10 @@ namespace LiturgicalMusic.Repository
                 songFileName += song.Arranger.Name + song.Arranger.Surname;
             }
 
-            if (File.Exists(String.Format(@"{0}\{1}.ly", tempDir, songFileName.GetHashCode().ToString())))
+            if (File.Exists(String.Format(@"{0}\{1}.ly", tempDir, Hash(songFileName))))
             {
-                File.Delete(String.Format(@"{0}\{1}.ly", tempDir, songFileName.GetHashCode().ToString()));
-                File.Delete(String.Format(@"{0}\{1}.bat", tempDir, songFileName.GetHashCode().ToString()));
+                File.Delete(String.Format(@"{0}\{1}.ly", tempDir, Hash(songFileName)));
+                File.Delete(String.Format(@"{0}\{1}.bat", tempDir, Hash(songFileName)));
             }
 
             string moveTo = String.Format(@"{0}\app\assets\pdf\{1}.pdf", srcDir, songFileName);
@@ -104,25 +105,6 @@ namespace LiturgicalMusic.Repository
             return Mapper.Map<ISong>(songEntity);
         }
 
-        public async Task<List<ISong>> GetAllSongsAsync()
-        {
-            List<SongEntity> songEntities;
-
-            using (var db = new MusicContext())
-            {
-                songEntities = await db.Songs
-                    .Include("Composer")
-                    .Include("Arranger")
-                    .Include("ThemeCategories")
-                    .Include("LiturgyCategories")
-                    .Include("InstrumentalParts")
-                    .Include("Stanzas")
-                    .ToListAsync();
-            }
-
-            return Mapper.Map<List<ISong>>(songEntities);
-        }
-
         public async Task<ISong> GetSongByIdAsync(int songId)
         {
             SongEntity songEntity;
@@ -142,6 +124,23 @@ namespace LiturgicalMusic.Repository
             return Mapper.Map<ISong>(songEntity);
         }
 
+        private string Hash(string text)
+        {
+            int hash = text.GetHashCode();
+            string result;
+
+            if (hash < 0)
+            {
+                result = "m" + (-hash).ToString();
+            }
+            else
+            {
+                result = hash.ToString();
+            }
+
+            return result;
+        }
+
         public async Task<ISong> PreviewSongAsync(ISong song)
         {
             string pathToWebAPI = @"E:\vs projects\LiturgicalMusic\LiturgicalMusic.WebAPI";
@@ -159,7 +158,7 @@ namespace LiturgicalMusic.Repository
                 songFileName += song.Arranger.Name + song.Arranger.Surname;
             }
 
-            fileName = songFileName.GetHashCode().ToString();
+            fileName = Hash(songFileName);
 
             string filePath = await Lilypond.CreateFileAsync(song, tempDir, fileName, false);
 
@@ -178,6 +177,31 @@ namespace LiturgicalMusic.Repository
             File.Move(filePath, moveTo);
 
             return song;
+        }
+
+        public async Task<List<ISong>> SearchSongsAsync(IFilter filter)
+        {
+            List<SongEntity> songEntities;
+
+            using (var db = new MusicContext())
+            {
+                if (filter.Title == null)
+                {
+                    songEntities = await db.Songs.OrderBy(s => s.Title)
+                        .Include("Composer")
+                        .Include("Arranger")
+                        .ToListAsync();
+                }
+                else
+                {
+                    songEntities = await db.Songs.Where(s => s.Title.Contains(filter.Title)).OrderBy(s => s.Title)
+                        .Include("Composer")
+                        .Include("Arranger")
+                        .ToListAsync();
+                }
+            }
+
+            return Mapper.Map<List<ISong>>(songEntities);
         }
 
         public async Task<ISong> UpdateSongAsync(ISong song)
@@ -204,10 +228,10 @@ namespace LiturgicalMusic.Repository
                 songFileName += song.Arranger.Name + song.Arranger.Surname;
             }
 
-            if (File.Exists(String.Format(@"{0}\{1}.ly", tempDir, songFileName.GetHashCode().ToString())))
+            if (File.Exists(String.Format(@"{0}\{1}.ly", tempDir, Hash(songFileName))))
             {
-                File.Delete(String.Format(@"{0}\{1}.ly", tempDir, songFileName.GetHashCode().ToString()));
-                File.Delete(String.Format(@"{0}\{1}.bat", tempDir, songFileName.GetHashCode().ToString()));
+                File.Delete(String.Format(@"{0}\{1}.ly", tempDir, Hash(songFileName)));
+                File.Delete(String.Format(@"{0}\{1}.bat", tempDir, Hash(songFileName)));
             }
 
             string moveTo = String.Format(@"{0}\app\assets\pdf\{1}.pdf", srcDir, songFileName);
