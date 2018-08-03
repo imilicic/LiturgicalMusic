@@ -28,8 +28,31 @@ namespace LiturgicalMusic.WebAPI.Controllers
         [Route("get")]
         public async Task<HttpResponseMessage> GetSongByIdAsync(int songId)
         {
-            ISong s = await Service.GetSongByIdAsync(songId);
+            IOptions options = new Options()
+            {
+                Arranger = true,
+                Composer = true,
+                Stanzas = true,
+                InstrumentalParts = true
+            };
+
+            ISong s = await Service.GetSongByIdAsync(songId, options);
             SongModel result = Mapper.Map<SongModel>(s);
+            return Request.CreateResponse(HttpStatusCode.OK, result);
+        }
+
+        [HttpGet]
+        [Route("search")]
+        public async Task<HttpResponseMessage> GetSongsAsync([FromUri] FilterModel filter)
+        {
+            IOptions options = new Options()
+            {
+                Arranger = true,
+                Composer = true
+            };
+
+            List<ISong> s = await Service.GetSongsAsync(Mapper.Map<IFilter>(filter), options);
+            List<SongModel> result = Mapper.Map<List<SongModel>>(s);
             return Request.CreateResponse(HttpStatusCode.OK, result);
         }
 
@@ -37,18 +60,12 @@ namespace LiturgicalMusic.WebAPI.Controllers
         [Route("create")]
         public async Task<HttpResponseMessage> CreateSongAsync([FromBody] SongModel song)
         {
-            ISong s = Mapper.Map<ISong>(song);
-            ISong resultSong = await Service.CreateSongAsync(s);
-            return Request.CreateResponse(HttpStatusCode.OK, Mapper.Map<SongModel>(resultSong));
-        }
+            ISong newSong = Service.CreateSong();
 
-        [HttpGet]
-        [Route("search")]
-        public async Task<HttpResponseMessage> SearchSongsAsync([FromUri] FilterModel filter)
-        {
-            List<ISong> s = await Service.SearchSongsAsync(Mapper.Map<IFilter>(filter));
-            List<SongModel> result = Mapper.Map<List<SongModel>>(s);
-            return Request.CreateResponse(HttpStatusCode.OK, result);
+            Mapper.Map(song, newSong);
+
+            ISong resultSong = await Service.InsertSongAsync(newSong);
+            return Request.CreateResponse(HttpStatusCode.OK, Mapper.Map<SongModel>(resultSong));
         }
 
         [HttpPost]
@@ -63,8 +80,12 @@ namespace LiturgicalMusic.WebAPI.Controllers
         [Route("create")]
         public async Task<HttpResponseMessage> UpdateSongAsync([FromBody] SongModel song)
         {
-            ISong s = Mapper.Map<ISong>(song);
-            ISong resultSong = await Service.UpdateSongAsync(s);
+            IOptions options = new Options();
+            ISong dbSong = await Service.GetSongByIdAsync(song.Id, options);
+
+            Mapper.Map(song, dbSong);
+            
+            ISong resultSong = await Service.UpdateSongAsync(dbSong);
             return Request.CreateResponse(HttpStatusCode.OK, Mapper.Map<SongModel>(resultSong));
         }
 
@@ -108,6 +129,7 @@ namespace LiturgicalMusic.WebAPI.Controllers
 
         public class StanzaModel
         {
+            public int Id { get; set; }
             public int Number { get; set; }
             public string Text { get; set; }
         }

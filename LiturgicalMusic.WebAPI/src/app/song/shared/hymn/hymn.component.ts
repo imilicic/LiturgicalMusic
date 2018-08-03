@@ -245,6 +245,7 @@ export class HymnComponent implements OnInit {
             let stanza: Stanza = new Stanza();
 
             stanza = {
+                Id: null,
                 Number: i + 1,
                 Text: formValues[l.controlName]
             };

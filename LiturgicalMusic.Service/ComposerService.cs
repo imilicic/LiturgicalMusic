@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using LiturgicalMusic.Service.Common;
 using LiturgicalMusic.Model.Common;
 using LiturgicalMusic.Repository.Common;
+using LiturgicalMusic.Model;
 
 namespace LiturgicalMusic.Service
 {
@@ -18,16 +19,19 @@ namespace LiturgicalMusic.Service
             this.Repository = repository;
         }
 
-        public async Task<IComposer> CreateComposerAsync(IComposer composer)
+        public IComposer CreateComposer()
         {
-            IComposer c = await Repository.CreateComposerAsync(composer);
-            return c;
+            return new Composer();
         }
 
-        public async Task<List<IComposer>> GetAllComposersAsync()
+        public async Task<List<IComposer>> GetComposersAsync()
         {
-            List<IComposer> c = await Repository.GetAllComposersAsync();
-            return c;
+            return await Repository.GetComposersAsync();
+        }
+
+        public async Task<IComposer> InsertComposerAsync(IComposer composer)
+        {
+            return await Repository.InsertComposerAsync(composer);
         }
     }
 }

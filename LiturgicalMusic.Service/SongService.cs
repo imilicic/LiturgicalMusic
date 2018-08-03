@@ -7,46 +7,50 @@ using LiturgicalMusic.Service.Common;
 using LiturgicalMusic.Model.Common;
 using LiturgicalMusic.Repository.Common;
 using LiturgicalMusic.Common;
+using LiturgicalMusic.Model;
+using AutoMapper;
 
 namespace LiturgicalMusic.Service
 {
     public class SongService : ISongService
     {
         protected ISongRepository Repository { get; private set; }
+        protected IMapper Mapper { get; private set; }
 
-        public SongService(ISongRepository repository)
+        public SongService(ISongRepository repository, IMapper mapper)
         {
             this.Repository = repository;
+            this.Mapper = mapper;
         }
 
-        public async Task<ISong> CreateSongAsync(ISong song)
+        public ISong CreateSong()
         {
-            ISong s = await Repository.CreateSongAsync(song);
-            return s;
+            return new Song();
         }
 
-        public async Task<ISong> GetSongByIdAsync(int songId)
+        public async Task<ISong> GetSongByIdAsync(int songId, IOptions options)
         {
-            ISong s = await Repository.GetSongByIdAsync(songId);
-            return s;
+            return await Repository.GetSongByIdAsync(songId, options);
+        }
+
+        public async Task<List<ISong>> GetSongsAsync(IFilter filter, IOptions options)
+        {
+            return await Repository.GetSongsAsync(filter, options);
+        }
+
+        public async Task<ISong> InsertSongAsync(ISong song)
+        {
+            return await Repository.InsertSongAsync(song);
         }
 
         public async Task<ISong> PreviewSongAsync(ISong song)
         {
-            ISong s = await Repository.PreviewSongAsync(song);
-            return s;
-        }
-
-        public async Task<List<ISong>> SearchSongsAsync(IFilter filter)
-        {
-            List<ISong> s = await Repository.SearchSongsAsync(filter);
-            return s;
+            return await Repository.PreviewSongAsync(song);
         }
 
         public async Task<ISong> UpdateSongAsync(ISong song)
         {
-            ISong s = await Repository.UpdateSongAsync(song);
-            return s;
+            return await Repository.UpdateSongAsync(song);
         }
     }
 }

@@ -9,13 +9,7 @@ namespace LiturgicalMusic.Model
 {
     public class Code: ICode
     {
-        public string Soprano { get; set; }
-        public string Alto { get; set; }
-        public string Tenor { get; set; }
-        public string Bass { get; set; }
-        public string SopranoRelative { get; set; }
-        public string AltoRelative { get; set; }
-        public string TenorRelative { get; set; }
-        public string BassRelative { get; set; }
+        public string Voice { get; set; }
+        public string VoiceRelative { get; set; }
     }
 }

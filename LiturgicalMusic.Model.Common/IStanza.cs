@@ -8,6 +8,7 @@ namespace LiturgicalMusic.Model.Common
 {
     public interface IStanza
     {
+        int Id { get; set; }
         int Number { get; set; }
         string Text { get; set; }
     }

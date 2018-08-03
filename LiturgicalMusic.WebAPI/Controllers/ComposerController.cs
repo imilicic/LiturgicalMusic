@@ -27,9 +27,9 @@ namespace LiturgicalMusic.WebAPI.Controllers
 
         [HttpGet]
         [Route("get")]
-        public async Task<HttpResponseMessage> GetAllComposersAsync()
+        public async Task<HttpResponseMessage> GetComposersAsync()
         {
-            List<IComposer> c = await Service.GetAllComposersAsync();
+            List<IComposer> c = await Service.GetComposersAsync();
             List<ComposerModel> result = Mapper.Map<List<ComposerModel>>(c);
             return Request.CreateResponse(HttpStatusCode.OK, result);
         }
@@ -38,8 +38,12 @@ namespace LiturgicalMusic.WebAPI.Controllers
         [Route("create")]
         public async Task<HttpResponseMessage> CreateComposerAsync([FromBody] ComposerModel composer)
         {
-            var result = await Service.CreateComposerAsync(Mapper.Map<IComposer>(composer));
-            return Request.CreateResponse(HttpStatusCode.OK, result);
+            IComposer newComposer = Service.CreateComposer();
+
+            Mapper.Map(composer, newComposer);
+
+            IComposer resultComposer = await Service.InsertComposerAsync(newComposer);
+            return Request.CreateResponse(HttpStatusCode.OK, Mapper.Map<ComposerModel>(resultComposer));
         }
 
         public class ComposerModel

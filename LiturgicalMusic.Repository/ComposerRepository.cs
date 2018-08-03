@@ -20,7 +20,7 @@ namespace LiturgicalMusic.Repository
             this.Mapper = mapper;
         }
 
-        public async Task<IComposer> CreateComposerAsync(IComposer composer)
+        public async Task<IComposer> InsertComposerAsync(IComposer composer)
         {
             ComposerEntity composerEntity;
 
@@ -32,7 +32,7 @@ namespace LiturgicalMusic.Repository
             }
             return Mapper.Map<IComposer>(composerEntity);
         }
-        public async Task<List<IComposer>> GetAllComposersAsync()
+        public async Task<List<IComposer>> GetComposersAsync()
         {
             List<ComposerEntity> composerEntities;
 

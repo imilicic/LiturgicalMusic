@@ -30,7 +30,6 @@ export class SongSearchComponent implements OnInit {
 
         let filter: Filter = new Filter();
         filter.Title = values.title;
-        console.log(filter);
 
         this.songService.searchSongs(filter).subscribe((response: Song[]) => {
             this.spinner = false;
