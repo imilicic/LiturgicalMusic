@@ -19,19 +19,24 @@ namespace LiturgicalMusic.Service
             this.Repository = repository;
         }
 
-        public IComposer CreateComposer()
+        public IComposer Create()
         {
             return new Composer();
         }
 
-        public async Task<List<IComposer>> GetComposersAsync()
+        public async Task<List<IComposer>> GetAsync()
         {
-            return await Repository.GetComposersAsync();
+            return await Repository.GetAsync();
         }
 
-        public async Task<IComposer> InsertComposerAsync(IComposer composer)
+        public async Task<IComposer> GetByIdAsync(int composerId)
         {
-            return await Repository.InsertComposerAsync(composer);
+            return await Repository.GetByIdAsync(composerId);
+        }
+
+        public async Task<IComposer> InsertAsync(IComposer composer)
+        {
+            return await Repository.InsertAsync(composer);
         }
     }
 }

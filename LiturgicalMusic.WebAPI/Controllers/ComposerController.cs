@@ -27,22 +27,30 @@ namespace LiturgicalMusic.WebAPI.Controllers
 
         [HttpGet]
         [Route("get")]
-        public async Task<HttpResponseMessage> GetComposersAsync()
+        public async Task<HttpResponseMessage> GetAsync()
         {
-            List<IComposer> c = await Service.GetComposersAsync();
+            List<IComposer> c = await Service.GetAsync();
             List<ComposerModel> result = Mapper.Map<List<ComposerModel>>(c);
             return Request.CreateResponse(HttpStatusCode.OK, result);
         }
 
+        [HttpGet]
+        [Route("get")]
+        public async Task<HttpResponseMessage> GetByIdAsync(int composerId)
+        {
+            IComposer composer = await Service.GetByIdAsync(composerId);
+            return Request.CreateResponse(HttpStatusCode.OK, Mapper.Map<ComposerModel>(composer));
+        }
+
         [HttpPost]
         [Route("create")]
-        public async Task<HttpResponseMessage> CreateComposerAsync([FromBody] ComposerModel composer)
+        public async Task<HttpResponseMessage> CreateAsync([FromBody] ComposerModel composer)
         {
-            IComposer newComposer = Service.CreateComposer();
+            IComposer newComposer = Service.Create();
 
             Mapper.Map(composer, newComposer);
 
-            IComposer resultComposer = await Service.InsertComposerAsync(newComposer);
+            IComposer resultComposer = await Service.InsertAsync(newComposer);
             return Request.CreateResponse(HttpStatusCode.OK, Mapper.Map<ComposerModel>(resultComposer));
         }
 

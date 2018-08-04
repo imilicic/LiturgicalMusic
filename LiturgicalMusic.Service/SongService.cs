@@ -23,34 +23,34 @@ namespace LiturgicalMusic.Service
             this.Mapper = mapper;
         }
 
-        public ISong CreateSong()
+        public ISong Create()
         {
             return new Song();
         }
 
-        public async Task<ISong> GetSongByIdAsync(int songId, IOptions options)
+        public async Task<ISong> GetByIdAsync(int songId, IOptions options)
         {
-            return await Repository.GetSongByIdAsync(songId, options);
+            return await Repository.GetByIdAsync(songId, options);
         }
 
-        public async Task<List<ISong>> GetSongsAsync(IFilter filter, IOptions options)
+        public async Task<List<ISong>> GetAsync(IFilter filter, IOptions options)
         {
-            return await Repository.GetSongsAsync(filter, options);
+            return await Repository.GetAsync(filter, options);
         }
 
-        public async Task<ISong> InsertSongAsync(ISong song)
+        public async Task<ISong> InsertAsync(ISong song)
         {
-            return await Repository.InsertSongAsync(song);
+            return await Repository.InsertAsync(song);
         }
 
-        public async Task<ISong> PreviewSongAsync(ISong song)
+        public async Task<ISong> PreviewAsync(ISong song)
         {
-            return await Repository.PreviewSongAsync(song);
+            return await Repository.PreviewAsync(song);
         }
 
-        public async Task<ISong> UpdateSongAsync(ISong song)
+        public async Task<ISong> UpdateAsync(ISong song)
         {
-            return await Repository.UpdateSongAsync(song);
+            return await Repository.UpdateAsync(song);
         }
     }
 }

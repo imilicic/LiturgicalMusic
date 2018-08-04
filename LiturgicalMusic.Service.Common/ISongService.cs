@@ -10,11 +10,11 @@ namespace LiturgicalMusic.Service.Common
 {
     public interface ISongService
     {
-        ISong CreateSong();
-        Task<ISong> GetSongByIdAsync(int songId, IOptions options);
-        Task<List<ISong>> GetSongsAsync(IFilter filter, IOptions options);
-        Task<ISong> InsertSongAsync(ISong song);
-        Task<ISong> PreviewSongAsync(ISong song);
-        Task<ISong> UpdateSongAsync(ISong song);
+        ISong Create();
+        Task<ISong> GetByIdAsync(int songId, IOptions options);
+        Task<List<ISong>> GetAsync(IFilter filter, IOptions options);
+        Task<ISong> InsertAsync(ISong song);
+        Task<ISong> PreviewAsync(ISong song);
+        Task<ISong> UpdateAsync(ISong song);
     }
 }

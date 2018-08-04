@@ -29,7 +29,7 @@ export class SongService {
     }
 
     searchSongs(filter: Filter): Observable<Song[]> {
-        let query = "/api/songs/search?title=" + filter.Title;
+        let query = "/api/songs/get?title=" + filter.Title;
 
         return this.http.get(query)
             .map((response: Response) => <Song[]>response.json())

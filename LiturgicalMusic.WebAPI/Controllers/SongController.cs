@@ -24,9 +24,36 @@ namespace LiturgicalMusic.WebAPI.Controllers
             this.Service = service;
         }
 
+        [HttpPost]
+        [Route("create")]
+        public async Task<HttpResponseMessage> CreateAsync([FromBody] SongModel song)
+        {
+            ISong newSong = Service.Create();
+
+            Mapper.Map(song, newSong);
+
+            ISong resultSong = await Service.InsertAsync(newSong);
+            return Request.CreateResponse(HttpStatusCode.OK, Mapper.Map<SongModel>(resultSong));
+        }
+
         [HttpGet]
         [Route("get")]
-        public async Task<HttpResponseMessage> GetSongByIdAsync(int songId)
+        public async Task<HttpResponseMessage> GetAsync([FromUri] FilterModel filter)
+        {
+            IOptions options = new Options()
+            {
+                Arranger = true,
+                Composer = true
+            };
+
+            List<ISong> s = await Service.GetAsync(Mapper.Map<IFilter>(filter), options);
+            List<SongModel> result = Mapper.Map<List<SongModel>>(s);
+            return Request.CreateResponse(HttpStatusCode.OK, result);
+        }
+
+        [HttpGet]
+        [Route("get")]
+        public async Task<HttpResponseMessage> GetByIdAsync(int songId)
         {
             IOptions options = new Options()
             {
@@ -36,56 +63,29 @@ namespace LiturgicalMusic.WebAPI.Controllers
                 InstrumentalParts = true
             };
 
-            ISong s = await Service.GetSongByIdAsync(songId, options);
+            ISong s = await Service.GetByIdAsync(songId, options);
             SongModel result = Mapper.Map<SongModel>(s);
             return Request.CreateResponse(HttpStatusCode.OK, result);
         }
 
-        [HttpGet]
-        [Route("search")]
-        public async Task<HttpResponseMessage> GetSongsAsync([FromUri] FilterModel filter)
-        {
-            IOptions options = new Options()
-            {
-                Arranger = true,
-                Composer = true
-            };
-
-            List<ISong> s = await Service.GetSongsAsync(Mapper.Map<IFilter>(filter), options);
-            List<SongModel> result = Mapper.Map<List<SongModel>>(s);
-            return Request.CreateResponse(HttpStatusCode.OK, result);
-        }
-
-        [HttpPost]
-        [Route("create")]
-        public async Task<HttpResponseMessage> CreateSongAsync([FromBody] SongModel song)
-        {
-            ISong newSong = Service.CreateSong();
-
-            Mapper.Map(song, newSong);
-
-            ISong resultSong = await Service.InsertSongAsync(newSong);
-            return Request.CreateResponse(HttpStatusCode.OK, Mapper.Map<SongModel>(resultSong));
-        }
-
         [HttpPost]
         [Route("preview")]
-        public async Task<HttpResponseMessage> PreviewSongAsync([FromBody] SongModel song)
+        public async Task<HttpResponseMessage> PreviewAsync([FromBody] SongModel song)
         {
-            ISong s = await Service.PreviewSongAsync(Mapper.Map<ISong>(song));
+            ISong s = await Service.PreviewAsync(Mapper.Map<ISong>(song));
             return Request.CreateResponse(HttpStatusCode.OK, Mapper.Map<SongModel>(s));
         }
 
         [HttpPut]
         [Route("create")]
-        public async Task<HttpResponseMessage> UpdateSongAsync([FromBody] SongModel song)
+        public async Task<HttpResponseMessage> UpdateAsync([FromBody] SongModel song)
         {
             IOptions options = new Options();
-            ISong dbSong = await Service.GetSongByIdAsync(song.Id, options);
+            ISong dbSong = await Service.GetByIdAsync(song.Id, options);
 
             Mapper.Map(song, dbSong);
             
-            ISong resultSong = await Service.UpdateSongAsync(dbSong);
+            ISong resultSong = await Service.UpdateAsync(dbSong);
             return Request.CreateResponse(HttpStatusCode.OK, Mapper.Map<SongModel>(resultSong));
         }
 

@@ -11,28 +11,16 @@ using System.Data.Entity;
 
 namespace LiturgicalMusic.Repository
 {
-    public class ComposerRepository : IComposerRepository
+    public class ComposerRepository : GenericRepository<ComposerEntity>, IComposerRepository
     {
         protected IMapper Mapper { get; private set; }
 
-        public ComposerRepository(IMapper mapper)
+        public ComposerRepository(MusicContext context, IMapper mapper) : base(context)
         {
             this.Mapper = mapper;
         }
 
-        public async Task<IComposer> InsertComposerAsync(IComposer composer)
-        {
-            ComposerEntity composerEntity;
-
-            using (var db = new MusicContext())
-            {
-                composerEntity = Mapper.Map<ComposerEntity>(composer);
-                db.Composers.Add(composerEntity);
-                await db.SaveChangesAsync();
-            }
-            return Mapper.Map<IComposer>(composerEntity);
-        }
-        public async Task<List<IComposer>> GetComposersAsync()
+        public async Task<List<IComposer>> GetAsync()
         {
             List<ComposerEntity> composerEntities;
 
@@ -41,6 +29,19 @@ namespace LiturgicalMusic.Repository
                 composerEntities = await db.Composers.OrderBy(c => c.Surname).ToListAsync();
             }
             return Mapper.Map<List<IComposer>>(composerEntities);
+        }
+
+        public async Task<IComposer> GetByIdAsync(int composerId)
+        {
+            ComposerEntity composer = await base.GetByIdAsync(composerId);
+            return Mapper.Map<IComposer>(composer);
+        }
+
+        public async Task<IComposer> InsertAsync(IComposer composer)
+        {
+            ComposerEntity composerEntity = Mapper.Map<ComposerEntity>(composer);
+
+            return Mapper.Map<IComposer>(await base.InsertAsync(composerEntity));
         }
     }
 }

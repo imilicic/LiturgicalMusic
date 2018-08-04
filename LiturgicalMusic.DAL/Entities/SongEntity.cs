@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace LiturgicalMusic.DAL
 {
     [Table("Songs")]
-    public class SongEntity
+    public class SongEntity : IEntity
     {
         public SongEntity()
         {

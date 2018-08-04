@@ -9,7 +9,7 @@ using System.ComponentModel.DataAnnotations;
 namespace LiturgicalMusic.DAL
 {
     [Table("Composers")]
-    public class ComposerEntity
+    public class ComposerEntity : IEntity
     {
         public int Id { get; set; }
 
