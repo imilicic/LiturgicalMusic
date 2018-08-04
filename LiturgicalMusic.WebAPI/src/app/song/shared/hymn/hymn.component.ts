@@ -239,10 +239,11 @@ export class HymnComponent implements OnInit {
         }
         
         this.song.Code = JSON.stringify(code);
-        this.song.Stanzas = [];
+        let stanzas: Stanza[] = [];
 
         this.lyrics.forEach((l, i) => {
             let stanza: Stanza = new Stanza();
+            let foundStanza: Stanza = this.song.Stanzas.find(s => s.Number == i + 1);
 
             stanza = {
                 Id: null,
@@ -250,8 +251,14 @@ export class HymnComponent implements OnInit {
                 Text: formValues[l.controlName]
             };
 
-            this.song.Stanzas.push(stanza);
+            if (foundStanza != null) {
+                stanza.Id = foundStanza.Id;
+            }
+
+            stanzas.push(stanza);
         });
+
+        this.song.Stanzas = stanzas;
     }
 
     createSongEmit(formValues: any) {

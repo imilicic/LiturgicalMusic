@@ -80,12 +80,8 @@ namespace LiturgicalMusic.WebAPI.Controllers
         [Route("create")]
         public async Task<HttpResponseMessage> UpdateAsync([FromBody] SongModel song)
         {
-            IOptions options = new Options();
-            ISong dbSong = await Service.GetByIdAsync(song.Id, options);
+            ISong resultSong = await Service.UpdateAsync(Mapper.Map<ISong>(song));
 
-            Mapper.Map(song, dbSong);
-            
-            ISong resultSong = await Service.UpdateAsync(dbSong);
             return Request.CreateResponse(HttpStatusCode.OK, Mapper.Map<SongModel>(resultSong));
         }
 

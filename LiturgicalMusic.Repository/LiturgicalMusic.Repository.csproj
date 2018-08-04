@@ -69,10 +69,12 @@
     <Compile Include="ComposerRepository.cs" />
     <Compile Include="DIModule.cs" />
     <Compile Include="GenericRepository.cs" />
+    <Compile Include="InstrumentalPartRepository.cs" />
     <Compile Include="Lilypond.cs" />
     <Compile Include="SongHelper.cs" />
     <Compile Include="SongRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StanzaRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LiturgicalMusic.Common\LiturgicalMusic.Common.csproj">

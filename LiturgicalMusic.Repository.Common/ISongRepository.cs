@@ -8,7 +8,7 @@ using LiturgicalMusic.Common;
 
 namespace LiturgicalMusic.Repository.Common
 {
-    public interface ISongRepository : IDisposable
+    public interface ISongRepository
     {
         Task<ISong> GetByIdAsync(int songId, IOptions options);
         Task<List<ISong>> GetAsync(IFilter filter, IOptions options);

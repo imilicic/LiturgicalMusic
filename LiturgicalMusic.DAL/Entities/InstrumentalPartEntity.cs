@@ -5,11 +5,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LiturgicalMusic.Common;
 
 namespace LiturgicalMusic.DAL
 {
     [Table("InstrumentalParts")]
-    public class InstrumentalPartEntity
+    public class InstrumentalPartEntity : IEntity
     {
         public int Id { get; set; }
 

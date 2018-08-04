@@ -319,9 +319,12 @@ namespace LiturgicalMusic.Repository
                         staves.AppendLine(CreateStaff(staffs[0], UPPER_STAFF, markVoice));
                     }
 
-                    Song.Stanzas.ForEach((IStanza stanza) => {
-                        staves.AppendLine(String.Format(@"\new Lyrics \lyricsto ""{0}"" \lyrics{1}", MARKED_VOICE, ALPHABET[stanza.Number - 1]));
-                    });
+                    if (markVoice >= 0)
+                    {
+                        Song.Stanzas.ForEach((IStanza stanza) => {
+                            staves.AppendLine(String.Format(@"\new Lyrics \lyricsto ""{0}"" \lyrics{1}", MARKED_VOICE, ALPHABET[stanza.Number - 1]));
+                        });
+                    }
                 }
             }
 
@@ -409,14 +412,25 @@ namespace LiturgicalMusic.Repository
 
         private List<List<string>> GetVoices(List<bool> template, string instrument)
         {
-            List<string> staff = new List<string>();
+            List<string> staff1 = new List<string>();
+            List<string> staff2 = new List<string>();
 
             for (int i = 0; i < template.Count; i++)
             {
-                staff.Add(String.Concat(instrument, VOICES[i]));
+                if (template[i])
+                {
+                    if (i <= 1)
+                    {
+                        staff1.Add(String.Concat(instrument, VOICES[i]));
+                    }
+                    else
+                    {
+                        staff2.Add(String.Concat(instrument, VOICES[i]));
+                    }
+                }
             }
 
-            return new List<List<string>> { staff.GetRange(0, 2), staff.GetRange(2, 2) };
+            return new List<List<string>> { staff1, staff2 };
         }
         #endregion Methods
     }

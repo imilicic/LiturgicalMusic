@@ -20,7 +20,6 @@ namespace LiturgicalMusic.Repository
     public class SongRepository : GenericRepository<SongEntity>, ISongRepository, IDisposable
     {
         protected IMapper Mapper { get; private set; }
-        private bool disposed = false;
 
         public SongRepository(MusicContext context, IMapper mapper) : base(context)
         {
@@ -131,9 +130,9 @@ namespace LiturgicalMusic.Repository
                 }
             }
 
-            SongEntity result = await base.UpdateAsync(songDb);
+            songDb = await base.UpdateAsync(songDb);
 
-            return Mapper.Map<ISong>(result);
+            return Mapper.Map<ISong>(songDb);
 
             // CRUD Instrumental part
             //List<InstrumentalPartEntity> parts = Context.InstrumentalParts.Where(p => p.SongId.Equals(songEntity.Id)).ToList();
@@ -189,25 +188,6 @@ namespace LiturgicalMusic.Repository
             //        Context.Stanzas.Add(stanza);
             //    }
             //}
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!this.disposed)
-            {
-                if (disposing)
-                {
-                    Context.Dispose();
-                }
-            }
-
-            this.disposed = true;
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
     }
 }

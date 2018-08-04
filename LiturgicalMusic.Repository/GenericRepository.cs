@@ -6,13 +6,17 @@ using System.Threading.Tasks;
 using LiturgicalMusic.DAL;
 using System.Data.Entity;
 using System.Linq.Expressions;
+using LiturgicalMusic.Common;
+using LiturgicalMusic.Repository.Common;
 
 namespace LiturgicalMusic.Repository
 {
-    public class GenericRepository<TEntity> where TEntity : class, IEntity
+    public class GenericRepository<TEntity> : IGenericRepository<TEntity>, IDisposable
+        where TEntity: class, IEntity
     {
         internal MusicContext Context;
         internal DbSet<TEntity> DbSet;
+        private bool disposed = false;
 
         public GenericRepository(MusicContext context)
         {
@@ -81,6 +85,25 @@ namespace LiturgicalMusic.Repository
             await Context.SaveChangesAsync();
 
             return entity;
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!this.disposed)
+            {
+                if (disposing)
+                {
+                    Context.Dispose();
+                }
+            }
+
+            this.disposed = true;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }
