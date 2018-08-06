@@ -12,6 +12,11 @@ namespace LiturgicalMusic.Model.Mapping
 {
     public class ModelProfile : Profile
     {
+        #region Constructors
+
+        /// <summary>
+        /// Creates mapper.
+        /// </summary>
         public ModelProfile()
         {
             CreateMap<ISong, SongEntity>()
@@ -29,5 +34,6 @@ namespace LiturgicalMusic.Model.Mapping
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(s => s));
             CreateMap<LiturgyEntity, int>();
         }
+        #endregion Constructors
     }
 }

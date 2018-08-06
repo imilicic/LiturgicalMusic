@@ -8,6 +8,12 @@ namespace LiturgicalMusic.Common
 {
     public interface IFilter
     {
+        #region Properties
+        /// <summary>
+        /// Gets or sets title.
+        /// </summary>
+        /// <value>The title.</value>
         string Title { get; set; }
+        #endregion Properties
     }
 }

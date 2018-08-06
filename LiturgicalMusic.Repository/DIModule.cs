@@ -10,9 +10,14 @@ namespace LiturgicalMusic.Repository
 {
     public class DIModule : Ninject.Modules.NinjectModule
     {
+        #region Methods
+        /// <summary>
+        /// Loads the module into the kernel.
+        /// </summary>
         public override void Load()
         {
             Bind<UnitOfWork>().ToSelf().InSingletonScope();
         }
+        #endregion Methods
     }
 }

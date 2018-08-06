@@ -9,8 +9,27 @@ namespace LiturgicalMusic.Repository.Common
 {
     public interface IComposerRepository
     {
-        Task<IComposer> InsertAsync(IComposer composer);
+        #region Methods
+
+        /// <summary>
+        /// Gets all composers.
+        /// </summary>
+        /// <returns></returns>
         Task<IList<IComposer>> GetAsync();
+
+        /// <summary>
+        /// Gets composer by ID.
+        /// </summary>
+        /// <param name="composerId">The composer ID.</param>
+        /// <returns></returns>
         Task<IComposer> GetByIdAsync(int composerId);
+
+        /// <summary>
+        /// Inserts a composer.
+        /// </summary>
+        /// <param name="composer">The composer.</param>
+        /// <returns></returns>
+        Task<IComposer> InsertAsync(IComposer composer);
+        #endregion Methods
     }
 }

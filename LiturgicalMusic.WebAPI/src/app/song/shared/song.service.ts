@@ -29,7 +29,7 @@ export class SongService {
     }
 
     searchSongs(filter: Filter, orderBy: string, ascending: boolean, pageNumber: number, pageSize: number): Observable<Response> {
-        let query = "/api/songs/get?title=" + filter.Title + "&&orderBy=" + orderBy + "&&ascending=" + ascending + "&&pageNumber=" + pageNumber + "&&pageSize=" + pageSize;
+        let query = "/api/songs/get?searchQuery=" + filter.Title + "&&orderBy=" + orderBy + "&&ascending=" + ascending + "&&pageNumber=" + pageNumber + "&&pageSize=" + pageSize;
 
         return this.http.get(query)
             .catch(this.handleError);

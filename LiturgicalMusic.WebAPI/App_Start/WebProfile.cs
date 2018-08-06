@@ -12,13 +12,18 @@ namespace LiturgicalMusic.WebAPI.App_Start
 {
     public class WebProfile : Profile
     {
+        #region Methods
+
+        /// <summary>
+        /// Creates mapper.
+        /// </summary>
         public WebProfile()
         {
             CreateMap<IComposer, ComposerController.ComposerModel>().ReverseMap();
             CreateMap<ISong, SongController.SongModel>().ReverseMap();
             CreateMap<IStanza, SongController.StanzaModel>().ReverseMap();
             CreateMap<IInstrumentalPart, SongController.InstrumentalPartModel>().ReverseMap();
-            CreateMap<IFilter, SongController.FilterModel>().ReverseMap();
         }
+        #endregion
     }
 }

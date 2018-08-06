@@ -15,13 +15,45 @@ namespace LiturgicalMusic.Repository
     public class Lilypond
     {
         #region Properties
-        public string FileName { get; set; }
-        public bool DeleteTempFiles { get; set; }
-        public string Key { get; set; }
-        public string Path { get; set; }
-        public ISong Song { get; set; }
-        public string Time { get; set; }
 
+        /// <summary>
+        /// Gets or sets file name for PDF file.
+        /// </summary>
+        /// <value>The file name.</value>
+        public string FileName { get; set; }
+
+        /// <summary>
+        /// Gets or sets whether to delete temporary files or not.
+        /// </summary>
+        /// <value><c>true</c> if you want to delete temporary files, <c>false</c> otherwise</value>
+        public bool DeleteTempFiles { get; set; }
+
+        /// <summary>
+        /// Gets or sets song key.
+        /// </summary>
+        /// <value>The key.</value>
+        public string Key { get; set; }
+
+        /// <summary>
+        /// Gets or sets path to folder in which file should be created.
+        /// </summary>
+        /// <value>The path.</value>
+        public string Path { get; set; }
+
+        /// <summary>
+        /// Gets or sets the song.
+        /// </summary>
+        /// <value>The song.</value>
+        public ISong Song { get; set; }
+
+        /// <summary>
+        /// Gets or sets the song time.
+        /// </summary>
+        /// <value>The song time.</value>
+        public string Time { get; set; }
+        #endregion Properties
+
+        #region Constants
         private const string ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         private const string ARRANGER_TEXT = "Harmonizacija:";
         private const string CODA_PART = "coda";
@@ -35,9 +67,16 @@ namespace LiturgicalMusic.Repository
         private const string PRELUDE_PART = "prelude";
         private const string UPPER_STAFF = "upper";
         private const string VOICES = "SATB";
-        #endregion Properties
+        #endregion Constants
 
         #region Constructors
+        /// <summary>
+        /// Initializes new instance of <see cref="Lilypond"/> class.
+        /// </summary>
+        /// <param name="song">The song.</param>
+        /// <param name="path">The path.</param>
+        /// <param name="fileName">The name of file.</param>
+        /// <param name="deleteTempFiles">Whether to delete temporary files or not.</param>
         public Lilypond(ISong song, string path, string fileName, bool deleteTempFiles)
         {
             this.Song = song;
@@ -52,6 +91,10 @@ namespace LiturgicalMusic.Repository
         #endregion Constructors
 
         #region Methods
+        /// <summary>
+        /// Creates PDF file containg score.
+        /// </summary>
+        /// <returns></returns>
         public async Task<string> CreateFileAsync()
         {
             IList<ICode> organCode = ExtractCode(Song.Code, INSTRUMENT_PARTS_PROPERTY);
@@ -120,6 +163,14 @@ namespace LiturgicalMusic.Repository
             return String.Format(@"{0}\{1}.pdf", Path, FileName);
         }
 
+        /// <summary>
+        /// Creates lilypond grandstaff score.
+        /// </summary>
+        /// <param name="template">The template.</param>
+        /// <param name="instrument">The instrument name.</param>
+        /// <param name="stanzas">The stanzas.</param>
+        /// <param name="markedVoice">Whether to mark this voice or not.</param>
+        /// <returns></returns>
         private string CreateGrandStaff(IList<bool> template, string instrument, IList<IStanza> stanzas = null, int markedVoice = -1)
         {
             StringBuilder grandStaff = new StringBuilder();
@@ -142,6 +193,10 @@ namespace LiturgicalMusic.Repository
             return grandStaff.ToString();
         }
 
+        /// <summary>
+        /// Creates lilypond headers.
+        /// </summary>
+        /// <returns></returns>
         private string CreateHeader()
         {
             StringBuilder header = new StringBuilder();
@@ -174,6 +229,11 @@ namespace LiturgicalMusic.Repository
             return header.ToString();
         }
 
+        /// <summary>
+        /// Creates lilypond lyrics.
+        /// </summary>
+        /// <param name="stanzas">The stanzas.</param>
+        /// <returns></returns>
         private string CreateLyrics(IList<IStanza> stanzas)
         {
             StringBuilder lyrics = new StringBuilder();
@@ -188,6 +248,10 @@ namespace LiturgicalMusic.Repository
             return lyrics.ToString();
         }
 
+        /// <summary>
+        /// Creates lilypond score for main part of song.
+        /// </summary>
+        /// <returns></returns>
         private string CreateMainScore()
         {
             StringBuilder score = new StringBuilder();
@@ -218,6 +282,13 @@ namespace LiturgicalMusic.Repository
             return score.ToString();
         }
 
+        /// <summary>
+        /// Creates lilypond score for prelude, interlude and coda.
+        /// </summary>
+        /// <param name="template">The template.</param>
+        /// <param name="instrument">The instrument name.</param>
+        /// <param name="isPrelude">Whether this is prelude or not.</param>
+        /// <returns></returns>
         private string CreatePartScore(IList<bool> template, string instrument, bool isPrelude = false)
         {
             StringBuilder score = new StringBuilder();
@@ -259,6 +330,13 @@ namespace LiturgicalMusic.Repository
             return score.ToString();
         }
 
+        /// <summary>
+        /// Creates lilypond staff.
+        /// </summary>
+        /// <param name="voices">The voices.</param>
+        /// <param name="position">The staff position, upper or lower.</param>
+        /// <param name="markedVoice">Whether to mark a voice.</param>
+        /// <returns></returns>
         private string CreateStaff(IList<string> voices, string position, int markedVoice = -1)
         {
             StringBuilder staff = new StringBuilder();
@@ -298,6 +376,13 @@ namespace LiturgicalMusic.Repository
             return staff.ToString();
         }
 
+        /// <summary>
+        /// Creates lilypond staves for score.
+        /// </summary>
+        /// <param name="template">The template.</param>
+        /// <param name="markVoice">Whether to mark a voice.</param>
+        /// <param name="voiceName">The name of a voice.</param>
+        /// <returns></returns>
         private string CreateStavesForScore(IList<bool> template, int markVoice, string voiceName)
         {
             StringBuilder staves = new StringBuilder();
@@ -334,6 +419,13 @@ namespace LiturgicalMusic.Repository
             return staves.ToString();
         }
 
+        /// <summary>
+        /// Creates lilypond voices.
+        /// </summary>
+        /// <param name="codeList">The list of codes representing voices.</param>
+        /// <param name="template">The template.</param>
+        /// <param name="instrument">The instrument name.</param>
+        /// <returns></returns>
         private string CreateVoices(IList<ICode> codeList, IList<bool> template, string instrument)
         {
             StringBuilder voices = new StringBuilder();
@@ -357,6 +449,12 @@ namespace LiturgicalMusic.Repository
             return voices.ToString();
         }
 
+        /// <summary>
+        /// Extracts code from string.
+        /// </summary>
+        /// <param name="codeString">The string which represents code.</param>
+        /// <param name="mustContain">Whether key must contain a string.</param>
+        /// <returns></returns>
         private IList<ICode> ExtractCode(string codeString, string mustContain = null)
         {
             Dictionary<string, string> codeRaw = JsonConvert.DeserializeObject<Dictionary<string, string>>(codeString);
@@ -413,6 +511,12 @@ namespace LiturgicalMusic.Repository
             return codeList;
         }
 
+        /// <summary>
+        /// Gets and creates voice names from template and instrument name.
+        /// </summary>
+        /// <param name="template">The template.</param>
+        /// <param name="instrument">The instrument name.</param>
+        /// <returns></returns>
         private IList<IList<string>> GetVoices(IList<bool> template, string instrument)
         {
             IList<string> staff1 = new List<string>();

@@ -9,11 +9,19 @@ namespace LiturgicalMusic.WebAPI.App_Start
 {
     public class AutoMapperConfig : Ninject.Modules.NinjectModule
     {
+        #region Methods
+        /// <summary>
+        /// Loads the module into the kernel.
+        /// </summary>
         public override void Load()
         {
             Bind<IMapper>().ToConstant(Initialize());
         }
 
+        /// <summary>
+        /// Initializes the mapper.
+        /// </summary>
+        /// <returns></returns>
         private IMapper Initialize()
         {
             Mapper.Initialize(config =>
@@ -24,5 +32,6 @@ namespace LiturgicalMusic.WebAPI.App_Start
 
             return Mapper.Instance;
         }
+        #endregion Methods
     }
 }

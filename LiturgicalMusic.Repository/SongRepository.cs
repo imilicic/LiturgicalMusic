@@ -15,13 +15,34 @@ namespace LiturgicalMusic.Repository
 {
     public class SongRepository : Repository<SongEntity>, ISongRepository
     {
-        protected IMapper Mapper { get; private set; }
+        #region Properties
 
+        /// <summary>
+        /// Gets or sets the mapper.
+        /// </summary>
+        /// <value>The mapper.</value>
+        protected IMapper Mapper { get; private set; }
+        #endregion Properties
+
+        #region Constructors
+        /// <summary>
+        /// Initializes new instance of <see cref="SongRepository"/> class.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <param name="mapper">The mapper.</param>
         public SongRepository(MusicContext context, IMapper mapper) : base(context)
         {
             this.Mapper = mapper;
         }
+        #endregion Constructors
 
+        #region Methods
+        /// <summary>
+        /// Gets song by ID which contains certain options.
+        /// </summary>
+        /// <param name="songId">The song ID.</param>
+        /// <param name="options">The options.</param>
+        /// <returns></returns>
         public async Task<ISong> GetByIdAsync(int songId, IOptions options)
         {
             string include = SongHelper.CreateIncludeString(options);
@@ -30,6 +51,16 @@ namespace LiturgicalMusic.Repository
             return Mapper.Map<ISong>(songEntity);
         }
 
+        /// <summary>
+        /// Gets all songs filtered, ordered, using pages
+        /// </summary>
+        /// <param name="filter">The filter.</param>
+        /// <param name="options">The options.</param>
+        /// <param name="orderBy">The string represeting how to order songs.</param>
+        /// <param name="ascending">Whether to order ascending or descending.</param>
+        /// <param name="pageNumber">The current page number.</param>
+        /// <param name="pageSize">The page size.</param>
+        /// <returns></returns>
         public async Task<IPagedList<ISong>> GetAsync(IFilter filter, IOptions options, string orderBy, bool ascending, int pageNumber, int pageSize)
         {
             IQueryable<SongEntity> query;
@@ -88,6 +119,11 @@ namespace LiturgicalMusic.Repository
             return result;
         }
 
+        /// <summary>
+        /// Inserts a song.
+        /// </summary>
+        /// <param name="song">The song.</param>
+        /// <returns></returns>
         public async Task<ISong> InsertAsync(ISong song)
         {
             await SongHelper.CreatePdfAsync(song, Path.GetRandomFileName(), true);
@@ -109,6 +145,11 @@ namespace LiturgicalMusic.Repository
             return Mapper.Map<ISong>(await base.InsertAsync(songEntity));
         }
 
+        /// <summary>
+        /// Makes a preview of a song.
+        /// </summary>
+        /// <param name="song">The song.</param>
+        /// <returns></returns>
         public async Task<ISong> PreviewAsync(ISong song)
         {
             string songFileName = SongHelper.SongFileName(song);
@@ -118,6 +159,11 @@ namespace LiturgicalMusic.Repository
             return song;
         }
 
+        /// <summary>
+        /// Updates a song.
+        /// </summary>
+        /// <param name="song">The song.</param>
+        /// <returns></returns>
         public async Task<ISong> UpdateAsync(ISong song)
         {
             IOptions options = new Options
@@ -170,5 +216,6 @@ namespace LiturgicalMusic.Repository
 
             return Mapper.Map<ISong>(songDb);
         }
+        #endregion Methods
     }
 }

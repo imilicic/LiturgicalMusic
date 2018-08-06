@@ -11,11 +11,21 @@ namespace LiturgicalMusic.Repository
 {
     public class SongHelper
     {
+        #region Constants
         private const string PATH_TO_WEB_API = @"E:\vs projects\LiturgicalMusic\LiturgicalMusic.WebAPI";
         private const string PDF_ASSETS_DIR = @"app\assets\pdf";
         private const string SOURCE_DIR = "src";
         private const string TEMP_DIR = "temp";
+        #endregion Constants
 
+        #region Methods
+        /// <summary>
+        /// Starts creating PDF file and moves it to another folder.
+        /// </summary>
+        /// <param name="song">The song.</param>
+        /// <param name="tempFileName">The file name for temporary files.</param>
+        /// <param name="deleteTempFiles">Whether to delete temporary files or not.</param>
+        /// <returns></returns>
         public async static Task CreatePdfAsync(ISong song, string tempFileName, bool deleteTempFiles)
         {
             string tempDir = String.Format(@"{0}\{1}", PATH_TO_WEB_API, TEMP_DIR);
@@ -50,6 +60,11 @@ namespace LiturgicalMusic.Repository
             File.Delete(filePath);
         }
 
+        /// <summary>
+        /// Creates string from options which denotes all properties which will be included when geting an entity.
+        /// </summary>
+        /// <param name="options">The options.</param>
+        /// <returns></returns>
         public static string CreateIncludeString(IOptions options)
         {
             string include = "";
@@ -87,6 +102,11 @@ namespace LiturgicalMusic.Repository
             return include;
         }
 
+        /// <summary>
+        /// Generates hash from string.
+        /// </summary>
+        /// <param name="text">The text.</param>
+        /// <returns></returns>
         public static string Hash(string text)
         {
             int hash = text.GetHashCode();
@@ -104,6 +124,11 @@ namespace LiturgicalMusic.Repository
             return result;
         }
 
+        /// <summary>
+        /// Creates song file name.
+        /// </summary>
+        /// <param name="song">The song.</param>
+        /// <returns></returns>
         public static string SongFileName(ISong song)
         {
             string songFileName = song.Title;
@@ -120,6 +145,14 @@ namespace LiturgicalMusic.Repository
             return songFileName;
         }
 
+        /// <summary>
+        /// Updates PDF file.
+        /// </summary>
+        /// <param name="song">The song.</param>
+        /// <param name="tempFileName">The file name for temporary files.</param>
+        /// <param name="oldSongFileName">The file name before update.</param>
+        /// <param name="deleteTempFiles">Whether to delete temporary files or not.</param>
+        /// <returns></returns>
         public async static Task UpdatePdfAsync(ISong song, string tempFileName, string oldSongFileName, bool deleteTempFiles)
         {
             string newSongFileName = SongFileName(song);
@@ -132,5 +165,7 @@ namespace LiturgicalMusic.Repository
 
             await CreatePdfAsync(song, tempFileName, deleteTempFiles);
         }
+
+        #endregion Methods
     }
 }

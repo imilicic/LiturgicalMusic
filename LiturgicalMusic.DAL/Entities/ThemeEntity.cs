@@ -11,16 +11,32 @@ namespace LiturgicalMusic.DAL
     [Table("ThemeCategories")]
     public class ThemeEntity
     {
+        #region Constructors
         public ThemeEntity()
         {
             this.Songs = new HashSet<SongEntity>();
         }
+        #endregion Constructors
 
+        #region Properties
+        /// <summary>
+        /// Gets or sets the identifier.
+        /// </summary>
+        /// <value>The identifier.</value>
         public int Id { get; set; }
 
+        /// <summary>
+        /// Gets or sets category name.
+        /// </summary>
+        /// <value>The name.</value>
         [Required, MaxLength(50)]
         public string Name { get; set; }
 
+        /// <summary>
+        /// Gets or sets songs having this category.
+        /// </summary>
+        /// <value>The songs.</value>
         public ICollection<SongEntity> Songs { get; set; }
+        #endregion Properties
     }
 }
