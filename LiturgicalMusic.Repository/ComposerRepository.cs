@@ -11,7 +11,7 @@ using System.Data.Entity;
 
 namespace LiturgicalMusic.Repository
 {
-    public class ComposerRepository : GenericRepository<ComposerEntity>, IComposerRepository, IDisposable
+    public class ComposerRepository : Repository<ComposerEntity>, IComposerRepository
     {
         protected IMapper Mapper { get; private set; }
 

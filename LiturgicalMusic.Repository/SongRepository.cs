@@ -17,7 +17,7 @@ using System.Data.Entity.Migrations;
 
 namespace LiturgicalMusic.Repository
 {
-    public class SongRepository : GenericRepository<SongEntity>, ISongRepository, IDisposable
+    public class SongRepository : Repository<SongEntity>, ISongRepository
     {
         protected IMapper Mapper { get; private set; }
 
@@ -133,61 +133,6 @@ namespace LiturgicalMusic.Repository
             songDb = await base.UpdateAsync(songDb);
 
             return Mapper.Map<ISong>(songDb);
-
-            // CRUD Instrumental part
-            //List<InstrumentalPartEntity> parts = Context.InstrumentalParts.Where(p => p.SongId.Equals(songEntity.Id)).ToList();
-
-            //foreach (InstrumentalPartEntity part in parts)
-            //{
-            //    if (songEntity.InstrumentalParts.SingleOrDefault(p => p.Position.Equals(part.Position)) == null)
-            //    {
-            //        Context.InstrumentalParts.Remove(part);
-            //    }
-            //}
-
-            //foreach (InstrumentalPartEntity part in songEntity.InstrumentalParts)
-            //{
-            //    InstrumentalPartEntity dbPart = await Context.InstrumentalParts.SingleOrDefaultAsync(p => p.Id.Equals(part.Id));
-
-            //    if (dbPart != null)
-            //    {
-            //        dbPart.Code = part.Code;
-            //        dbPart.Position = part.Position;
-            //        dbPart.Template = part.Template;
-            //        dbPart.Type = part.Type;
-            //    }
-            //    else
-            //    {
-            //        part.SongId = songEntity.Id;
-            //        Context.InstrumentalParts.Add(part);
-            //    }
-            //}
-
-            //// CRUD stanzas
-            //List<StanzaEntity> stanzas = await Context.Stanzas.Where(s => s.SongId.Equals(songEntity.Id)).ToListAsync();
-
-            //foreach (StanzaEntity stanza in stanzas)
-            //{
-            //    if (songEntity.Stanzas.SingleOrDefault(s => s.Id.Equals(stanza.Id)) == null)
-            //    {
-            //        Context.Stanzas.Remove(stanza);
-            //    }
-            //}
-
-            //foreach (StanzaEntity stanza in songEntity.Stanzas)
-            //{
-            //    StanzaEntity dbStanza = await Context.Stanzas.SingleOrDefaultAsync(s => s.Id.Equals(stanza.Id));
-
-            //    if (dbStanza != null)
-            //    {
-            //        dbStanza.Text = stanza.Text;
-            //    }
-            //    else
-            //    {
-            //        stanza.SongId = songEntity.Id;
-            //        Context.Stanzas.Add(stanza);
-            //    }
-            //}
         }
     }
 }

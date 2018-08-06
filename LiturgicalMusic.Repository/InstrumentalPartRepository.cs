@@ -10,11 +10,11 @@ using LiturgicalMusic.Repository.Common;
 
 namespace LiturgicalMusic.Repository
 {
-    public class InstrumentalPartRepository : GenericRepository<InstrumentalPartEntity>, IInstrumentalPartRepository
+    public class InstrumentalPartRepository : Repository<InstrumentalPartEntity>, IInstrumentalPartRepository
     {
         protected IMapper Mapper { get; private set; }
 
-        public InstrumentalPartRepository(IMapper mapper, MusicContext context) : base(context)
+        public InstrumentalPartRepository(MusicContext context, IMapper mapper) : base(context)
         {
             this.Mapper = mapper;
         }

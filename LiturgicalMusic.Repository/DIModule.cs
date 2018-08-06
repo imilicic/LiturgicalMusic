@@ -12,10 +12,11 @@ namespace LiturgicalMusic.Repository
     {
         public override void Load()
         {
-            Bind<IComposerRepository>().To<ComposerRepository>();
-            Bind<ISongRepository>().To<SongRepository>();
-            Bind<IStanzaRepository>().To<StanzaRepository>();
-            Bind<IInstrumentalPartRepository>().To<InstrumentalPartRepository>();
+            //Bind<IComposerRepository>().To<ComposerRepository>();
+            //Bind<ISongRepository>().To<SongRepository>();
+            //Bind<IStanzaRepository>().To<StanzaRepository>();
+            //Bind<IInstrumentalPartRepository>().To<InstrumentalPartRepository>();
+            Bind<UnitOfWork>().ToSelf().InSingletonScope();
         }
     }
 }

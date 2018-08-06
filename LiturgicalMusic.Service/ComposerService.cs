@@ -5,18 +5,18 @@ using System.Text;
 using System.Threading.Tasks;
 using LiturgicalMusic.Service.Common;
 using LiturgicalMusic.Model.Common;
-using LiturgicalMusic.Repository.Common;
+using LiturgicalMusic.Repository;
 using LiturgicalMusic.Model;
 
 namespace LiturgicalMusic.Service
 {
     public class ComposerService : IComposerService
     {
-        protected IComposerRepository Repository { get; private set; }
+        protected UnitOfWork UnitOfWork { get; private set; }
 
-        public ComposerService(IComposerRepository repository)
+        public ComposerService(UnitOfWork unitOfWork)
         {
-            this.Repository = repository;
+            this.UnitOfWork = unitOfWork;
         }
 
         public IComposer Create()
@@ -26,17 +26,17 @@ namespace LiturgicalMusic.Service
 
         public async Task<List<IComposer>> GetAsync()
         {
-            return await Repository.GetAsync();
+            return await UnitOfWork.ComposerRepository.GetAsync();
         }
 
         public async Task<IComposer> GetByIdAsync(int composerId)
         {
-            return await Repository.GetByIdAsync(composerId);
+            return await UnitOfWork.ComposerRepository.GetByIdAsync(composerId);
         }
 
         public async Task<IComposer> InsertAsync(IComposer composer)
         {
-            return await Repository.InsertAsync(composer);
+            return await UnitOfWork.ComposerRepository.InsertAsync(composer);
         }
     }
 }

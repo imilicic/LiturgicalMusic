@@ -11,11 +11,11 @@ using System.Linq.Expressions;
 
 namespace LiturgicalMusic.Repository
 {
-    public class StanzaRepository : GenericRepository<StanzaEntity>, IStanzaRepository, IDisposable
+    public class StanzaRepository : Repository<StanzaEntity>, IStanzaRepository
     {
         protected IMapper Mapper { get; private set; }
 
-        public StanzaRepository(IMapper mapper, MusicContext context) : base(context)
+        public StanzaRepository(MusicContext context, IMapper mapper) : base(context)
         {
             this.Mapper = mapper;
         }

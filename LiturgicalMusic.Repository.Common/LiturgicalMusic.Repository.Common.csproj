@@ -41,7 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IComposerRepository.cs" />
-    <Compile Include="IGenericRepository.cs" />
+    <Compile Include="IRepository.cs" />
     <Compile Include="IInstrumentalPartRepository.cs" />
     <Compile Include="ISongRepository.cs" />
     <Compile Include="IStanzaRepository.cs" />

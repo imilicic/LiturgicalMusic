@@ -8,8 +8,7 @@ using System.Linq.Expressions;
 
 namespace LiturgicalMusic.Repository.Common
 {
-    public interface IGenericRepository<TEntity> : IDisposable
-        where TEntity : class, IEntity
+    public interface IRepository<TEntity> where TEntity : class, IEntity
     {
         Task DeleteAsync(TEntity entity);
         Task<List<TEntity>> GetAsync(
