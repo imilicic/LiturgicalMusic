@@ -8,6 +8,7 @@ using LiturgicalMusic.Repository.Common;
 using AutoMapper;
 using LiturgicalMusic.Model.Common;
 using System.Linq.Expressions;
+using System.Data.Entity;
 
 namespace LiturgicalMusic.Repository
 {
@@ -25,11 +26,11 @@ namespace LiturgicalMusic.Repository
             await base.DeleteAsync(await base.GetByIdAsync(stanzaId));
         }
 
-        public async Task<List<IStanza>> GetBySongAsync(int songId)
+        public async Task<IList<IStanza>> GetBySongAsync(int songId)
         {
-            List<StanzaEntity> stanzas = await base.GetAsync(s => s.SongId.Equals(songId));
+            IList<StanzaEntity> stanzas = await base.Get(s => s.SongId.Equals(songId)).ToListAsync();
 
-            return Mapper.Map<List<IStanza>>(stanzas);
+            return Mapper.Map<IList<IStanza>>(stanzas);
         }
 
         public async Task<IStanza> InsertAsync(IStanza stanza, int songId)

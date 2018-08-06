@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Net;
 using System.Threading.Tasks;
 using LiturgicalMusic.Common;
+using X.PagedList;
 
 namespace LiturgicalMusic.WebAPI.Controllers
 {
@@ -38,7 +39,7 @@ namespace LiturgicalMusic.WebAPI.Controllers
 
         [HttpGet]
         [Route("get")]
-        public async Task<HttpResponseMessage> GetAsync([FromUri] FilterModel filter)
+        public async Task<HttpResponseMessage> GetAsync([FromUri] FilterModel filter, string orderBy = "title", bool ascending = true, int pageNumber = 1, int pageSize = 20)
         {
             IOptions options = new Options()
             {
@@ -46,9 +47,12 @@ namespace LiturgicalMusic.WebAPI.Controllers
                 Composer = true
             };
 
-            List<ISong> s = await Service.GetAsync(Mapper.Map<IFilter>(filter), options);
-            List<SongModel> result = Mapper.Map<List<SongModel>>(s);
-            return Request.CreateResponse(HttpStatusCode.OK, result);
+            IPagedList<ISong> result = await Service.GetAsync(Mapper.Map<IFilter>(filter), options, orderBy, ascending, pageNumber, pageSize);
+            HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.OK, result);
+
+            response.Headers.Add("Song-count", result.TotalItemCount.ToString());
+
+            return response;
         }
 
         [HttpGet]
@@ -103,24 +107,24 @@ namespace LiturgicalMusic.WebAPI.Controllers
             public string Position { get; set; }
             public string Type { get; set; }
             public string Code { get; set; }
-            public List<bool> Template { get; set; }
+            public IList<bool> Template { get; set; }
         }
 
         public class SongModel
         {
             public int Id { get; set; }
             public string Title { get; set; }
-            public List<bool> Template { get; set; }
+            public IList<bool> Template { get; set; }
             public string Type { get; set; }
             public string Code { get; set; }
             public string Source { get; set; }
             public string OtherInformations { get; set; }
-            public List<StanzaModel> Stanzas { get; set; }
+            public IList<StanzaModel> Stanzas { get; set; }
             public ComposerModel Composer { get; set; }
             public ComposerModel Arranger { get; set; }
-            public List<InstrumentalPartModel> InstrumentalParts { get; set; }
-            public List<int> ThemeCategories { get; set; }
-            public List<int> LiturgyCategories { get; set; }
+            public IList<InstrumentalPartModel> InstrumentalParts { get; set; }
+            public IList<int> ThemeCategories { get; set; }
+            public IList<int> LiturgyCategories { get; set; }
         }
 
         public class StanzaModel

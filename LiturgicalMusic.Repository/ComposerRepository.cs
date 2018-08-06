@@ -20,15 +20,9 @@ namespace LiturgicalMusic.Repository
             this.Mapper = mapper;
         }
 
-        public async Task<List<IComposer>> GetAsync()
+        public async Task<IList<IComposer>> GetAsync()
         {
-            List<ComposerEntity> composerEntities;
-
-            using (var db = new MusicContext())
-            {
-                composerEntities = await db.Composers.OrderBy(c => c.Surname).ToListAsync();
-            }
-            return Mapper.Map<List<IComposer>>(composerEntities);
+            return Mapper.Map<IList<IComposer>>(await base.Get(null, cs => cs.OrderBy(c => c.Surname)).ToListAsync());
         }
 
         public async Task<IComposer> GetByIdAsync(int composerId)

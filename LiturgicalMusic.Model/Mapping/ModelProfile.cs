@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using LiturgicalMusic.DAL;
 using LiturgicalMusic.Model.Common;
+using X.PagedList;
 
 namespace LiturgicalMusic.Model.Mapping
 {

@@ -29,8 +29,8 @@ namespace LiturgicalMusic.WebAPI.Controllers
         [Route("get")]
         public async Task<HttpResponseMessage> GetAsync()
         {
-            List<IComposer> c = await Service.GetAsync();
-            List<ComposerModel> result = Mapper.Map<List<ComposerModel>>(c);
+            IList<IComposer> c = await Service.GetAsync();
+            IList<ComposerModel> result = Mapper.Map<IList<ComposerModel>>(c);
             return Request.CreateResponse(HttpStatusCode.OK, result);
         }
 

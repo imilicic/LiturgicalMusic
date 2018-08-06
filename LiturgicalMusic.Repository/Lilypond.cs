@@ -54,15 +54,15 @@ namespace LiturgicalMusic.Repository
         #region Methods
         public async Task<string> CreateFileAsync()
         {
-            List<ICode> organCode = ExtractCode(Song.Code, INSTRUMENT_PARTS_PROPERTY);
-            List<ICode> voiceCode = ExtractCode(Song.Code, HUMAN_VOICE_PARTS_PROPERTY);
+            IList<ICode> organCode = ExtractCode(Song.Code, INSTRUMENT_PARTS_PROPERTY);
+            IList<ICode> voiceCode = ExtractCode(Song.Code, HUMAN_VOICE_PARTS_PROPERTY);
             IInstrumentalPart prelude = null, interlude = null, coda = null;
 
             if (Song.InstrumentalParts.Count() > 0)
             {
-                prelude = Song.InstrumentalParts.Find(p => p.Position.Equals(PRELUDE_PART));
-                interlude = Song.InstrumentalParts.Find(p => p.Position.Equals(INTERLUDE_PART));
-                coda = Song.InstrumentalParts.Find(p => p.Position.Equals(CODA_PART));
+                prelude = Song.InstrumentalParts.SingleOrDefault(p => p.Position.Equals(PRELUDE_PART));
+                interlude = Song.InstrumentalParts.SingleOrDefault(p => p.Position.Equals(INTERLUDE_PART));
+                coda = Song.InstrumentalParts.SingleOrDefault(p => p.Position.Equals(CODA_PART));
             }
 
             using (StreamWriter file = new StreamWriter(String.Format(@"{0}\{1}.ly", Path, FileName)))
@@ -71,20 +71,20 @@ namespace LiturgicalMusic.Repository
 
                 if (prelude != null)
                 {
-                    List<ICode> preludeCode = ExtractCode(prelude.Code);
+                    IList<ICode> preludeCode = ExtractCode(prelude.Code);
 
                     await file.WriteLineAsync(CreateVoices(preludeCode, prelude.Template, PRELUDE_PART));
                     await file.WriteLineAsync(CreatePartScore(prelude.Template, PRELUDE_PART, true));
                 }
 
-                await file.WriteLineAsync(CreateVoices(voiceCode, Song.Template.GetRange(0, 4), HUMAN_VOICE_PARTS));
-                await file.WriteLineAsync(CreateVoices(organCode, Song.Template.GetRange(4, 4), INSTRUMENT_PARTS));
+                await file.WriteLineAsync(CreateVoices(voiceCode, Song.Template.Take(4).ToList(), HUMAN_VOICE_PARTS));
+                await file.WriteLineAsync(CreateVoices(organCode, Song.Template.Skip(4).ToList(), INSTRUMENT_PARTS));
                 await file.WriteLineAsync(CreateLyrics(Song.Stanzas));
                 await file.WriteLineAsync(CreateMainScore());
 
                 if (interlude != null)
                 {
-                    List<ICode> interludeCode = ExtractCode(interlude.Code);
+                    IList<ICode> interludeCode = ExtractCode(interlude.Code);
 
                     await file.WriteLineAsync(CreateVoices(interludeCode, interlude.Template, INTERLUDE_PART));
                     await file.WriteLineAsync(CreatePartScore(interlude.Template, INTERLUDE_PART));
@@ -92,7 +92,7 @@ namespace LiturgicalMusic.Repository
 
                 if (coda != null)
                 {
-                    List<ICode> codaCode = ExtractCode(coda.Code);
+                    IList<ICode> codaCode = ExtractCode(coda.Code);
 
                     await file.WriteLineAsync(CreateVoices(codaCode, coda.Template, CODA_PART));
                     await file.WriteLineAsync(CreatePartScore(coda.Template, CODA_PART));
@@ -120,19 +120,20 @@ namespace LiturgicalMusic.Repository
             return String.Format(@"{0}\{1}.pdf", Path, FileName);
         }
 
-        private string CreateGrandStaff(List<bool> template, string instrument, List<IStanza> stanzas = null, int markedVoice = -1)
+        private string CreateGrandStaff(IList<bool> template, string instrument, IList<IStanza> stanzas = null, int markedVoice = -1)
         {
             StringBuilder grandStaff = new StringBuilder();
-            List<List<string>> staffs = GetVoices(template, instrument);
+            IList<IList<string>> staffs = GetVoices(template, instrument);
 
             grandStaff.AppendLine(@"\new GrandStaff <<");
             grandStaff.AppendLine(CreateStaff(staffs[0], UPPER_STAFF, markedVoice));
 
             if (markedVoice >= 0)
             {
-                stanzas.ForEach((IStanza stanza) => {
+                foreach (IStanza stanza in stanzas)
+                {
                     grandStaff.AppendLine(String.Format(@"\new Lyrics \lyricsto ""{0}"" \lyrics{1}", MARKED_VOICE, ALPHABET[stanza.Number - 1]));
-                });
+                }
             }
 
             grandStaff.AppendLine(CreateStaff(staffs[1], LOWER_STAFF));
@@ -173,15 +174,16 @@ namespace LiturgicalMusic.Repository
             return header.ToString();
         }
 
-        private string CreateLyrics(List<IStanza> stanzas)
+        private string CreateLyrics(IList<IStanza> stanzas)
         {
             StringBuilder lyrics = new StringBuilder();
 
-            stanzas.ForEach((IStanza stanza) => {
+            foreach (IStanza stanza in stanzas)
+            {
                 lyrics.AppendLine(String.Format(@"lyrics{0} = \lyricmode {{", ALPHABET[stanza.Number - 1]));
                 lyrics.AppendLine(stanza.Text);
                 lyrics.AppendLine("}");
-            });
+            }
 
             return lyrics.ToString();
         }
@@ -189,8 +191,8 @@ namespace LiturgicalMusic.Repository
         private string CreateMainScore()
         {
             StringBuilder score = new StringBuilder();
-            List<bool> voiceTemplate = Song.Template.GetRange(0, 4);
-            List<bool> organTemplate = Song.Template.GetRange(4, 4);
+            IList<bool> voiceTemplate = Song.Template.Take(4).ToList();
+            IList<bool> organTemplate = Song.Template.Skip(4).ToList();
 
             score.AppendLine(@"\score {");
             score.AppendLine(@"<<");
@@ -216,7 +218,7 @@ namespace LiturgicalMusic.Repository
             return score.ToString();
         }
 
-        private string CreatePartScore(List<bool> template, string instrument, bool isPrelude = false)
+        private string CreatePartScore(IList<bool> template, string instrument, bool isPrelude = false)
         {
             StringBuilder score = new StringBuilder();
 
@@ -228,13 +230,13 @@ namespace LiturgicalMusic.Repository
 
             score.AppendLine(@"\score {");
 
-            if (template.GetRange(0, 2).Any(s => s) && template.GetRange(2, 2).Any(s => s)) // there is upper and lower parts, ie grandstaff must be used
+            if (template.Take(2).Any(s => s) && template.Skip(2).Any(s => s)) // there is upper and lower parts, ie grandstaff must be used
             {
                 score.AppendLine(CreateGrandStaff(template, instrument));
             }
             else // use only one staff
             {
-                List<List<string>> staffs = GetVoices(template, instrument);
+                IList<IList<string>> staffs = GetVoices(template, instrument);
 
                 if (staffs[0].Count() == 0)
                 {
@@ -257,11 +259,11 @@ namespace LiturgicalMusic.Repository
             return score.ToString();
         }
 
-        private string CreateStaff(List<string> voices, string position, int markedVoice = -1)
+        private string CreateStaff(IList<string> voices, string position, int markedVoice = -1)
         {
             StringBuilder staff = new StringBuilder();
             int i = 0;
-            List<string> numbers = new List<string> { "One", "Two" };
+            IList<string> numbers = new List<string> { "One", "Two" };
 
             staff.AppendLine(String.Format(@"\new Staff = ""{0}"" <<", position));
 
@@ -296,19 +298,19 @@ namespace LiturgicalMusic.Repository
             return staff.ToString();
         }
 
-        private string CreateStavesForScore(List<bool> template, int markVoice, string voiceName)
+        private string CreateStavesForScore(IList<bool> template, int markVoice, string voiceName)
         {
             StringBuilder staves = new StringBuilder();
 
             if (template.Any(s => s))
             {
-                if (template.GetRange(0, 2).Any(s => s) && template.GetRange(2, 2).Any(s => s)) // there is upper and lower parts, ie grandstaff must be used
+                if (template.Take(2).Any(s => s) && template.Skip(2).Any(s => s)) // there is upper and lower parts, ie grandstaff must be used
                 {
                     staves.AppendLine(CreateGrandStaff(template, voiceName, Song.Stanzas, markVoice));
                 }
                 else // use only one staff
                 {
-                    List<List<string>> staffs = GetVoices(template, voiceName);
+                    IList<IList<string>> staffs = GetVoices(template, voiceName);
 
                     if (staffs[0].Count() == 0)
                     {
@@ -321,9 +323,10 @@ namespace LiturgicalMusic.Repository
 
                     if (markVoice >= 0)
                     {
-                        Song.Stanzas.ForEach((IStanza stanza) => {
+                        foreach (IStanza stanza in Song.Stanzas)
+                        {
                             staves.AppendLine(String.Format(@"\new Lyrics \lyricsto ""{0}"" \lyrics{1}", MARKED_VOICE, ALPHABET[stanza.Number - 1]));
-                        });
+                        }
                     }
                 }
             }
@@ -331,7 +334,7 @@ namespace LiturgicalMusic.Repository
             return staves.ToString();
         }
 
-        private string CreateVoices(List<ICode> codeList, List<bool> template, string instrument)
+        private string CreateVoices(IList<ICode> codeList, IList<bool> template, string instrument)
         {
             StringBuilder voices = new StringBuilder();
 
@@ -354,13 +357,13 @@ namespace LiturgicalMusic.Repository
             return voices.ToString();
         }
 
-        private List<ICode> ExtractCode(string codeString, string mustContain = null)
+        private IList<ICode> ExtractCode(string codeString, string mustContain = null)
         {
             Dictionary<string, string> codeRaw = JsonConvert.DeserializeObject<Dictionary<string, string>>(codeString);
-            List<string> voices = new List<string>() { "", "", "", "" };
-            List<string> relatives = new List<string>() { "", "", "", "" };
+            IList<string> voices = new List<string>() { "", "", "", "" };
+            IList<string> relatives = new List<string>() { "", "", "", "" };
             int i = 0;
-            List<string> keys;
+            IList<string> keys;
             
             if (mustContain != null)
             {
@@ -393,7 +396,7 @@ namespace LiturgicalMusic.Repository
                 }
             }
 
-            List<ICode> codeList = new List<ICode>();
+            IList<ICode> codeList = new List<ICode>();
 
             for (i = 0; i < voices.Count; i++)
             {
@@ -410,10 +413,10 @@ namespace LiturgicalMusic.Repository
             return codeList;
         }
 
-        private List<List<string>> GetVoices(List<bool> template, string instrument)
+        private IList<IList<string>> GetVoices(IList<bool> template, string instrument)
         {
-            List<string> staff1 = new List<string>();
-            List<string> staff2 = new List<string>();
+            IList<string> staff1 = new List<string>();
+            IList<string> staff2 = new List<string>();
 
             for (int i = 0; i < template.Count; i++)
             {
@@ -430,7 +433,7 @@ namespace LiturgicalMusic.Repository
                 }
             }
 
-            return new List<List<string>> { staff1, staff2 };
+            return new List<IList<string>> { staff1, staff2 };
         }
         #endregion Methods
     }

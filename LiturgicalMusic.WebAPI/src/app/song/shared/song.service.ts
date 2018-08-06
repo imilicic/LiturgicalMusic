@@ -28,11 +28,10 @@ export class SongService {
             .catch(this.handleError);
     }
 
-    searchSongs(filter: Filter): Observable<Song[]> {
-        let query = "/api/songs/get?title=" + filter.Title;
+    searchSongs(filter: Filter, orderBy: string, ascending: boolean, pageNumber: number, pageSize: number): Observable<Response> {
+        let query = "/api/songs/get?title=" + filter.Title + "&&orderBy=" + orderBy + "&&ascending=" + ascending + "&&pageNumber=" + pageNumber + "&&pageSize=" + pageSize;
 
         return this.http.get(query)
-            .map((response: Response) => <Song[]>response.json())
             .catch(this.handleError);
     }
 

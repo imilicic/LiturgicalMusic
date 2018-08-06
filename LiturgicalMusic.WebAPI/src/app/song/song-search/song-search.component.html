@@ -4,6 +4,29 @@
         <label class="control-label" for="title">Naziv</label>
         <input class="form-control" formControlName="title" id="title" type="text" />
     </div>
+    <div class="form-group">
+        <label>Sortiranje po</label>
+        <div class="radio">
+            <label>
+                <input type="radio" name="orderBy" value="title" formControlName="orderBy"/> nazivu
+            </label>
+        </div>
+        <div class="radio">
+            <label>
+                <input type="radio" name="orderBy" value="composer" formControlName="orderBy"/> autoru
+            </label>
+        </div>
+        <div class="radio">
+            <label>
+                <input type="radio" name="orderBy" value="arranger" formControlName="orderBy" /> harmonizatoru
+            </label>
+        </div>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" formControlName="ascending"/> Sortiraj uzlazno
+            </label>
+        </div>
+    </div>
     <button class="btn btn-default">Pretraži</button>
     <span *ngIf="spinner">
         <img src="app/assets/image/spinner.gif" style="width: 100px;"/>
@@ -23,7 +46,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let song of songs">
+            <tr *ngFor="let song of songs | paginate: { itemsPerPage: pageSize, currentPage: pageNumber, totalItems: songCount}">
                 <td class="col-md-3"><a [routerLink]="[song.Id]">{{song.Title}}</a></td>
                 <td class="col-md-2">{{song.Composer?.Name}} {{song.Composer?.Surname}}</td>
                 <td class="col-md-2">{{song.Arranger?.Name}} {{song.Arranger?.Surname}}</td>
@@ -32,4 +55,7 @@
             </tr>
         </tbody>
     </table>
+    <div style="text-align:center">
+        <pagination-controls (pageChange)="pageChanged($event)" previousLabel="Prethodna" nextLabel="Sljedeća"></pagination-controls>
+    </div>
 </div>

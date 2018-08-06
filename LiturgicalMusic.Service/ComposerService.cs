@@ -24,7 +24,7 @@ namespace LiturgicalMusic.Service
             return new Composer();
         }
 
-        public async Task<List<IComposer>> GetAsync()
+        public async Task<IList<IComposer>> GetAsync()
         {
             return await UnitOfWork.ComposerRepository.GetAsync();
         }

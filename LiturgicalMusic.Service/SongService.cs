@@ -9,6 +9,7 @@ using LiturgicalMusic.Repository;
 using LiturgicalMusic.Common;
 using LiturgicalMusic.Model;
 using AutoMapper;
+using X.PagedList;
 
 namespace LiturgicalMusic.Service
 {
@@ -33,9 +34,9 @@ namespace LiturgicalMusic.Service
             return await UnitOfWork.SongRepository.GetByIdAsync(songId, options);
         }
 
-        public async Task<List<ISong>> GetAsync(IFilter filter, IOptions options)
+        public async Task<IPagedList<ISong>> GetAsync(IFilter filter, IOptions options, string orderBy, bool ascending, int pageNumber, int pageSize)
         {
-            return await UnitOfWork.SongRepository.GetAsync(filter, options);
+            return await UnitOfWork.SongRepository.GetAsync(filter, options, orderBy, ascending, pageNumber, pageSize);
         }
 
         public async Task<ISong> InsertAsync(ISong song)
@@ -51,7 +52,7 @@ namespace LiturgicalMusic.Service
         public async Task<ISong> UpdateAsync(ISong song)
         {
             // cud stanzas
-            List<IStanza> stanzas = await UnitOfWork.StanzaRepository.GetBySongAsync(song.Id);
+            IList<IStanza> stanzas = await UnitOfWork.StanzaRepository.GetBySongAsync(song.Id);
 
             foreach (IStanza stanza in stanzas)
             {
@@ -73,7 +74,7 @@ namespace LiturgicalMusic.Service
             }
 
             // cud instrumental parts
-            List<IInstrumentalPart> instrumentalParts = await UnitOfWork.InstrumentalPartRepository.GetBySongAsync(song.Id);
+            IList<IInstrumentalPart> instrumentalParts = await UnitOfWork.InstrumentalPartRepository.GetBySongAsync(song.Id);
 
             foreach (IInstrumentalPart part in instrumentalParts)
             {

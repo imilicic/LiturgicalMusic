@@ -11,7 +11,7 @@ namespace LiturgicalMusic.Repository.Common
     public interface IStanzaRepository
     {
         Task DeleteAsync(int stanzaId);
-        Task<List<IStanza>> GetBySongAsync(int songId);
+        Task<IList<IStanza>> GetBySongAsync(int songId);
         Task<IStanza> InsertAsync(IStanza stanza, int songId);
         Task<IStanza> UpdateAsync(IStanza stanza);
     }

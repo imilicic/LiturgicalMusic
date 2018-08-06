@@ -1,19 +1,15 @@
 ﻿using AutoMapper;
 using LiturgicalMusic.DAL;
-using LiturgicalMusic.Model;
 using LiturgicalMusic.Model.Common;
 using LiturgicalMusic.Repository.Common;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Data.Entity;
 using LiturgicalMusic.Common;
-using System.Data.Entity.Migrations;
+using X.PagedList;
+using AutoMapper.QueryableExtensions;
 
 namespace LiturgicalMusic.Repository
 {
@@ -34,22 +30,62 @@ namespace LiturgicalMusic.Repository
             return Mapper.Map<ISong>(songEntity);
         }
 
-        public async Task<List<ISong>> GetAsync(IFilter filter, IOptions options)
+        public async Task<IPagedList<ISong>> GetAsync(IFilter filter, IOptions options, string orderBy, bool ascending, int pageNumber, int pageSize)
         {
-            List<SongEntity> songEntities;
+            IQueryable<SongEntity> query;
+            Func<IQueryable<SongEntity>, IOrderedQueryable<SongEntity>> order;
             string include = SongHelper.CreateIncludeString(options);
-            Func<IQueryable<SongEntity>, IOrderedQueryable<SongEntity>> orderByTitle = s => s.OrderBy(se => se.Title);
+
+            switch (orderBy)
+            {
+                case "title":
+                    if (ascending)
+                    {
+                        order = s => s.OrderBy(se => se.Title);
+                    }
+                    else
+                    {
+                        order = s => s.OrderByDescending(se => se.Title);
+                    }
+                    break;
+                case "composer":
+                    if (ascending)
+                    {
+                        order = s => s.OrderBy(se => se.Composer.Surname);
+                    }
+                    else
+                    {
+                        order = s => s.OrderByDescending(se => se.Composer.Surname);
+                    }
+                    break;
+                case "arranger":
+                    if (ascending)
+                    {
+                        order = s => s.OrderBy(se => se.Arranger.Surname);
+                    }
+                    else
+                    {
+                        order = s => s.OrderByDescending(se => se.Arranger.Surname);
+                    }
+                    break;
+                default:
+                    order = s => s.OrderBy(se => se.Title);
+                    break;
+            }
 
             if (filter.Title != null)
             {
-                songEntities = await base.GetAsync(s => s.Title.Contains(filter.Title), orderByTitle, include);
+                query = base.Get(s => s.Title.Contains(filter.Title), order, include);
             }
             else
             {
-                songEntities = await base.GetAsync(null, orderByTitle, include);
+                query = base.Get(null, order, include);
             }
 
-            return Mapper.Map<List<ISong>>(songEntities);
+            IPagedList<SongEntity> songEntities = await query.ToPagedListAsync(pageNumber, pageSize);
+            IPagedList<ISong> result = new StaticPagedList<ISong>(Mapper.Map<IEnumerable<ISong>>(songEntities), songEntities.GetMetaData());
+
+            return result;
         }
 
         public async Task<ISong> InsertAsync(ISong song)

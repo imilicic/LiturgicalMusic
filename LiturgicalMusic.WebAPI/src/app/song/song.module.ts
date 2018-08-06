@@ -2,6 +2,7 @@
 import { NgModule } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
+import { NgxPaginationModule } from "ngx-pagination";
 
 import { ComposerResolverService } from "./shared/composer-resolver.service";
 import { ComposerService } from "./shared/composer.service";
@@ -19,6 +20,7 @@ import { SongViewComponent } from "./song-view/song-view.component";
 @NgModule({
     imports: [
         CommonModule,
+        NgxPaginationModule,
         ReactiveFormsModule,
         RouterModule,
         SongRoutingModule

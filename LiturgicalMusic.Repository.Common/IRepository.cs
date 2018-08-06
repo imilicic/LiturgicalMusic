@@ -11,7 +11,7 @@ namespace LiturgicalMusic.Repository.Common
     public interface IRepository<TEntity> where TEntity : class, IEntity
     {
         Task DeleteAsync(TEntity entity);
-        Task<List<TEntity>> GetAsync(
+        IQueryable<TEntity> Get(
             Expression<Func<TEntity, bool>> filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             string includeProperties = "");

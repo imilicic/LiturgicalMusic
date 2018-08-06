@@ -10,16 +10,16 @@ namespace LiturgicalMusic.Model.Common
     {
         int Id { get; set; }
         string Title { get; set; }
-        List<bool> Template { get; set; }
+        IList<bool> Template { get; set; }
         string Type { get; set; }
         string Code { get; set; }
         string Source { get; set; }
         string OtherInformations { get; set; }
-        List<IStanza> Stanzas { get; set; }
+        IList<IStanza> Stanzas { get; set; }
         IComposer Composer { get; set; }
         IComposer Arranger { get; set; }
-        List<IInstrumentalPart> InstrumentalParts { get; set; }
-        List<int> ThemeCategories { get; set; }
-        List<int> LiturgyCategories { get; set; }
+        IList<IInstrumentalPart> InstrumentalParts { get; set; }
+        IList<int> ThemeCategories { get; set; }
+        IList<int> LiturgyCategories { get; set; }
     }
 }

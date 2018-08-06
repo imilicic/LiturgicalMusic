@@ -7,6 +7,7 @@ using LiturgicalMusic.DAL;
 using LiturgicalMusic.Model.Common;
 using AutoMapper;
 using LiturgicalMusic.Repository.Common;
+using System.Data.Entity;
 
 namespace LiturgicalMusic.Repository
 {
@@ -24,11 +25,11 @@ namespace LiturgicalMusic.Repository
             await base.DeleteAsync(await base.GetByIdAsync(instrumentalPartId));
         }
 
-        public async Task<List<IInstrumentalPart>> GetBySongAsync(int songId)
+        public async Task<IList<IInstrumentalPart>> GetBySongAsync(int songId)
         {
-            List<InstrumentalPartEntity> instrumentalParts = await base.GetAsync(p => p.SongId.Equals(songId));
+            IList<InstrumentalPartEntity> instrumentalParts = await base.Get(p => p.SongId.Equals(songId)).ToListAsync();
 
-            return Mapper.Map<List<IInstrumentalPart>>(instrumentalParts);
+            return Mapper.Map<IList<IInstrumentalPart>>(instrumentalParts);
         }
 
         public async Task<IInstrumentalPart> InsertAsync(IInstrumentalPart instrumentalPart, int songId)

@@ -8,6 +8,7 @@ using System.Data.Entity;
 using System.Linq.Expressions;
 using LiturgicalMusic.Common;
 using LiturgicalMusic.Repository.Common;
+using X.PagedList;
 
 namespace LiturgicalMusic.Repository
 {
@@ -28,7 +29,7 @@ namespace LiturgicalMusic.Repository
             await Context.SaveChangesAsync();
         }
 
-        public async virtual Task<List<TEntity>> GetAsync(
+        public virtual IQueryable<TEntity> Get(
             Expression<Func<TEntity, bool>> filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             string includeProperties = "")
@@ -48,11 +49,11 @@ namespace LiturgicalMusic.Repository
 
             if (orderBy != null)
             {
-                return await orderBy(query).ToListAsync();
+                return orderBy(query);
             }
             else
             {
-                return await query.ToListAsync();
+                return query;
             }
         }
 
