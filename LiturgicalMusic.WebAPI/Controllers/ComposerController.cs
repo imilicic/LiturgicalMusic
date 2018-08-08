@@ -31,9 +31,7 @@ namespace LiturgicalMusic.WebAPI.Controllers
         /// <summary>
         /// Initializes new instance of <see cref="ComposerController"/> class.
         /// </summary>
-        public ComposerController()
-        {
-        }
+        public ComposerController() { }
 
         /// <summary>
         /// Initializes new instance of <see cref="ComposerController"/> class.

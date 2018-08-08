@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using LiturgicalMusic.Service.Common;
 using LiturgicalMusic.Model.Common;
-using LiturgicalMusic.Repository;
+using LiturgicalMusic.Repository.Common;
 using LiturgicalMusic.Common;
 using LiturgicalMusic.Model;
 using AutoMapper;
@@ -16,30 +16,29 @@ namespace LiturgicalMusic.Service
     public class SongService : ISongService
     {
         #region Properties
-
-        /// <summary>
-        /// Gets or sets unit of work.
-        /// </summary>
-        /// <value>The unit of work.</value>
-        protected UnitOfWork UnitOfWork { get; private set; }
-
         /// <summary>
         /// Gets or sets the mapper.
         /// </summary>
         /// <value>The mapper.</value>
         protected IMapper Mapper { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the song repository.
+        /// </summary>
+        /// <value>The song repository.</value>
+        protected ISongRepository SongRepository { get; private set; }
         #endregion Properties
 
         #region Constructors
         /// <summary>
         /// Initializes new instace of <see cref="SongService"/> class.
         /// </summary>
-        /// <param name="unitOfWork">The unit of work.</param>
         /// <param name="mapper">The mapper.</param>
-        public SongService(UnitOfWork unitOfWork, IMapper mapper)
+        /// <param name="songRepository">The song repository.</param>
+        public SongService(IMapper mapper, ISongRepository songRepository)
         {
-            this.UnitOfWork = unitOfWork;
             this.Mapper = mapper;
+            this.SongRepository = songRepository;
         }
         #endregion Constructors
 
@@ -55,18 +54,6 @@ namespace LiturgicalMusic.Service
         }
 
         /// <summary>
-        /// Gets song by ID which contains certain options.
-        /// </summary>
-        /// <param name="songId">The song ID.</param>
-        /// <param name="options">The options.</param>
-        /// <returns></returns>
-        public async Task<ISong> GetByIdAsync(int songId, IOptions options)
-        {
-            return await UnitOfWork.SongRepository.GetByIdAsync(songId, options);
-        }
-
-
-        /// <summary>
         /// Gets all songs filtered, ordered, using pages
         /// </summary>
         /// <param name="filter">The filter.</param>
@@ -76,9 +63,20 @@ namespace LiturgicalMusic.Service
         /// <param name="pageNumber">The current page number.</param>
         /// <param name="pageSize">The page size.</param>
         /// <returns></returns>
-        public async Task<IPagedList<ISong>> GetAsync(IFilter filter, IOptions options, string orderBy, bool ascending, int pageNumber, int pageSize)
+        public async Task<IPagedList<ISong>> GetAsync(IFilter filter, IOptions options, ISorting sortingOptions, IPaging pageOptions)
         {
-            return await UnitOfWork.SongRepository.GetAsync(filter, options, orderBy, ascending, pageNumber, pageSize);
+            return await SongRepository.GetAsync(filter, options, sortingOptions, pageOptions);
+        }
+
+        /// <summary>
+        /// Gets song by ID which contains certain options.
+        /// </summary>
+        /// <param name="songId">The song ID.</param>
+        /// <param name="options">The options.</param>
+        /// <returns></returns>
+        public async Task<ISong> GetByIdAsync(int songId, IOptions options)
+        {
+            return await SongRepository.GetByIdAsync(songId, options);
         }
 
         /// <summary>
@@ -88,7 +86,9 @@ namespace LiturgicalMusic.Service
         /// <returns></returns>
         public async Task<ISong> InsertAsync(ISong song)
         {
-            return await UnitOfWork.SongRepository.InsertAsync(song);
+            ISong result = await SongRepository.InsertAsync(song);
+
+            return result;
         }
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace LiturgicalMusic.Service
         /// <returns></returns>
         public async Task<ISong> PreviewAsync(ISong song)
         {
-            return await UnitOfWork.SongRepository.PreviewAsync(song);
+            return await SongRepository.PreviewAsync(song);
         }
 
         /// <summary>
@@ -108,53 +108,7 @@ namespace LiturgicalMusic.Service
         /// <returns></returns>
         public async Task<ISong> UpdateAsync(ISong song)
         {
-            // cud stanzas
-            IList<IStanza> stanzas = await UnitOfWork.StanzaRepository.GetBySongAsync(song.Id);
-
-            foreach (IStanza stanza in stanzas)
-            {
-                if (song.Stanzas.SingleOrDefault(s => s.Id.Equals(stanza.Id)) == null) {
-                    await UnitOfWork.StanzaRepository.DeleteAsync(stanza.Id);
-                }
-            }
-
-            foreach (IStanza stanza in song.Stanzas)
-            {
-                if (stanzas.SingleOrDefault(s => s.Id.Equals(stanza.Id)) == null)
-                {
-                    await UnitOfWork.StanzaRepository.InsertAsync(stanza, song.Id);
-                }
-                else
-                {
-                    await UnitOfWork.StanzaRepository.UpdateAsync(stanza);
-                }
-            }
-
-            // cud instrumental parts
-            IList<IInstrumentalPart> instrumentalParts = await UnitOfWork.InstrumentalPartRepository.GetBySongAsync(song.Id);
-
-            foreach (IInstrumentalPart part in instrumentalParts)
-            {
-                if (song.InstrumentalParts.SingleOrDefault(p => p.Id.Equals(part.Id)) == null)
-                {
-                    await UnitOfWork.InstrumentalPartRepository.DeleteAsync(part.Id);
-                }
-            }
-
-            foreach (IInstrumentalPart part in song.InstrumentalParts)
-            {
-                if (instrumentalParts.SingleOrDefault(p => p.Id.Equals(part.Id)) == null)
-                {
-                    await UnitOfWork.InstrumentalPartRepository.InsertAsync(part, song.Id);
-                }
-                else
-                {
-                    await UnitOfWork.InstrumentalPartRepository.UpdateAsync(part);
-                }
-            }
-
-            // update song
-            return await UnitOfWork.SongRepository.UpdateAsync(song);
+            return await SongRepository.UpdateAsync(song);
         }
         #endregion Methods
     }

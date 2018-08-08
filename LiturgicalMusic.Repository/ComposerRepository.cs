@@ -14,35 +14,40 @@ namespace LiturgicalMusic.Repository
     public class ComposerRepository : Repository<ComposerEntity>, IComposerRepository
     {
         #region Properties
-
         /// <summary>
         /// Gets or sets the mapper.
         /// </summary>
         /// <value>The mapper.</value>
         protected IMapper Mapper { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the unit of work class.
+        /// </summary>
+        /// <value>The unit of work.</value>
+        protected IUnitOfWork UnitOfWork { get; private set; }
         #endregion Properties 
 
         #region Constructors
         /// <summary>
         /// Initializes new instace of <see cref="ComposerRepository"/> class.
         /// </summary>
-        /// <param name="context">The context.</param>
         /// <param name="mapper">The mapper.</param>
-        public ComposerRepository(MusicContext context, IMapper mapper) : base(context)
+        public ComposerRepository(IMapper mapper, MusicContext dbContext, IUnitOfWorkFactory uowFactory) : base(dbContext, uowFactory)
         {
             this.Mapper = mapper;
+            this.UnitOfWork = CreateUnitOfWork();
         }
         #endregion Constructors
 
         #region Methods
-
         /// <summary>
         /// Gets all composers.
         /// </summary>
         /// <returns></returns>
         public async Task<IList<IComposer>> GetAsync()
         {
-            return Mapper.Map<IList<IComposer>>(await base.Get(null, cs => cs.OrderBy(c => c.Surname)).ToListAsync());
+            IList<ComposerEntity> composers = await base.Get(null, cs => cs.OrderBy(c => c.Surname)).ToListAsync();
+            return Mapper.Map<IList<IComposer>>(composers);
         }
 
         /// <summary>
@@ -65,7 +70,10 @@ namespace LiturgicalMusic.Repository
         {
             ComposerEntity composerEntity = Mapper.Map<ComposerEntity>(composer);
 
-            return Mapper.Map<IComposer>(await base.InsertAsync(composerEntity));
+            composerEntity = await UnitOfWork.InsertAsync(composerEntity);
+            await UnitOfWork.CommitAsync();
+
+            return Mapper.Map<IComposer>(composerEntity);
         }
         #endregion Methods
     }

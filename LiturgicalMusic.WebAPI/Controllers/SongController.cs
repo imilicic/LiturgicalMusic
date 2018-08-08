@@ -88,8 +88,18 @@ namespace LiturgicalMusic.WebAPI.Controllers
             {
                 Title = searchQuery
             };
+            ISorting sortingOptions = new Sorting()
+            {
+                SortBy = orderBy,
+                SortAscending = ascending
+            };
+            IPaging pageOptions = new Paging()
+            {
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
 
-            IPagedList<ISong> result = await Service.GetAsync(filter, options, orderBy, ascending, pageNumber, pageSize);
+            IPagedList<ISong> result = await Service.GetAsync(filter, options, sortingOptions, pageOptions);
             HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.OK, result);
 
             response.Headers.Add("Song-count", result.TotalItemCount.ToString());

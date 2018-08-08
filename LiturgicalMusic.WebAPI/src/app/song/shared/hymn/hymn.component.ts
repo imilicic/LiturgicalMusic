@@ -243,15 +243,19 @@ export class HymnComponent implements OnInit {
 
         this.lyrics.forEach((l, i) => {
             let stanza: Stanza = new Stanza();
-            let foundStanza: Stanza = this.song.Stanzas.find(s => s.Number == i + 1);
+            let foundStanza: Stanza = undefined;
+
+            if (this.song.Stanzas != undefined) {
+                foundStanza = this.song.Stanzas.find(s => s.Number == i + 1);
+            }
 
             stanza = {
-                Id: null,
+                Id: undefined,
                 Number: i + 1,
                 Text: formValues[l.controlName]
             };
 
-            if (foundStanza != null) {
+            if (foundStanza != undefined) {
                 stanza.Id = foundStanza.Id;
             }
 

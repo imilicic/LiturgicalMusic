@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using LiturgicalMusic.Service.Common;
 using LiturgicalMusic.Model.Common;
-using LiturgicalMusic.Repository;
+using LiturgicalMusic.Repository.Common;
 using LiturgicalMusic.Model;
 
 namespace LiturgicalMusic.Service
@@ -14,10 +14,10 @@ namespace LiturgicalMusic.Service
     {
         #region Properties
         /// <summary>
-        /// Gets or sets unit of work.
+        /// Gets or sets composer repository.
         /// </summary>
-        /// <value>The unit of work.</value>
-        protected UnitOfWork UnitOfWork { get; private set; }
+        /// <value>The composer repository.</value>
+        protected IComposerRepository ComposerRepository { get; private set; }
         #endregion Properties
 
         #region Constructors
@@ -25,9 +25,9 @@ namespace LiturgicalMusic.Service
         /// Initializes new instance of <see cref="ComposerService"/> class.
         /// </summary>
         /// <param name="unitOfWork">The unit of work.</param>
-        public ComposerService(UnitOfWork unitOfWork)
+        public ComposerService(IComposerRepository composerRepository)
         {
-            this.UnitOfWork = unitOfWork;
+            this.ComposerRepository = composerRepository;
         }
         #endregion Constructors
 
@@ -48,7 +48,7 @@ namespace LiturgicalMusic.Service
         /// <returns></returns>
         public async Task<IList<IComposer>> GetAsync()
         {
-            return await UnitOfWork.ComposerRepository.GetAsync();
+            return await ComposerRepository.GetAsync();
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace LiturgicalMusic.Service
         /// <returns></returns>
         public async Task<IComposer> GetByIdAsync(int composerId)
         {
-            return await UnitOfWork.ComposerRepository.GetByIdAsync(composerId);
+            return await ComposerRepository.GetByIdAsync(composerId);
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace LiturgicalMusic.Service
         /// <returns></returns>
         public async Task<IComposer> InsertAsync(IComposer composer)
         {
-            return await UnitOfWork.ComposerRepository.InsertAsync(composer);
+            return await ComposerRepository.InsertAsync(composer);
         }
         #endregion Methods
     }

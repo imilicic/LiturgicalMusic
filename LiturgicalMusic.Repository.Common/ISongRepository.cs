@@ -31,7 +31,7 @@ namespace LiturgicalMusic.Repository.Common
         /// <param name="pageNumber">The current page number.</param>
         /// <param name="pageSize">The page size.</param>
         /// <returns></returns>
-        Task<IPagedList<ISong>> GetAsync(IFilter filter, IOptions options, string orderBy, bool ascending, int pageNumber, int pageSize);
+        Task<IPagedList<ISong>> GetAsync(IFilter filter, IOptions options, ISorting sortingOptions, IPaging pageOptions);
 
         /// <summary>
         /// Inserts a song.

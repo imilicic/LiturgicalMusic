@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Ninject;
 using LiturgicalMusic.Repository.Common;
+using Ninject.Extensions.Factory;
 
 namespace LiturgicalMusic.Repository
 {
@@ -16,7 +17,11 @@ namespace LiturgicalMusic.Repository
         /// </summary>
         public override void Load()
         {
-            Bind<UnitOfWork>().ToSelf().InSingletonScope();
+            Bind<IComposerRepository>().To<ComposerRepository>();
+            Bind<ISongRepository>().To<SongRepository>();
+            Bind(typeof(IRepository<>)).To(typeof(Repository<>));
+            Bind<IUnitOfWorkFactory>().ToFactory();
+            Bind<IUnitOfWork>().To<UnitOfWork>().InSingletonScope();
         }
         #endregion Methods
     }

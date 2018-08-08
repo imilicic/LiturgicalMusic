@@ -8,15 +8,15 @@ using System.Linq.Expressions;
 
 namespace LiturgicalMusic.Repository.Common
 {
-    public interface IRepository<TEntity> where TEntity : class, IEntity
+    public interface IRepository<T> where T : class, IEntity
     {
         #region Methods
+
         /// <summary>
-        /// Deletes entity.
+        /// Creates and returns <see cref="UnitOfWork"/> class.
         /// </summary>
-        /// <param name="entity">The entity.</param>
         /// <returns></returns>
-        Task DeleteAsync(TEntity entity);
+        IUnitOfWork CreateUnitOfWork();
 
         /// <summary>
         /// Gets entities which can be filtered, ordered and include certain properties.
@@ -25,9 +25,9 @@ namespace LiturgicalMusic.Repository.Common
         /// <param name="orderBy">The orderBy function.</param>
         /// <param name="includeProperties">The properties.</param>
         /// <returns></returns>
-        IQueryable<TEntity> Get(
-            Expression<Func<TEntity, bool>> filter = null,
-            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+        IQueryable<T> Get(
+            Expression<Func<T, bool>> filter = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
             string includeProperties = "");
 
         /// <summary>
@@ -36,21 +36,7 @@ namespace LiturgicalMusic.Repository.Common
         /// <param name="entityId">The entity ID.</param>
         /// <param name="includeProperties">The properties.</param>
         /// <returns></returns>
-        Task<TEntity> GetByIdAsync(int entityId, string includeProperties = "");
-
-        /// <summary>
-        /// Inserts an entity.
-        /// </summary>
-        /// <param name="entity">The entity.</param>
-        /// <returns></returns>
-        Task<TEntity> InsertAsync(TEntity entity);
-
-        /// <summary>
-        /// Updates an entity.
-        /// </summary>
-        /// <param name="entity">The entity.</param>
-        /// <returns></returns>
-        Task<TEntity> UpdateAsync(TEntity entity);
+        Task<T> GetByIdAsync(int entityId, string includeProperties = "");
         #endregion Methods
     }
 }

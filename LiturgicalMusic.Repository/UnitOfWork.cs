@@ -6,47 +6,18 @@ using System.Threading.Tasks;
 using LiturgicalMusic.Repository.Common;
 using LiturgicalMusic.DAL;
 using AutoMapper;
+using System.Transactions;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 
 namespace LiturgicalMusic.Repository
 {
-    public class UnitOfWork : IDisposable
+    public class UnitOfWork : IUnitOfWork
     {
-        #region Fields
-        /// <summary>
-        /// Represents context.
-        /// </summary>
-        private MusicContext _context;
-
-        /// <summary>
-        /// Represents mapper.
-        /// </summary>
-        private IMapper _mapper;
-
-        /// <summary>
-        /// Whether this class if disposed or not.
-        /// </summary>
+        #region Properties
+        protected MusicContext DbContext { get; private set; }
         private bool disposed = false;
-
-        /// <summary>
-        /// Represents composer repository.
-        /// </summary>
-        private IComposerRepository _composerRepository;
-
-        /// <summary>
-        /// Represents instrumental part repository.
-        /// </summary>
-        private IInstrumentalPartRepository _instrumentalPartRepository;
-
-        /// <summary>
-        /// Represents song repository.
-        /// </summary>
-        private ISongRepository _songRepository;
-
-        /// <summary>
-        /// Represents stanza repository.
-        /// </summary>
-        private IStanzaRepository _stanzaRepository;
-        #endregion Fields
+        #endregion Properties
 
         #region Constructors
         /// <summary>
@@ -54,95 +25,107 @@ namespace LiturgicalMusic.Repository
         /// </summary>
         /// <param name="context">The context.</param>
         /// <param name="mapper">The mapper.</param>
-        public UnitOfWork(MusicContext context, IMapper mapper)
+        public UnitOfWork(MusicContext dbContext)
         {
-            this._context = context;
-            this._mapper = mapper;
+            this.DbContext = dbContext;
         }
         #endregion Constructors
 
-        #region Properties
-        /// <summary>
-        /// Gets composer repository.
-        /// </summary>
-        /// <value>The composer repository.</value>
-        public IComposerRepository ComposerRepository
-        {
-            get
-            {
-                if (this._composerRepository == null)
-                {
-                    this._composerRepository = new ComposerRepository(_context, _mapper);
-                }
-                return this._composerRepository;
-            }
-        }
-
-        /// <summary>
-        /// Gets instrumental part repository.
-        /// </summary>
-        /// <value>The instrumental part repository.</value>
-        public IInstrumentalPartRepository InstrumentalPartRepository
-        {
-            get
-            {
-                if (this._instrumentalPartRepository == null)
-                {
-                    this._instrumentalPartRepository = new InstrumentalPartRepository(_context, _mapper);
-                }
-                return this._instrumentalPartRepository;
-            }
-        }
-
-        /// <summary>
-        /// Gets song repository.
-        /// </summary>
-        /// <value>The song repository.</value>
-        public ISongRepository SongRepository
-        {
-            get
-            {
-                if (this._songRepository == null)
-                {
-                    this._songRepository = new SongRepository(_context, _mapper);
-                }
-                return this._songRepository;
-            }
-        }
-
-        /// <summary>
-        /// Gets stanza repository.
-        /// </summary>
-        /// <value>The stanza repository.</value>
-        public IStanzaRepository StanzaRepository
-        {
-            get
-            {
-                if (this._stanzaRepository == null)
-                {
-                    this._stanzaRepository = new StanzaRepository(_context, _mapper);
-                }
-                return this._stanzaRepository;
-            }
-        }
-        #endregion Properties
-
         #region Methods
         /// <summary>
-        /// Disposes this class.
+        /// Commits changes made in database.
         /// </summary>
-        /// <param name="disposing">Whether to dispose or not.</param>
-        protected virtual void Dispose(bool disposing)
+        /// <returns></returns>
+        public async Task<int> CommitAsync()
         {
-            if (!this.disposed)
+            int result = 0;
+
+            using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-                if (disposing)
-                {
-                    _context.Dispose();
-                }
+                result = await DbContext.SaveChangesAsync();
+                scope.Complete();
             }
 
-            this.disposed = true;
+            return result;
+        }
+
+        /// <summary>
+        /// Deletes entity.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
+        /// <returns></returns>
+        public Task<int> DeleteAsync<T>(T entity) where T : class
+        {
+            DbEntityEntry dbEntityEntry = DbContext.Entry(entity);
+
+            if (dbEntityEntry.State != EntityState.Deleted)
+            {
+                dbEntityEntry.State = EntityState.Deleted;
+            }
+            else
+            {
+                DbContext.Set<T>().Attach(entity);
+                DbContext.Set<T>().Remove(entity);
+            }
+
+            return Task.FromResult(1);
+        }
+
+        /// <summary>
+        /// Deletes entity by entity ID.
+        /// </summary>
+        /// <param name="entityID">The entity ID.</param>
+        /// <returns></returns>
+        public Task<int> DeleteAsync<T>(int entityID) where T : class
+        {
+            T entity = DbContext.Set<T>().Find(entityID);
+
+            if (entity == null)
+            {
+                return Task.FromResult(0);
+            }
+
+            return DeleteAsync<T>(entity);
+        }
+
+        /// <summary>
+        /// Inserts the entity.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
+        /// <returns></returns>
+        public Task<T> InsertAsync<T>(T entity) where T : class
+        {
+            DbEntityEntry dbEntityEntry = DbContext.Entry(entity);
+
+            if (dbEntityEntry.State != EntityState.Detached)
+            {
+                dbEntityEntry.State = EntityState.Added;
+            }
+            else
+            {
+                DbContext.Set<T>().Add(entity);
+            }
+
+            return Task.FromResult(entity);
+        }
+
+        /// <summary>
+        /// Updates the entity.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
+        /// <returns></returns>
+        public Task<T> UpdateAsync<T>(T entity) where T : class
+        {
+            DbEntityEntry dbEntityEntry = DbContext.Entry(entity);
+
+            if (dbEntityEntry.State == EntityState.Detached)
+            {
+                DbContext.Set<T>().Attach(entity);
+            }
+
+            dbEntityEntry.State = EntityState.Modified;
+
+            return Task.FromResult(entity);
         }
 
         /// <summary>
@@ -150,7 +133,11 @@ namespace LiturgicalMusic.Repository
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
+            if (!this.disposed)
+            {
+                DbContext.Dispose();
+            }
+            this.disposed = true;
             GC.SuppressFinalize(this);
         }
         #endregion Methods

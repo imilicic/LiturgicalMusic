@@ -8,25 +8,29 @@ using System.Data.Entity;
 using System.Linq.Expressions;
 using LiturgicalMusic.Common;
 using LiturgicalMusic.Repository.Common;
-using X.PagedList;
 
 namespace LiturgicalMusic.Repository
 {
-    public class Repository<TEntity> : IRepository<TEntity> where TEntity: class, IEntity
+    public class Repository<T> : IRepository<T> where T: class, IEntity
     {
         #region Properties
-
         /// <summary>
         /// Gets or sets the context.
         /// </summary>
         /// <value>The context.</value>
-        internal MusicContext Context;
+        protected MusicContext DbContext { private get; set; }
 
         /// <summary>
-        /// Gets or sets the DbSet.
+        /// Gets or sets the database set.
         /// </summary>
-        /// <value>The DbSet.</value>
-        internal DbSet<TEntity> DbSet;
+        /// <value>The database set.</value>
+        protected DbSet<T> DbSet { get; private set; }
+
+        /// <summary>
+        /// Gets or sets factory for unit of work.
+        /// </summary>
+        /// <value>The factory for unit of work.</value>
+        protected IUnitOfWorkFactory UowFactory { private get; set; }
         #endregion Properties
 
         #region Constructors
@@ -34,24 +38,23 @@ namespace LiturgicalMusic.Repository
         /// Initializes new instace of <see cref="Repository"/> class.
         /// </summary>
         /// <param name="context">The context.</param>
-        public Repository(MusicContext context)
+        /// <param name="uowFactory">The factory for unit of work.</param>
+        public Repository(MusicContext dbContext, IUnitOfWorkFactory uowFactory)
         {
-            this.Context = context;
-            this.DbSet = Context.Set<TEntity>();
+            this.DbContext = dbContext;
+            this.DbSet = DbContext.Set<T>();
+            this.UowFactory = uowFactory;
         }
         #endregion Constructors
 
         #region Methods
-
         /// <summary>
-        /// Deletes entity.
+        /// Creates and returns <see cref="UnitOfWork"/> class.
         /// </summary>
-        /// <param name="entity">The entity.</param>
         /// <returns></returns>
-        public async virtual Task DeleteAsync(TEntity entity)
+        public IUnitOfWork CreateUnitOfWork()
         {
-            DbSet.Remove(entity);
-            await Context.SaveChangesAsync();
+            return this.UowFactory.CreateUnitOfWork();
         }
 
         /// <summary>
@@ -61,12 +64,12 @@ namespace LiturgicalMusic.Repository
         /// <param name="orderBy">The orderBy function.</param>
         /// <param name="includeProperties">The properties.</param>
         /// <returns></returns>
-        public virtual IQueryable<TEntity> Get(
-            Expression<Func<TEntity, bool>> filter = null,
-            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+        public virtual IQueryable<T> Get(
+            Expression<Func<T, bool>> filter = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
             string includeProperties = "")
         {
-            IQueryable<TEntity> query = DbSet;
+            IQueryable<T> query = DbSet;
 
             if (filter != null)
             {
@@ -95,9 +98,9 @@ namespace LiturgicalMusic.Repository
         /// <param name="entityId">The entity ID.</param>
         /// <param name="includeProperties">The properties.</param>
         /// <returns></returns>
-        public async virtual Task<TEntity> GetByIdAsync(int entityId, string includeProperties = "")
+        public async virtual Task<T> GetByIdAsync(int entityId, string includeProperties = "")
         {
-            IQueryable<TEntity> query = DbSet;
+            IQueryable<T> query = DbSet;
 
             foreach (var includeProperty in includeProperties.Split
                    (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
@@ -106,32 +109,6 @@ namespace LiturgicalMusic.Repository
             }
 
             return await query.SingleOrDefaultAsync(e => e.Id.Equals(entityId));
-        }
-
-        /// <summary>
-        /// Inserts an entity.
-        /// </summary>
-        /// <param name="entity">The entity.</param>
-        /// <returns></returns>
-        public async virtual Task<TEntity> InsertAsync(TEntity entity)
-        {
-            DbSet.Add(entity);
-            await Context.SaveChangesAsync();
-
-            return entity;
-        }
-
-        /// <summary>
-        /// Updates an entity.
-        /// </summary>
-        /// <param name="entity">The entity.</param>
-        /// <returns></returns>
-        public async virtual Task<TEntity> UpdateAsync(TEntity entity)
-        {
-            Context.Entry(entity).State = EntityState.Modified;
-            await Context.SaveChangesAsync();
-
-            return entity;
         }
         #endregion Methods
     }
