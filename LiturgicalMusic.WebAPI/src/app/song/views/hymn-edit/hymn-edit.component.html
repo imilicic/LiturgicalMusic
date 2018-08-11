@@ -1,4 +1,4 @@
-﻿<form autocomplete="off" [formGroup]="voiceForm" (ngSubmit)="createSongEmit(voiceForm.value)" novalidate>
+﻿<form autocomplete="off" [formGroup]="voiceForm" (ngSubmit)="createUpdateSong(voiceForm.value)" novalidate>
     <div class="form-group" [ngClass]="{'has-error': key.touched && key.invalid, 'has-success': key.value!=null && key.valid}">
         <label class="control-label" for="Key">Tonalitet</label>
         <select class="form-control" formControlName="Key" id="Key">
@@ -135,9 +135,9 @@
         </div>
     </div>
     <div *ngIf="preview" style="text-align:center;">
-        <img src="app/assets/image/spinner.gif" style="width:150px;" *ngIf="spinner"/>
         <embed [src]="domSanitizer.bypassSecurityTrustResourceUrl(pdfFileName)" width="800" height="500" *ngIf="preview && !spinner"/>
     </div>
-    <button type="button" class="btn btn-default" (click)="previewSong(voiceForm.value)" [disabled]="previewEnabled()">Pregledaj</button>
-    <button type="submit" class="btn btn-default" [disabled]="voiceForm.invalid">Spremi</button>
+    <button type="button" class="btn btn-default" (click)="previewSong(voiceForm.value)" [disabled]="previewEnabled() || spinner">Pregledaj</button>
+    <button type="submit" class="btn btn-default" [disabled]="voiceForm.invalid || spinner">Spremi</button>
+    <img src="app/assets/image/spinner.gif" style="width:100px;" *ngIf="spinner"/>
 </form>

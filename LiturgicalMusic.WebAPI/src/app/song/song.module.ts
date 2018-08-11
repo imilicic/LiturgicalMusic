@@ -6,15 +6,14 @@ import { NgxPaginationModule } from "ngx-pagination";
 
 import { ComposerResolverService } from "./services/composer-resolver.service";
 import { ComposerService } from "./services/composer.service";
-import { HymnComponent } from "./views/hymn/hymn.component";
-import { SongCreateComponent } from "./views/song-create.component";
-import { SongDataComponent } from "./views/song-data/song-data.component";
+import { HymnEditComponent } from "./views/hymn-edit/hymn-edit.component";
 import { SongEditComponent } from "./views/song-edit.component";
 import { SongResolverService } from "./services/song-resolver.service";
 import { SongRouteActivatorService } from "./services/song-route-activator.service";
 import { SongRoutingModule } from "./song-routing.module";
 import { SongSearchComponent } from "./views/song-search.component";
 import { SongService } from "./services/song.service";
+import { SongSessionService } from "./services/song-session.service";
 import { SongViewComponent } from "./views/song-view.component";
 
 @NgModule({
@@ -26,9 +25,7 @@ import { SongViewComponent } from "./views/song-view.component";
         SongRoutingModule
     ],
     declarations: [
-        HymnComponent,
-        SongCreateComponent,
-        SongDataComponent,
+        HymnEditComponent,
         SongEditComponent,
         SongSearchComponent,
         SongViewComponent
@@ -36,6 +33,7 @@ import { SongViewComponent } from "./views/song-view.component";
     providers: [
         ComposerResolverService,
         ComposerService,
+        SongSessionService,
         SongResolverService,
         SongRouteActivatorService,
         SongService

@@ -1,19 +1,18 @@
-﻿import { Component, Input, OnInit, Output, EventEmitter } from "@angular/core";
+﻿import { Component, OnInit } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { DomSanitizer } from "@angular/platform-browser";
 
 import { InstrumentalPart } from "../../models/instrumentalPart.model";
 import { Song } from "../../models/song.model";
 import { SongService } from "../../services/song.service";
+import { SongSessionService } from "../../services/song-session.service";
 import { Stanza } from "../../models/stanza.model";
 
 @Component({
-    selector: "hymn",
-    templateUrl: "./hymn.component.html"
+    templateUrl: "./hymn-edit.component.html"
 })
-export class HymnComponent implements OnInit {
-    @Input() song: Song;
-    @Output() songVoices = new EventEmitter();
+export class HymnEditComponent implements OnInit {
+    song: Song;
     chosenVoicesOrgan: any[] = [];
     chosenVoicesParts: any[][] = [];
     chosenVoicesVoice: any[] = [];
@@ -28,9 +27,11 @@ export class HymnComponent implements OnInit {
     timeDenominator: FormControl;
     voiceForm: FormGroup;
 
-    constructor(private domSanitizer: DomSanitizer, private songService: SongService) { }
+    constructor(private domSanitizer: DomSanitizer, private songService: SongService, private songSessionService: SongSessionService) { }
 
     ngOnInit() {
+        this.song = this.songSessionService.songSession;
+
         let key: string = "";
         let timeNumerator: number = undefined;
         let timeDenominator: number = undefined;
@@ -265,9 +266,21 @@ export class HymnComponent implements OnInit {
         this.song.Stanzas = stanzas;
     }
 
-    createSongEmit(formValues: any) {
+    createUpdateSong(formValues: any) {
+        this.spinner = true;
         this.createSong(formValues);
-        this.songVoices.emit(this.song);
+
+        if (this.songSessionService.action == "create") {
+            this.songService.createSong(this.song).subscribe((response: Song) => {
+                this.spinner = false;
+                this.songSessionService.moveTo("songs/view/" + response.Id);
+            });
+        } else {
+            this.songService.updateSong(this.song).subscribe((response: Song) => {
+                this.spinner = false;
+                this.songSessionService.moveTo("songs/view/" + response.Id);
+            });
+        }
     }
 
     hasError(name: string) {

@@ -183,6 +183,7 @@ namespace LiturgicalMusic.Repository
             UnitOfWork.ClearLocal<SongEntity>();
             UnitOfWork.ClearLocal<StanzaEntity>();
             UnitOfWork.ClearLocal<InstrumentalPartEntity>();
+            UnitOfWork.ClearLocal<ComposerEntity>();
 
             return Mapper.Map<ISong>(songEntity);
         }
@@ -318,6 +319,7 @@ namespace LiturgicalMusic.Repository
             UnitOfWork.ClearLocal<SongEntity>();
             UnitOfWork.ClearLocal<StanzaEntity>();
             UnitOfWork.ClearLocal<InstrumentalPartEntity>();
+            UnitOfWork.ClearLocal<ComposerEntity>();
 
             return Mapper.Map<ISong>(songDb);
         }

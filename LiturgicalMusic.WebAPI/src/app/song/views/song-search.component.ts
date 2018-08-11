@@ -40,7 +40,6 @@ export class SongSearchComponent implements OnInit {
 
     deleteSong(songId: number) {
         this.songService.deleteSong(songId).subscribe(response => {
-            console.log("Deleted!");
             this.searchSongs(this.searchForm.value);
         });
     }
