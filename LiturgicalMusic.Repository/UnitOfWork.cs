@@ -9,6 +9,7 @@ using AutoMapper;
 using System.Transactions;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using LiturgicalMusic.Common;
 
 namespace LiturgicalMusic.Repository
 {
@@ -33,6 +34,15 @@ namespace LiturgicalMusic.Repository
 
         #region Methods
         /// <summary>
+        /// Clears all entities from local.
+        /// </summary>
+        /// <typeparam name="T">The type of entity to clear.</typeparam>
+        public void ClearLocal<T>() where T : class
+        {
+            DbContext.Set<T>().Local.ToList().ForEach(f => DbContext.Entry(f).State = EntityState.Detached);
+        }
+
+        /// <summary>
         /// Commits changes made in database.
         /// </summary>
         /// <returns></returns>
@@ -52,9 +62,10 @@ namespace LiturgicalMusic.Repository
         /// <summary>
         /// Deletes entity.
         /// </summary>
+        /// <typeparam name="T">The type of entity.</typeparam>
         /// <param name="entity">The entity.</param>
         /// <returns></returns>
-        public Task<int> DeleteAsync<T>(T entity) where T : class
+        public Task<bool> DeleteAsync<T>(T entity) where T : class
         {
             DbEntityEntry dbEntityEntry = DbContext.Entry(entity);
 
@@ -68,21 +79,22 @@ namespace LiturgicalMusic.Repository
                 DbContext.Set<T>().Remove(entity);
             }
 
-            return Task.FromResult(1);
+            return Task.FromResult(true);
         }
 
         /// <summary>
         /// Deletes entity by entity ID.
         /// </summary>
+        /// <typeparam name="T">The type of entity.</typeparam>
         /// <param name="entityID">The entity ID.</param>
         /// <returns></returns>
-        public Task<int> DeleteAsync<T>(int entityID) where T : class
+        public Task<bool> DeleteAsync<T>(int entityID) where T : class
         {
             T entity = DbContext.Set<T>().Find(entityID);
 
             if (entity == null)
             {
-                return Task.FromResult(0);
+                return Task.FromResult(false);
             }
 
             return DeleteAsync<T>(entity);
@@ -91,6 +103,7 @@ namespace LiturgicalMusic.Repository
         /// <summary>
         /// Inserts the entity.
         /// </summary>
+        /// <typeparam name="T">The type of entity.</typeparam>
         /// <param name="entity">The entity.</param>
         /// <returns></returns>
         public Task<T> InsertAsync<T>(T entity) where T : class
@@ -112,9 +125,10 @@ namespace LiturgicalMusic.Repository
         /// <summary>
         /// Updates the entity.
         /// </summary>
+        /// <typeparam name="T">The type of entity.</typeparam>
         /// <param name="entity">The entity.</param>
         /// <returns></returns>
-        public Task<T> UpdateAsync<T>(T entity) where T : class
+        public Task<T> UpdateAsync<T>(T entity) where T : class, IEntity
         {
             DbEntityEntry dbEntityEntry = DbContext.Entry(entity);
 

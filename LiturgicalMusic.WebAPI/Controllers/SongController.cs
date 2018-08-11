@@ -66,6 +66,20 @@ namespace LiturgicalMusic.WebAPI.Controllers
         }
 
         /// <summary>
+        /// Delets a song.
+        /// </summary>
+        /// <param name="songId">The song ID.</param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("delete/{songId:int}")]
+        public async Task<HttpResponseMessage> DeleteAsync(int songId)
+        {
+            await Service.DeleteAsync(songId);
+
+            return Request.CreateResponse(HttpStatusCode.OK);
+        }
+
+        /// <summary>
         /// Gets all songs filtered, ordered, using pages
         /// </summary>
         /// <param name="filter">The filter.</param>
@@ -149,8 +163,8 @@ namespace LiturgicalMusic.WebAPI.Controllers
         /// <param name="song">The song.</param>
         /// <returns></returns>
         [HttpPut]
-        [Route("create")]
-        public async Task<HttpResponseMessage> UpdateAsync([FromBody] SongModel song)
+        [Route("update/{songId:int}")]
+        public async Task<HttpResponseMessage> UpdateAsync(int songId, [FromBody] SongModel song)
         {
             ISong resultSong = await Service.UpdateAsync(Mapper.Map<ISong>(song));
 

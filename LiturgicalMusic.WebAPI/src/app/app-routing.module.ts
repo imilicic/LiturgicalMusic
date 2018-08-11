@@ -8,7 +8,8 @@ import { HomeComponent } from "./home/home.component";
         RouterModule.forRoot([
             { path: "home", component: HomeComponent },
             { path: "", redirectTo: "home", pathMatch: "full" },
-            { path: "song", loadChildren: "app/song/song.module#SongModule" },
+            { path: "songs", loadChildren: 'app/song/song.module#SongModule' },
+            { path: "**", redirectTo: "home" }
         ])
     ]
 })

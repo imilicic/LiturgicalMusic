@@ -1,8 +1,8 @@
 ﻿import { Injectable } from "@angular/core";
 import { ActivatedRouteSnapshot, CanActivate, Router } from "@angular/router";
 
-import { SongService } from "../shared/song.service";
-import { Song } from "../shared/models/song.model";
+import { SongService } from "./song.service";
+import { Song } from "../models/song.model";
 
 @Injectable()
 export class SongRouteActivatorService implements CanActivate {

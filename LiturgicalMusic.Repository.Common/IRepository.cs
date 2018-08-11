@@ -19,24 +19,17 @@ namespace LiturgicalMusic.Repository.Common
         IUnitOfWork CreateUnitOfWork();
 
         /// <summary>
-        /// Gets entities which can be filtered, ordered and include certain properties.
+        /// Gets entities.
         /// </summary>
-        /// <param name="filter">The filter Expression.</param>
-        /// <param name="orderBy">The orderBy function.</param>
-        /// <param name="includeProperties">The properties.</param>
         /// <returns></returns>
-        IQueryable<T> Get(
-            Expression<Func<T, bool>> filter = null,
-            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
-            string includeProperties = "");
+        IQueryable<T> Get(string include = "");
 
         /// <summary>
-        /// Gets entity by ID which can include certain properties.
+        /// Gets entity by Id.
         /// </summary>
         /// <param name="entityId">The entity ID.</param>
-        /// <param name="includeProperties">The properties.</param>
         /// <returns></returns>
-        Task<T> GetByIdAsync(int entityId, string includeProperties = "");
+        Task<T> GetById(int entityId, string include = "");
         #endregion Methods
     }
 }

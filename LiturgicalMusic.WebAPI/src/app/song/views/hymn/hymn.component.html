@@ -100,8 +100,12 @@
             <textarea rows="5" cols="10" class="form-control" id="{{stanza.controlName}}" formControlName="{{stanza.controlName}}"></textarea>
             <span class="help-block" *ngIf="hasError(stanza.controlName)">Obavezno!</span>
         </div>
-        <button type="button" class="btn btn-default" (click)="appendStanza()">Dodaj strofu</button>
-        <button type="button" class="btn btn-default" (click)="deleteStanza()">Obriši strofu</button>
+        <button type="button" class="btn btn-default" (click)="appendStanza()">
+            <span class="glyphicon glyphicon-plus"></span> Dodaj
+        </button>
+        <button type="button" class="btn btn-default" (click)="deleteStanza()">
+            <span class="glyphicon glyphicon-minus"></span> Obriši zadnju
+        </button>
     </div>
     <div *ngIf="chosenVoicesParts.length > 0">
         <div *ngFor="let part of chosenVoicesParts; let i = index">

@@ -2,9 +2,9 @@
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
 
-import { Composer } from "../../shared/models/composer.model";
-import { InstrumentalPart } from "../../shared/models/instrumentalPart.model";
-import { Song } from "../../shared/models/song.model";
+import { Composer } from "../../models/composer.model";
+import { InstrumentalPart } from "../../models/instrumentalPart.model";
+import { Song } from "../../models/song.model";
 
 @Component({
     selector: "song-data",

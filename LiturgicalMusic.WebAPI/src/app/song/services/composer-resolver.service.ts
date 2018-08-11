@@ -2,7 +2,7 @@
 import { Resolve } from "@angular/router";
 import { Observable } from "rxjs/Observable";
 
-import { Composer } from "./models/composer.model";
+import { Composer } from "../models/composer.model";
 import { ComposerService } from "./composer.service";
 
 @Injectable()

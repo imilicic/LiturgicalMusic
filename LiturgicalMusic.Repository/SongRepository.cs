@@ -9,10 +9,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using LiturgicalMusic.Common;
 using X.PagedList;
+using System.Data.Entity;
 
 namespace LiturgicalMusic.Repository
 {
-    public class SongRepository : Repository<SongEntity>, ISongRepository
+    public class SongRepository : ISongRepository
     {
         #region Properties
         /// <summary>
@@ -20,6 +21,12 @@ namespace LiturgicalMusic.Repository
         /// </summary>
         /// <value>The mapper.</value>
         protected IMapper Mapper { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the generic repository.
+        /// </summary>
+        /// <value>The repository.</value>
+        protected IRepository<SongEntity> Repository { get; private set; }
 
         /// <summary>
         /// Gets or sets the unit of work.
@@ -35,14 +42,48 @@ namespace LiturgicalMusic.Repository
         /// <param name="mapper">The mapper.</param>
         /// <param name="dbContext">The database context.</param>
         /// <param name="uowFactory">The factory for unit of work.</param>
-        public SongRepository(IMapper mapper, MusicContext dbContext, IUnitOfWorkFactory uowFactory): base(dbContext, uowFactory)
+        public SongRepository(IMapper mapper, IRepository<SongEntity> repository)
         {
             this.Mapper = mapper;
-            this.UnitOfWork = CreateUnitOfWork();
+            this.Repository = repository;
+            this.UnitOfWork = Repository.CreateUnitOfWork();
         }
         #endregion Constructors
 
         #region Methods
+        /// <summary>
+        /// Deletes a song.
+        /// </summary>
+        /// <param name="songId">The song ID.</param>
+        /// <returns></returns>
+        public async Task DeleteAsync(int songId)
+        {
+            IOptions options = new Options()
+            {
+                Stanzas = true,
+                InstrumentalParts = true
+            };
+            SongEntity songEntity = await Repository.GetById(songId, SongHelper.CreateIncludeString(options));
+            SongHelper.DeletePdf(Mapper.Map<ISong>(songEntity));
+
+            for (int i = songEntity.Stanzas.Count - 1; i >= 0; i--)
+            {
+                StanzaEntity stanza = songEntity.Stanzas.ElementAt(i);
+
+                await UnitOfWork.DeleteAsync<StanzaEntity>(stanza.Id);
+            }
+
+            for (int i = songEntity.InstrumentalParts.Count - 1; i >= 0; i--)
+            {
+                InstrumentalPartEntity part = songEntity.InstrumentalParts.ElementAt(i);
+
+                await UnitOfWork.DeleteAsync<InstrumentalPartEntity>(part.Id);
+            }
+
+            await UnitOfWork.DeleteAsync<SongEntity>(songId);
+            await UnitOfWork.CommitAsync();
+        }
+
         /// <summary>
         /// Gets all songs filtered, ordered, using pages
         /// </summary>
@@ -55,57 +96,45 @@ namespace LiturgicalMusic.Repository
         /// <returns></returns>
         public async Task<IPagedList<ISong>> GetAsync(IFilter filter, IOptions options, ISorting sortingOptions, IPaging pageOptions)
         {
-            IQueryable<SongEntity> query;
-            Func<IQueryable<SongEntity>, IOrderedQueryable<SongEntity>> order;
             string include = SongHelper.CreateIncludeString(options);
+            IQueryable<SongEntity> query = Repository.Get(include);
+            IOrderedEnumerable<SongEntity> orderedQuery;
+            Func<SongEntity, string> order;
 
+            // filtering
+            if (filter.Title != null)
+            {
+                query = query.Where(s => s.Title.Contains(filter.Title));
+            }
+
+            // sorting
             switch (sortingOptions.SortBy)
             {
                 case "title":
-                    if (sortingOptions.SortAscending)
-                    {
-                        order = s => s.OrderBy(se => se.Title);
-                    }
-                    else
-                    {
-                        order = s => s.OrderByDescending(se => se.Title);
-                    }
+                    order = s => s.Title;
                     break;
                 case "composer":
-                    if (sortingOptions.SortAscending)
-                    {
-                        order = s => s.OrderBy(se => se.Composer.Surname);
-                    }
-                    else
-                    {
-                        order = s => s.OrderByDescending(se => se.Composer.Surname);
-                    }
+                    order = s => s.Composer.Surname;
                     break;
                 case "arranger":
-                    if (sortingOptions.SortAscending)
-                    {
-                        order = s => s.OrderBy(se => se.Arranger.Surname);
-                    }
-                    else
-                    {
-                        order = s => s.OrderByDescending(se => se.Arranger.Surname);
-                    }
+                    order = s => s.Arranger.Surname;
                     break;
                 default:
-                    order = s => s.OrderBy(se => se.Title);
+                    order = s => s.Title;
                     break;
             }
 
-            if (filter.Title != null)
+            if (sortingOptions.SortAscending)
             {
-                query = base.Get(s => s.Title.Contains(filter.Title), order, include);
+                orderedQuery = query.OrderBy(order);
             }
             else
             {
-                query = base.Get(null, order, include);
+                orderedQuery = query.OrderByDescending(order);
             }
 
-            IPagedList<SongEntity> songEntities = await query.ToPagedListAsync(pageOptions.PageNumber, pageOptions.PageSize);
+            // paging
+            IPagedList<SongEntity> songEntities = await orderedQuery.ToPagedListAsync(pageOptions.PageNumber, pageOptions.PageSize);
             IPagedList<ISong> result = new StaticPagedList<ISong>(Mapper.Map<IEnumerable<ISong>>(songEntities), songEntities.GetMetaData());
 
             return result;
@@ -120,7 +149,7 @@ namespace LiturgicalMusic.Repository
         public async Task<ISong> GetByIdAsync(int songId, IOptions options)
         {
             string include = SongHelper.CreateIncludeString(options);
-            SongEntity songEntity = await base.GetByIdAsync(songId, include);
+            SongEntity songEntity = await Repository.GetById(songId, include);
 
             return Mapper.Map<ISong>(songEntity);
         }
@@ -150,6 +179,10 @@ namespace LiturgicalMusic.Repository
 
             songEntity = await UnitOfWork.InsertAsync<SongEntity>(songEntity);
             await UnitOfWork.CommitAsync();
+
+            UnitOfWork.ClearLocal<SongEntity>();
+            UnitOfWork.ClearLocal<StanzaEntity>();
+            UnitOfWork.ClearLocal<InstrumentalPartEntity>();
 
             return Mapper.Map<ISong>(songEntity);
         }
@@ -183,7 +216,7 @@ namespace LiturgicalMusic.Repository
                 InstrumentalParts = true
             };
             string include = SongHelper.CreateIncludeString(options);
-            SongEntity songDb = await base.GetByIdAsync(song.Id, include);
+            SongEntity songDb = await Repository.GetById(song.Id, include);
             SongEntity songEntity = Mapper.Map<SongEntity>(song);
 
             await SongHelper.UpdatePdfAsync(song, Path.GetRandomFileName(), SongHelper.SongFileName(Mapper.Map<ISong>(songDb)), true);
@@ -281,6 +314,10 @@ namespace LiturgicalMusic.Repository
 
             songDb = await UnitOfWork.UpdateAsync(songDb);
             await UnitOfWork.CommitAsync();
+
+            UnitOfWork.ClearLocal<SongEntity>();
+            UnitOfWork.ClearLocal<StanzaEntity>();
+            UnitOfWork.ClearLocal<InstrumentalPartEntity>();
 
             return Mapper.Map<ISong>(songDb);
         }

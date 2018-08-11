@@ -27,7 +27,7 @@
             </label>
         </div>
     </div>
-    <button class="btn btn-default">Pretraži</button>
+    <button class="btn btn-default" [disabled]="spinner">Pretraži</button>
     <span *ngIf="spinner">
         <img src="app/assets/image/spinner.gif" style="width: 100px;"/>
     </span>
@@ -38,20 +38,30 @@
     <table class="table table-striped" *ngIf="songs.length>0">
         <thead>
             <tr>
-                <th class="col-md-3">Naziv</th>
+                <th class="col-md-2">Naziv</th>
                 <th class="col-md-2">Autor</th>
                 <th class="col-md-2">Harmonizirao</th>
                 <th class="col-md-2">Izvor</th>
-                <th class="col-md-3">Druge informacije</th>
+                <th class="col-md-4">Akcije</th>
             </tr>
         </thead>
         <tbody>
             <tr *ngFor="let song of songs | paginate: { itemsPerPage: pageSize, currentPage: pageNumber, totalItems: songCount}">
-                <td class="col-md-3"><a [routerLink]="[song.Id]">{{song.Title}}</a></td>
+                <td class="col-md-2">{{song.Title}}</td>
                 <td class="col-md-2">{{song.Composer?.Name}} {{song.Composer?.Surname}}</td>
                 <td class="col-md-2">{{song.Arranger?.Name}} {{song.Arranger?.Surname}}</td>
                 <td class="col-md-2">{{song.Source}}</td>
-                <td class="col-md-3">{{song.OtherInformation}}</td>
+                <td class="col-md-4">
+                    <a [routerLink]="['../view/', song.Id]" class="btn btn-default">
+                        <span class="glyphicon glyphicon-open-file"></span> Otvori
+                    </a>
+                    <a [routerLink]="['../edit/', song.Id]" class="btn btn-default">
+                        <span class="glyphicon glyphicon-edit"></span> Uredi
+                    </a>
+                    <button type="button" class="btn btn-default" (click)="deleteSong(song.Id)">
+                        <span class="glyphicon glyphicon-trash"></span> Obriši
+                    </button>
+                </td>
             </tr>
         </tbody>
     </table>

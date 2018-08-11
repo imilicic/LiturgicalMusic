@@ -2,10 +2,10 @@
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { DomSanitizer } from "@angular/platform-browser";
 
-import { InstrumentalPart } from "../../shared/models/instrumentalPart.model";
-import { Song } from "../../shared/models/song.model";
-import { SongService } from "../../shared/song.service";
-import { Stanza } from "../../shared/models/stanza.model";
+import { InstrumentalPart } from "../../models/instrumentalPart.model";
+import { Song } from "../../models/song.model";
+import { SongService } from "../../services/song.service";
+import { Stanza } from "../../models/stanza.model";
 
 @Component({
     selector: "hymn",

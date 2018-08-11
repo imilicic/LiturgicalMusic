@@ -3,9 +3,9 @@ import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { Response } from "@angular/http";
 import { PaginatePipe } from "ngx-pagination";
 
-import { Filter } from "../shared/models/filter.model";
-import { Song } from "../shared/models/song.model";
-import { SongService } from "../shared/song.service";
+import { Filter } from "../models/filter.model";
+import { Song } from "../models/song.model";
+import { SongService } from "../services/song.service";
 
 @Component({
     templateUrl: "./song-search.component.html"
@@ -33,6 +33,15 @@ export class SongSearchComponent implements OnInit {
             ascending: this.ascending,
             orderBy: this.orderBy,
             title: this.title
+        });
+
+        this.searchSongs(this.searchForm.value);
+    }
+
+    deleteSong(songId: number) {
+        this.songService.deleteSong(songId).subscribe(response => {
+            console.log("Deleted!");
+            this.searchSongs(this.searchForm.value);
         });
     }
 

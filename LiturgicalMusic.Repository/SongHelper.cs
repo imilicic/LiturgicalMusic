@@ -39,7 +39,6 @@ namespace LiturgicalMusic.Repository
                 throw new Exception("Something went wrong!");
             }
 
-
             if (deleteTempFiles)
             {
                 if (File.Exists(String.Format(@"{0}\{1}.ly", tempDir, Hash(songFileName))))
@@ -100,6 +99,26 @@ namespace LiturgicalMusic.Repository
             }
 
             return include;
+        }
+
+        /// <summary>
+        /// Deletes PDF score file of a song.
+        /// </summary>
+        /// <param name="song">The song.</param>
+        /// <returns></returns>
+        public static bool DeletePdf(ISong song)
+        {
+            string srcDir = String.Format(@"{0}\{1}", PATH_TO_WEB_API, SOURCE_DIR);
+            string songFileName = SongFileName(song);
+            string pdfFilePath = String.Format(@"{0}\{1}\{2}.pdf", srcDir, PDF_ASSETS_DIR, songFileName);
+
+            if (File.Exists(pdfFilePath))
+            {
+                File.Delete(pdfFilePath);
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>

@@ -2,7 +2,7 @@
 import { ActivatedRoute } from "@angular/router";
 import { DomSanitizer } from "@angular/platform-browser";
 
-import { Song } from "../shared/models/song.model";
+import { Song } from "../models/song.model";
 
 @Component({
     templateUrl: "./song-view.component.html"

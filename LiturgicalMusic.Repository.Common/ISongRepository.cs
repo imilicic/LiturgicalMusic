@@ -14,6 +14,13 @@ namespace LiturgicalMusic.Repository.Common
         #region Methods
 
         /// <summary>
+        /// Deletes a song.
+        /// </summary>
+        /// <param name="songId">The song ID.</param>
+        /// <returns></returns>
+        Task DeleteAsync(int songId);
+
+        /// <summary>
         /// Gets song by ID which contains certain options.
         /// </summary>
         /// <param name="songId">The song ID.</param>

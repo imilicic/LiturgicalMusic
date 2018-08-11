@@ -2,8 +2,8 @@
 import { ActivatedRouteSnapshot, Resolve, Router } from "@angular/router";
 import { Observable } from "rxjs/Observable";
 
-import { Song } from "../shared/models/song.model";
-import { SongService } from "../shared/song.service";
+import { Song } from "../models/song.model";
+import { SongService } from "./song.service";
 
 @Injectable()
 export class SongResolverService implements Resolve<Song>{

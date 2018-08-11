@@ -5,8 +5,8 @@ import "rxjs/add/operator/catch";
 import "rxjs/add/operator/map";
 import "rxjs/add/observable/throw";
 
-import { Filter } from "./models/filter.model";
-import { Song } from "./models/song.model";
+import { Filter } from "../models/filter.model";
+import { Song } from "../models/song.model";
 
 @Injectable()
 export class SongService {
@@ -18,6 +18,14 @@ export class SongService {
 
         return this.http.post("/api/songs/create", JSON.stringify(song), options)
             .map((response: Response) => <Song>response.json())
+            .catch(this.handleError);
+    }
+
+    deleteSong(songId: number) {
+        let headers = new Headers({ 'Content-Type': 'application/json' });
+        let options = new RequestOptions({ headers: headers });
+
+        return this.http.delete("/api/songs/delete/" + songId, options)
             .catch(this.handleError);
     }
 
@@ -44,7 +52,7 @@ export class SongService {
         let headers = new Headers({ 'Content-Type': 'application/json'});
         let options = new RequestOptions({ headers: headers });
 
-        return this.http.post("/api/songs/preview", JSON.stringify(song), options)
+        return this.http.post("/api/songs/preview/", JSON.stringify(song), options)
             .map((response: Response) => <Song>response.json())
             .catch(this.handleError);
     }
@@ -53,7 +61,7 @@ export class SongService {
         let headers = new Headers({ 'Content-Type': 'application/json' });
         let options = new RequestOptions({ headers: headers });
 
-        return this.http.put("/api/songs/create", JSON.stringify(song), options)
+        return this.http.put("/api/songs/update/" + song.Id, JSON.stringify(song), options)
             .map((response: Response) => <Song>response.json())
             .catch(this.handleError);
     }

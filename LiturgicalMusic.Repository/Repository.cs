@@ -57,58 +57,36 @@ namespace LiturgicalMusic.Repository
             return this.UowFactory.CreateUnitOfWork();
         }
 
-        /// <summary>
-        /// Gets entities which can be filtered, ordered and include certain properties.
-        /// </summary>
-        /// <param name="filter">The filter Expression.</param>
-        /// <param name="orderBy">The orderBy function.</param>
-        /// <param name="includeProperties">The properties.</param>
-        /// <returns></returns>
-        public virtual IQueryable<T> Get(
-            Expression<Func<T, bool>> filter = null,
-            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
-            string includeProperties = "")
+        protected virtual IQueryable<T> GetQueryable(string include = "")
         {
             IQueryable<T> query = DbSet;
 
-            if (filter != null)
-            {
-                query = query.Where(filter);
-            }
-
-            foreach (var includeProperty in includeProperties.Split
+            foreach (var includeProperty in include.Split
                 (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
             {
                 query = query.Include(includeProperty);
             }
 
-            if (orderBy != null)
-            {
-                return orderBy(query);
-            }
-            else
-            {
-                return query;
-            }
+            return query;
         }
 
         /// <summary>
-        /// Gets entity by ID which can include certain properties.
+        /// Gets entities.
+        /// </summary>
+        /// <returns></returns>
+        public virtual IQueryable<T> Get(string include = "")
+        {
+            return GetQueryable(include);
+        }
+
+        /// <summary>
+        /// Gets entity by Id.
         /// </summary>
         /// <param name="entityId">The entity ID.</param>
-        /// <param name="includeProperties">The properties.</param>
         /// <returns></returns>
-        public async virtual Task<T> GetByIdAsync(int entityId, string includeProperties = "")
+        public virtual Task<T> GetById(int entityId, string include = "")
         {
-            IQueryable<T> query = DbSet;
-
-            foreach (var includeProperty in includeProperties.Split
-                   (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-            {
-                query = query.Include(includeProperty);
-            }
-
-            return await query.SingleOrDefaultAsync(e => e.Id.Equals(entityId));
+            return GetQueryable(include).SingleOrDefaultAsync(e => e.Id.Equals(entityId));
         }
         #endregion Methods
     }

@@ -11,7 +11,7 @@ using System.Data.Entity;
 
 namespace LiturgicalMusic.Repository
 {
-    public class ComposerRepository : Repository<ComposerEntity>, IComposerRepository
+    public class ComposerRepository : IComposerRepository
     {
         #region Properties
         /// <summary>
@@ -19,6 +19,12 @@ namespace LiturgicalMusic.Repository
         /// </summary>
         /// <value>The mapper.</value>
         protected IMapper Mapper { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the generic repository.
+        /// </summary>
+        /// <value>The repository.</value>
+        protected IRepository<ComposerEntity> Repository { get; private set; }
 
         /// <summary>
         /// Gets or sets the unit of work class.
@@ -32,10 +38,11 @@ namespace LiturgicalMusic.Repository
         /// Initializes new instace of <see cref="ComposerRepository"/> class.
         /// </summary>
         /// <param name="mapper">The mapper.</param>
-        public ComposerRepository(IMapper mapper, MusicContext dbContext, IUnitOfWorkFactory uowFactory) : base(dbContext, uowFactory)
+        public ComposerRepository(IMapper mapper, IRepository<ComposerEntity> repository)
         {
             this.Mapper = mapper;
-            this.UnitOfWork = CreateUnitOfWork();
+            this.Repository = repository;
+            this.UnitOfWork = Repository.CreateUnitOfWork();
         }
         #endregion Constructors
 
@@ -46,7 +53,7 @@ namespace LiturgicalMusic.Repository
         /// <returns></returns>
         public async Task<IList<IComposer>> GetAsync()
         {
-            IList<ComposerEntity> composers = await base.Get(null, cs => cs.OrderBy(c => c.Surname)).ToListAsync();
+            IList<ComposerEntity> composers = await Repository.Get().OrderBy(c => c.Surname).ToListAsync();
             return Mapper.Map<IList<IComposer>>(composers);
         }
 
@@ -57,7 +64,7 @@ namespace LiturgicalMusic.Repository
         /// <returns></returns>
         public async Task<IComposer> GetByIdAsync(int composerId)
         {
-            ComposerEntity composer = await base.GetByIdAsync(composerId);
+            ComposerEntity composer = await Repository.Get().SingleOrDefaultAsync(c => c.Id.Equals(composerId));
             return Mapper.Map<IComposer>(composer);
         }
 

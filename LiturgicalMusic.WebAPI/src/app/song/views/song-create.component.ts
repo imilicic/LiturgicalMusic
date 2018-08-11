@@ -1,8 +1,8 @@
 ﻿import { Component } from "@angular/core";
 import { Router } from "@angular/router";
 
-import { Song } from "../shared/models/song.model";
-import { SongService } from "../shared/song.service";
+import { Song } from "../models/song.model";
+import { SongService } from "../services/song.service";
 
 @Component({
     templateUrl: "./song-create.component.html"
@@ -22,7 +22,7 @@ export class SongCreateComponent {
             .subscribe((response: Song) => {
                 this.spinner = false;
                 this.song = response;
-                this.router.navigate(['../search/', this.song.Id]);
+                this.router.navigate(['songs/view/', this.song.Id]);
             });
     }
 

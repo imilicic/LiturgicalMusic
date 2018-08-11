@@ -43,7 +43,6 @@ namespace LiturgicalMusic.Service
         #endregion Constructors
 
         #region Methods
-
         /// <summary>
         /// Creates a new song.
         /// </summary>
@@ -51,6 +50,16 @@ namespace LiturgicalMusic.Service
         public ISong Create()
         {
             return new Song();
+        }
+
+        /// <summary>
+        /// Deletes a song.
+        /// </summary>
+        /// <param name="songId">The song ID.</param>
+        /// <returns></returns>
+        public async Task DeleteAsync(int songId)
+        {
+            await SongRepository.DeleteAsync(songId);
         }
 
         /// <summary>

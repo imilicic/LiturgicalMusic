@@ -1,13 +1,13 @@
 ﻿import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 
-import { Song } from "../shared/models/song.model";
-import { SongService } from "../shared/song.service";
+import { Song } from "../models/song.model";
+import { SongService } from "../services/song.service";
 
 @Component({
-    templateUrl: "./song-update.component.html"
+    templateUrl: "./song-edit.component.html"
 })
-export class SongUpdateComponent implements OnInit {
+export class SongEditComponent implements OnInit {
     currentPage: number = 1;
     song: Song;
     spinner: boolean = false;
@@ -30,7 +30,7 @@ export class SongUpdateComponent implements OnInit {
         this.songService.updateSong(event).subscribe((response: Song) => {
             this.spinner = false;
             this.song = response;
-            this.router.navigate(['../../search/', this.song.Id]);
+            this.router.navigate(['songs/view/', this.song.Id]);
         });
     }
 }

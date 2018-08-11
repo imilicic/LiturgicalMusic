@@ -5,7 +5,7 @@ import "rxjs/add/operator/catch";
 import "rxjs/add/operator/map";
 import "rxjs/add/observable/throw";
 
-import { Composer } from "./models/composer.model";
+import { Composer } from "../models/composer.model";
 
 @Injectable()
 export class ComposerService {
