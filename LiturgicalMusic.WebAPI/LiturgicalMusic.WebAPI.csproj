@@ -160,7 +160,7 @@
     <Content Include="Global.asax" />
     <Content Include="src\app\home\home.component.html" />
     <Content Include="src\app\shared\navbar\navbar.component.html" />
-    <Content Include="src\app\song\views\hymn-edit\hymn-edit.component.html" />
+    <Content Include="src\app\song\views\hymn\hymn-edit.component.html" />
     <Content Include="src\app\song\views\song-edit.component.html" />
     <Content Include="src\app\song\views\song-search.component.html" />
     <Content Include="src\app\song\views\song-view.component.html" />
@@ -237,7 +237,7 @@
     <TypeScriptCompile Include="src\app\shared\navbar\navbar.component.ts" />
     <TypeScriptCompile Include="src\app\song\services\composer.service.ts" />
     <TypeScriptCompile Include="src\app\song\services\song-session.service.ts" />
-    <TypeScriptCompile Include="src\app\song\views\hymn-edit\hymn-edit.component.ts" />
+    <TypeScriptCompile Include="src\app\song\views\hymn\hymn-edit.component.ts" />
     <TypeScriptCompile Include="src\app\song\models\composer.model.ts" />
     <TypeScriptCompile Include="src\app\song\models\filter.model.ts" />
     <TypeScriptCompile Include="src\app\song\models\instrumentalPart.model.ts" />

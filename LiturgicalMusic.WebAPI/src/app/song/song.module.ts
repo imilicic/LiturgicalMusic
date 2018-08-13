@@ -6,7 +6,7 @@ import { NgxPaginationModule } from "ngx-pagination";
 
 import { ComposerResolverService } from "./services/composer-resolver.service";
 import { ComposerService } from "./services/composer.service";
-import { HymnEditComponent } from "./views/hymn-edit/hymn-edit.component";
+import { HymnEditComponent } from "./views/hymn/hymn-edit.component";
 import { SongEditComponent } from "./views/song-edit.component";
 import { SongResolverService } from "./services/song-resolver.service";
 import { SongRouteActivatorService } from "./services/song-route-activator.service";

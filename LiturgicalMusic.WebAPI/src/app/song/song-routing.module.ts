@@ -2,7 +2,7 @@
 import { RouterModule } from "@angular/router";
 
 import { ComposerResolverService } from "./services/composer-resolver.service";
-import { HymnEditComponent } from "./views/hymn-edit/hymn-edit.component";
+import { HymnEditComponent } from "./views/hymn/hymn-edit.component";
 import { SongEditComponent } from "./views/song-edit.component";
 import { SongSearchComponent } from "./views/song-search.component";
 import { SongViewComponent } from "./views/song-view.component";
