@@ -7,6 +7,7 @@ import { NgxPaginationModule } from "ngx-pagination";
 import { ComposerResolverService } from "./services/composer-resolver.service";
 import { ComposerService } from "./services/composer.service";
 import { HymnEditComponent } from "./views/hymn/hymn-edit.component";
+import { PsalmEditComponent } from "./views/psalm/psalm-edit.component";
 import { SongEditComponent } from "./views/song-edit.component";
 import { SongResolverService } from "./services/song-resolver.service";
 import { SongRouteActivatorService } from "./services/song-route-activator.service";
@@ -26,6 +27,7 @@ import { SongViewComponent } from "./views/song-view.component";
     ],
     declarations: [
         HymnEditComponent,
+        PsalmEditComponent,
         SongEditComponent,
         SongSearchComponent,
         SongViewComponent

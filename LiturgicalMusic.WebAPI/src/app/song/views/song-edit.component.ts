@@ -16,13 +16,11 @@ export class SongEditComponent implements OnInit {
     partNames: string[] = ["prelude", "interlude", "coda"];
     partVoices: boolean[][] = [[false, false, false, false], [false, false, false, false], [false, false, false, false]];
     song: Song = undefined;
-    templateVoices: boolean[] = [false, false, false, false, true, true, true, true];
 
     arranger: FormControl;
     composer: FormControl;
     otherInformations: FormControl;
     source: FormControl;
-    template: FormControl;
     title: FormControl;
     type: FormControl;
     songForm: FormGroup;
@@ -60,7 +58,6 @@ export class SongEditComponent implements OnInit {
 
             otherInformations = this.song.OtherInformations;
             source = this.song.Source;
-            this.templateVoices = this.song.Template;
             title = this.song.Title;
             type = this.song.Type;
             
@@ -77,7 +74,6 @@ export class SongEditComponent implements OnInit {
         this.composer = new FormControl(composerId);
         this.otherInformations = new FormControl(otherInformations);
         this.source = new FormControl(source);
-        this.template = new FormControl(this.templateVoices, Validators.required);
         this.title = new FormControl(title, Validators.required);
         this.type = new FormControl(type, Validators.required);
 
@@ -86,7 +82,6 @@ export class SongEditComponent implements OnInit {
             composer: this.composer,
             otherInformations: this.otherInformations,
             source: this.source,
-            template: this.template,
             title: this.title,
             type: this.type
         });
@@ -100,7 +95,6 @@ export class SongEditComponent implements OnInit {
         newSong.InstrumentalParts = undefined;
         newSong.OtherInformations = formValues.otherInformations;
         newSong.Source = formValues.source;
-        newSong.Template = formValues.template;
         newSong.Title = formValues.title;
         newSong.Type = formValues.type;
 
@@ -129,14 +123,10 @@ export class SongEditComponent implements OnInit {
         this.songSessionService.songSession = newSong;
 
         if (this.songSessionService.action == "create") {
-            this.songSessionService.moveTo("songs/edit/hymn");
+            this.songSessionService.moveTo("songs/edit/" + newSong.Type);
         } else {
-            this.songSessionService.moveTo("songs/edit/" + this.song.Id + "/hymn");
+            this.songSessionService.moveTo("songs/edit/" + this.song.Id + "/" + this.song.Type);
         }
-    }
-
-    voicesInvalid() {
-        return !this.templateVoices.some(b => b);
     }
 
     partsInvalid() {
@@ -153,10 +143,6 @@ export class SongEditComponent implements OnInit {
 
     otherPartsCheck(id: number) {
         this.otherParts[id] = !this.otherParts[id];
-    }
-
-    updateTemplate(position: number) {
-        this.templateVoices[position] = !this.templateVoices[position];
     }
 
     updatePartTemplate(part: number, position: number) {

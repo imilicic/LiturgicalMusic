@@ -55,42 +55,48 @@
         </select>
         <span class="help-block" *ngIf="(timeNumerator.touched && timeNumerator.invalid) || (timeDenominator.touched && timeDenominator.invalid)">Obavezno!</span>
     </div>
-    <h2 *ngIf="chosenVoicesOrgan.length > 0">Orgulje</h2>
-    <div *ngFor="let voice of chosenVoicesOrgan">
-        <div [ngSwitch]="voice.voice">
-            <h3 *ngSwitchCase="'Soprano'">Sopran</h3>
-            <h3 *ngSwitchCase="'Alto'">Alt</h3>
-            <h3 *ngSwitchCase="'Tenor'">Tenor</h3>
-            <h3 *ngSwitchCase="'Bass'">Bas</h3>
-        </div>
-        <div class="form-group" [ngClass]="{'has-error': hasError(voice.controlNameRelative), 'has-success': hasSuccess(voice.controlNameRelative)}">
-            <label class="control-label" for="{{voice.controlNameRelative}}">Relativno</label>
-            <input class="form-control" formControlName="{{voice.controlNameRelative}}" id="{{voice.controlNameRelative}}"  type="text" />
-            <span class="help-block" *ngIf="hasError(voice.controlNameRelative)">Obavezno!</span>
-        </div>
-        <div class="form-group" [ngClass]="{'has-error': hasError(voice.controlName), 'has-success': hasSuccess(voice.controlName)}">
-            <label class="control-label" for="{{voice.controlName}}">Note</label>
-            <textarea class="form-control" cols="10" formControlName="{{voice.controlName}}" id="{{voice.controlName}}" rows="5"></textarea>
-            <span class="help-block" *ngIf="hasError(voice.controlName)">Obavezno!</span>
+    <h2>Orgulje</h2>
+    <div *ngFor="let voice of templateVoices">
+        <div *ngIf="voice.Instrument == 'Orgulje'">
+            <h4>
+                <label class="control-label">
+                    {{ voice.Name }} <input type="checkbox" [checked]="voice.Use" (change)="updateTemplate(voice)"/>
+                </label>
+            </h4>
+            <div *ngIf="voice.Use">
+                <div class="form-group">
+                    <label class="control-label" for="{{voice.ControlNameRelative}}">Relativno</label>
+                    <input class="form-control" type="text" formControlName="{{voice.ControlNameRelative}}" id="{{voice.ControlNameRelative}}" />
+                    <span class="help-block" *ngIf="hasError(voice.ControlNameRelative)">Obavezno!</span>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="{{voice.ControlName}}">Note</label>
+                    <textarea class="form-control" cols="10" formControlName="{{voice.ControlName}}" id="{{voice.ControlName}}" rows="5"></textarea>
+                    <span class="help-block" *ngIf="hasError(voice.ControlName)">Obavezno!</span>
+                </div>
+            </div>
         </div>
     </div>
-    <h2 *ngIf="chosenVoicesVoice.length > 0">Glas</h2>
-    <div class="form-group" *ngFor="let voice of chosenVoicesVoice">
-        <div [ngSwitch]="voice.voice">
-            <h3 *ngSwitchCase="'Soprano'">Sopran</h3>
-            <h3 *ngSwitchCase="'Alto'">Alt</h3>
-            <h3 *ngSwitchCase="'Tenor'">Tenor</h3>
-            <h3 *ngSwitchCase="'Bass'">Bas</h3>
-        </div>
-        <div class="form-group" [ngClass]="{'has-error': hasError(voice.controlNameRelative), 'has-success': hasSuccess(voice.controlNameRelative)}">
-            <label class="control-label" for="{{voice.controlNameRelative}}">Relativno</label>
-            <input class="form-control" formControlName="{{voice.controlNameRelative}}" id="{{voice.controlNameRelative}}" type="text" />
-            <span class="help-block" *ngIf="hasError(voice.controlNameRelative)">Obavezno!</span>
-        </div>
-        <div class="form-group" [ngClass]="{'has-error': hasError(voice.controlName), 'has-success': hasSuccess(voice.controlName)}">
-            <label class="control-label" for="{{voice.controlName}}">Note</label>
-            <textarea class="form-control" cols="10" formControlName="{{voice.controlName}}" id="{{voice.controlName}}" rows="5"></textarea>
-            <span class="help-block" *ngIf="hasError(voice.controlName)">Obavezno!</span>
+    <h2>Glas</h2>
+    <div *ngFor="let voice of templateVoices">
+        <div *ngIf="voice.Instrument == 'Glas'">
+            <h4>
+                <label class="control-label">
+                    {{ voice.Name }} <input type="checkbox" [checked]="voice.Use" (change)="updateTemplate(voice)" />
+                </label>
+            </h4>
+            <div *ngIf="voice.Use">
+                <div class="form-group">
+                    <label class="control-label" for="{{voice.ControlNameRelative}}">Relativno</label>
+                    <input class="form-control" type="text" formControlName="{{voice.ControlNameRelative}}" id="{{voice.ControlNameRelative}}" />
+                    <span class="help-block" *ngIf="hasError(voice.ControlNameRelative)">Obavezno!</span>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="{{voice.ControlName}}">Note</label>
+                    <textarea class="form-control" cols="10" formControlName="{{voice.ControlName}}" id="{{voice.ControlName}}" rows="5"></textarea>
+                    <span class="help-block" *ngIf="hasError(voice.ControlName)">Obavezno!</span>
+                </div>
+            </div>
         </div>
     </div>
     <h2>Tekst</h2>
@@ -138,6 +144,6 @@
         <embed [src]="domSanitizer.bypassSecurityTrustResourceUrl(pdfFileName)" width="800" height="500" *ngIf="preview && !spinner"/>
     </div>
     <button type="button" class="btn btn-default" (click)="previewSong(voiceForm.value)" [disabled]="previewEnabled() || spinner">Pregledaj</button>
-    <button type="submit" class="btn btn-default" [disabled]="voiceForm.invalid || spinner">Spremi</button>
+    <button type="submit" class="btn btn-default" [disabled]="voiceForm.invalid || spinner || voicesInvalid()">Spremi</button>
     <img src="app/assets/image/spinner.gif" style="width:100px;" *ngIf="spinner"/>
 </form>

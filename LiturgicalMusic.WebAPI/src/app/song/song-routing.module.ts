@@ -3,6 +3,7 @@ import { RouterModule } from "@angular/router";
 
 import { ComposerResolverService } from "./services/composer-resolver.service";
 import { HymnEditComponent } from "./views/hymn/hymn-edit.component";
+import { PsalmEditComponent } from "./views/psalm/psalm-edit.component";
 import { SongEditComponent } from "./views/song-edit.component";
 import { SongSearchComponent } from "./views/song-search.component";
 import { SongViewComponent } from "./views/song-view.component";
@@ -33,6 +34,10 @@ import { SongResolverService } from "./services/song-resolver.service";
                     {
                         path: "hymn",
                         component: HymnEditComponent
+                    },
+                    {
+                        path: "psalm",
+                        component: PsalmEditComponent
                     }
                 ]
             },
@@ -48,6 +53,10 @@ import { SongResolverService } from "./services/song-resolver.service";
                     {
                         path: "hymn",
                         component: HymnEditComponent
+                    },
+                    {
+                        path: "psalm",
+                        component: PsalmEditComponent
                     }
                 ]
             },
