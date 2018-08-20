@@ -1,0 +1,69 @@
+﻿import { Component, Input, OnInit } from "@angular/core";
+import { FormControl, FormGroup, Validators } from "@angular/forms";
+
+import { Stanza } from "../../models/stanza.model";
+
+@Component({
+    selector: "song-lyrics",
+    templateUrl: "./lyrics.component.html"
+})
+export class LyricsComponent implements OnInit {
+    lyrics: any[] = [];
+    @Input() stanzas: Stanza[];
+
+    lyricsForm: FormGroup;
+
+    ngOnInit() {
+        if (this.stanzas != undefined && this.stanzas.length > 0) {
+            this.lyricsForm = new FormGroup({});
+            this.stanzas.forEach(stanza => {
+                this.appendStanza(stanza.Text);
+            });
+        } else {
+            this.lyricsForm = new FormGroup({});
+            this.appendStanza();
+        }
+    }
+
+    appendStanza(text: string = "") {
+        this.lyrics.push({
+            controlName: 'stanza' + (this.lyrics.length + 1),
+            control: new FormControl(text, Validators.required)
+        });
+
+        this.lyricsForm.addControl(this.lyrics[this.lyrics.length - 1].controlName, this.lyrics[this.lyrics.length - 1].control);
+    }
+
+    deleteStanza() {
+        if (this.lyrics.length > 1) {
+            let stanza: any = this.lyrics.pop();
+            this.lyricsForm.removeControl(stanza.controlName);
+        }
+    }
+
+    getFormValues() {
+        let stanzas: Stanza[] = [];
+
+        this.lyrics.forEach((l, i) => {
+            let stanza: Stanza = new Stanza();
+
+            stanza = {
+                Id: undefined,
+                Number: i + 1,
+                Text: this.lyricsForm.controls[l.controlName].value
+            };
+
+            stanzas.push(stanza);
+        });
+
+        return stanzas;
+    }
+
+    hasError(name: string) {
+        return this.lyricsForm.controls[name].touched && this.lyricsForm.controls[name].invalid;
+    }
+
+    hasSuccess(name: string) {
+        return this.lyricsForm.controls[name].value != undefined && this.lyricsForm.controls[name].valid;
+    }
+}

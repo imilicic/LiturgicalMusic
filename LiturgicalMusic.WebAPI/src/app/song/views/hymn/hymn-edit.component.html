@@ -55,30 +55,25 @@
         </select>
         <span class="help-block" *ngIf="(timeNumerator.touched && timeNumerator.invalid) || (timeDenominator.touched && timeDenominator.invalid)">Obavezno!</span>
     </div>
+
     <h2>Predigra</h2>
     <instrument-voices [templateVoices]="partsTemplateVoices[0]" [code]="getInstrumentalPartCode('Prelude')"></instrument-voices>
+
     <h2>Glas</h2>
     <instrument-voices [templateVoices]="getTemplateVoices('Voice')" [code]="getSongCode()"></instrument-voices>
+
     <h2>Orgulje</h2>
     <instrument-voices [templateVoices]="getTemplateVoices('Organ')" [code]="getSongCode()"></instrument-voices>
+
     <h2>Tekst</h2>
-    <div>
-        <div class="form-group" *ngFor="let stanza of lyrics; let i = index" [ngClass]="{'has-error': hasError(stanza.controlName), 'has-success': hasSuccess(stanza.controlName)}">
-            <label class="control-label" for="{{stanza.controlName}}">{{i + 1}}. strofa</label>
-            <textarea rows="5" cols="10" class="form-control" id="{{stanza.controlName}}" formControlName="{{stanza.controlName}}"></textarea>
-            <span class="help-block" *ngIf="hasError(stanza.controlName)">Obavezno!</span>
-        </div>
-        <button type="button" class="btn btn-default" (click)="appendStanza()">
-            <span class="glyphicon glyphicon-plus"></span> Dodaj
-        </button>
-        <button type="button" class="btn btn-default" (click)="deleteStanza()">
-            <span class="glyphicon glyphicon-minus"></span> Obriši zadnju
-        </button>
-    </div>
+    <song-lyrics [stanzas]="song.Stanzas"></song-lyrics>
+
     <h2>Međuigra</h2>
     <instrument-voices [templateVoices]="partsTemplateVoices[1]" [code]="getInstrumentalPartCode('Interlude')"></instrument-voices>
+
     <h2>Završetak</h2>
     <instrument-voices [templateVoices]="partsTemplateVoices[2]" [code]="getInstrumentalPartCode('Coda')"></instrument-voices>
+
     <div *ngIf="preview" style="text-align:center;">
         <embed [src]="domSanitizer.bypassSecurityTrustResourceUrl(pdfFileName)" width="800" height="500" *ngIf="preview && !spinner"/>
     </div>

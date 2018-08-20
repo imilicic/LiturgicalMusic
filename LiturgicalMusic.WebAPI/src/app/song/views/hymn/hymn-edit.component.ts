@@ -1,8 +1,9 @@
-﻿import { Component, OnInit, ViewChildren, QueryList } from "@angular/core";
+﻿import { Component, OnInit, ViewChild, ViewChildren, QueryList } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { DomSanitizer } from "@angular/platform-browser";
 
 import { InstrumentalPart } from "../../models/instrumentalPart.model";
+import { LyricsComponent } from "../lyrics/lyrics.component";
 import { Song } from "../../models/song.model";
 import { SongService } from "../../services/song.service";
 import { SongSessionService } from "../../services/song-session.service";
@@ -15,7 +16,8 @@ import { VoiceComponent } from "../voice/voice.component";
 })
 export class HymnEditComponent implements OnInit {
     @ViewChildren(VoiceComponent) instrumentVoices: QueryList<VoiceComponent>;
-    lyrics: any[] = [];
+    @ViewChild(LyricsComponent) lyrics: LyricsComponent;
+    partPositions: string[] = ["prelude", "interlude", "coda"];
     partsTemplateVoices: Template[][] = [[], [], []];
     pdfFileName: string;
     preview: boolean = false;
@@ -23,7 +25,6 @@ export class HymnEditComponent implements OnInit {
     spinner: boolean = false;
     templateVoices: Template[] = [];
     voices: string[] = ["Soprano", "Alto", "Tenor", "Bass"];
-    partPositions: string[] = ["prelude", "interlude", "coda"];
 
     key: FormControl;
     template: FormControl;
@@ -34,6 +35,7 @@ export class HymnEditComponent implements OnInit {
     constructor(private domSanitizer: DomSanitizer, private songService: SongService, private songSessionService: SongSessionService) { }
 
     ngOnInit() {
+        window.scrollTo(0, 0);
         this.song = this.songSessionService.songSession;
 
         let key: string = "";
@@ -68,8 +70,7 @@ export class HymnEditComponent implements OnInit {
             timeDenominator = parseInt(time[1]);
             key = code.Key;
         }
-
-        window.scrollTo(0, 0);
+        
         this.pdfFileName = "app/assets/pdf/" + this.song.Title;
 
         if (this.song.Composer != undefined) {
@@ -89,47 +90,6 @@ export class HymnEditComponent implements OnInit {
         controls["timeDenominator"] = this.timeDenominator;
 
         this.voiceForm = new FormGroup(controls);
-
-        if (this.song.Stanzas != null) {
-            this.song.Stanzas.forEach(stanza => {
-                let controlName: string = 'stanza' + (this.lyrics.length + 1);
-
-                this.lyrics.push({
-                    control: new FormControl(stanza.Text, Validators.required),
-                    controlName: controlName
-                });
-
-                this.voiceForm.addControl(controlName, this.lyrics[this.lyrics.length - 1].control);
-            });
-        } else {
-            this.lyrics.push({
-                control: new FormControl("", Validators.required),
-                controlName: 'stanza1'
-            });
-
-            this.voiceForm.addControl("stanza1", this.lyrics[0].control);
-        }
-    }
-
-    appendStanza() {
-        this.lyrics.push({
-            controlName: 'stanza' + (this.lyrics.length + 1),
-            control: new FormControl("", Validators.required)
-        });
-
-        this.voiceForm.addControl(this.lyrics[this.lyrics.length - 1].controlName, this.lyrics[this.lyrics.length - 1].control);
-    }
-
-    createTemplateVoices(instrument: string, template: boolean[], templateVoices: Template[]) {
-        template.forEach((t, i) => {
-            templateVoices.push({
-                ControlName: instrument + this.voices[i],
-                ControlNameRelative: instrument + this.voices[i] + "Relative",
-                Instrument: instrument,
-                Name: this.voices[i],
-                Use: t
-            });
-        });
     }
 
     createSong(formValues: any) {
@@ -161,31 +121,34 @@ export class HymnEditComponent implements OnInit {
                 }
             });
         }
-        
-        let stanzas: Stanza[] = [];
 
-        this.lyrics.forEach((l, i) => {
-            let stanza: Stanza = new Stanza();
+        let stanzas: Stanza[] = this.lyrics.getFormValues();
+
+        stanzas.forEach((stanza, i) => {
             let foundStanza: Stanza = undefined;
 
             if (this.song.Stanzas != undefined) {
                 foundStanza = this.song.Stanzas.find(s => s.Number == i + 1);
             }
 
-            stanza = {
-                Id: undefined,
-                Number: i + 1,
-                Text: formValues[l.controlName]
-            };
-
             if (foundStanza != undefined) {
                 stanza.Id = foundStanza.Id;
             }
-
-            stanzas.push(stanza);
         });
 
         this.song.Stanzas = stanzas;
+    }
+
+    createTemplateVoices(instrument: string, template: boolean[], templateVoices: Template[]) {
+        template.forEach((t, i) => {
+            templateVoices.push({
+                ControlName: instrument + this.voices[i],
+                ControlNameRelative: instrument + this.voices[i] + "Relative",
+                Instrument: instrument,
+                Name: this.voices[i],
+                Use: t
+            });
+        });
     }
 
     createUpdateSong(formValues: any) {
@@ -202,13 +165,6 @@ export class HymnEditComponent implements OnInit {
                 this.spinner = false;
                 this.songSessionService.moveTo("songs/view/" + response.Id);
             });
-        }
-    }
-
-    deleteStanza() {
-        if (this.lyrics.length > 1) {
-            let stanza: any = this.lyrics.pop();
-            this.voiceForm.removeControl(stanza.controlName);
         }
     }
 
@@ -238,14 +194,6 @@ export class HymnEditComponent implements OnInit {
 
     getTemplateVoices(instrument: string) {
         return this.templateVoices.filter(t => t.Instrument == instrument);
-    }
-
-    hasError(name: string) {
-        return this.voiceForm.controls[name].touched && this.voiceForm.controls[name].invalid;
-    }
-
-    hasSuccess(name: string) {
-        return this.voiceForm.controls[name].value != undefined && this.voiceForm.controls[name].valid;
     }
 
     mapper(code: any, instrument: string, back: boolean = false) {
