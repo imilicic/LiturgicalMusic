@@ -1,4 +1,4 @@
-﻿import { Component, OnInit } from "@angular/core";
+﻿import { Component, OnInit, ViewChildren, QueryList } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { DomSanitizer } from "@angular/platform-browser";
 
@@ -7,27 +7,23 @@ import { Song } from "../../models/song.model";
 import { SongService } from "../../services/song.service";
 import { SongSessionService } from "../../services/song-session.service";
 import { Stanza } from "../../models/stanza.model";
-
-class Template {
-    ControlName: string;
-    ControlNameRelative: string;
-    Instrument: string;
-    Name: string;
-    Use: boolean;
-}
+import { Template } from "../../models/template.model";
+import { VoiceComponent } from "../voice/voice.component";
 
 @Component({
     templateUrl: "./hymn-edit.component.html"
 })
 export class HymnEditComponent implements OnInit {
-    song: Song;
-    chosenVoicesParts: any[][] = [];
+    @ViewChildren(VoiceComponent) instrumentVoices: QueryList<VoiceComponent>;
     lyrics: any[] = [];
+    partsTemplateVoices: Template[][] = [[], [], []];
     pdfFileName: string;
     preview: boolean = false;
-    templateVoices: Template[] = [];
+    song: Song;
     spinner: boolean = false;
-    voices: any[] = ["Soprano", "Alto", "Tenor", "Bass"];
+    templateVoices: Template[] = [];
+    voices: string[] = ["Soprano", "Alto", "Tenor", "Bass"];
+    partPositions: string[] = ["prelude", "interlude", "coda"];
 
     key: FormControl;
     template: FormControl;
@@ -45,67 +41,24 @@ export class HymnEditComponent implements OnInit {
         let timeDenominator: number = undefined;
         let code: any = undefined;
         let controls: any = {};
+        let partVoices: boolean[][] = [[false, false, false, false], [false, false, false, false], [false, false, false, false]];
 
         if (this.song.Template == undefined) {
             this.song.Template = [false, false, false, false, true, true, true, true];
         }
 
-        this.templateVoices.push({
-            ControlName: "VoiceSoprano",
-            ControlNameRelative: "VoiceSopranoRelative",
-            Instrument: "Glas",
-            Name: "Sopran",
-            Use: this.song.Template[0]
-        });
-        this.templateVoices.push({
-            ControlName: "VoiceAlto",
-            ControlNameRelative: "VoiceAltoRelative",
-            Instrument: "Glas",
-            Name: "Alt",
-            Use: this.song.Template[1]
-        });
-        this.templateVoices.push({
-            ControlName: "VoiceTenor",
-            ControlNameRelative: "VoiceTenorRelative",
-            Instrument: "Glas",
-            Name: "Tenor",
-            Use: this.song.Template[2]
-        });
-        this.templateVoices.push({
-            ControlName: "VoiceBass",
-            ControlNameRelative: "VoiceBassRelative",
-            Instrument: "Glas",
-            Name: "Bas",
-            Use: this.song.Template[3]
-        });
-        this.templateVoices.push({
-            ControlName: "OrganSoprano",
-            ControlNameRelative: "OrganSopranoRelative",
-            Instrument: "Orgulje",
-            Name: "Sopran",
-            Use: this.song.Template[4]
-        });
-        this.templateVoices.push({
-            ControlName: "OrganAlto",
-            ControlNameRelative: "OrganAltoRelative",
-            Instrument: "Orgulje",
-            Name: "Alt",
-            Use: this.song.Template[5]
-        });
-        this.templateVoices.push({
-            ControlName: "OrganTenor",
-            ControlNameRelative: "OrganTenorRelative",
-            Instrument: "Orgulje",
-            Name: "Tenor",
-            Use: this.song.Template[6]
-        });
-        this.templateVoices.push({
-            ControlName: "OrganBass",
-            ControlNameRelative: "OrganBassRelative",
-            Instrument: "Orgulje",
-            Name: "Bas",
-            Use: this.song.Template[7]
-        });
+        if (this.song.InstrumentalParts != undefined) {
+            this.song.InstrumentalParts.forEach(p => {
+                let i = this.partPositions.indexOf(p.Position);
+                partVoices[i] = p.Template;
+            });
+        }
+
+        this.createTemplateVoices('Voice', this.song.Template.slice(0, 4), this.templateVoices);
+        this.createTemplateVoices('Organ', this.song.Template.slice(4, 8), this.templateVoices);
+        this.createTemplateVoices('Prelude', partVoices[0], this.partsTemplateVoices[0]);
+        this.createTemplateVoices('Interlude', partVoices[1], this.partsTemplateVoices[1]);
+        this.createTemplateVoices('Coda', partVoices[2], this.partsTemplateVoices[2]);
 
         if (this.song.Code != undefined) {
             code = JSON.parse(this.song.Code);
@@ -115,26 +68,6 @@ export class HymnEditComponent implements OnInit {
             timeDenominator = parseInt(time[1]);
             key = code.Key;
         }
-
-        this.templateVoices.forEach(t => {
-            if (t.Use) {
-                let voice: string = undefined;
-                let voiceRelative: string = undefined;
-
-                if (code != undefined) {
-                    voice = code[t.ControlName];
-
-                    if (voice != undefined) {
-                        voice = voice.split("keyTime ")[1];
-                    }
-
-                    voiceRelative = code[t.ControlNameRelative];
-                }
-
-                controls[t.ControlName] = new FormControl(voice, Validators.required);
-                controls[t.ControlNameRelative] = new FormControl(voiceRelative, Validators.required);
-            }
-        });
 
         window.scrollTo(0, 0);
         this.pdfFileName = "app/assets/pdf/" + this.song.Title;
@@ -146,45 +79,6 @@ export class HymnEditComponent implements OnInit {
         }
 
         this.pdfFileName += ".pdf";
-
-        if (this.song.InstrumentalParts != undefined) {
-            this.song.InstrumentalParts.forEach(p => {
-                let voices: any = [];
-                let partCode: any = undefined;
-
-                if (p.Code != undefined) {
-                    partCode = JSON.parse(p.Code);
-                }
-
-                p.Template.forEach((b, i) => {
-                    if (b) {
-                        let voice: string = undefined;
-                        let voiceRelative: string = undefined;
-
-                        voices.push({
-                            voice: this.voices[i],
-                            controlName: p.Position + "Part" + this.voices[i],
-                            controlNameRelative: p.Position + "Part" + this.voices[i] + "Relative",
-                            partName: p.Position
-                        });
-
-                        if (partCode != undefined) {
-                            voice = partCode[this.voices[i]];
-
-                            if (voice != undefined) {
-                                voice = voice.split("keyTime ")[1];
-                            }
-
-                            voiceRelative = partCode[this.voices[i] + "Relative"];
-                        }
-
-                        controls[p.Position + "Part" + this.voices[i]] = new FormControl(voice, Validators.required);
-                        controls[p.Position + "Part" + this.voices[i] + "Relative"] = new FormControl(voiceRelative, Validators.required);
-                    }
-                });
-                this.chosenVoicesParts.push(voices);
-            });
-        }
 
         this.key = new FormControl(key, Validators.required);
         this.timeNumerator = new FormControl(timeNumerator, Validators.required);
@@ -226,59 +120,48 @@ export class HymnEditComponent implements OnInit {
         this.voiceForm.addControl(this.lyrics[this.lyrics.length - 1].controlName, this.lyrics[this.lyrics.length - 1].control);
     }
 
-    deleteStanza() {
-        if (this.lyrics.length > 1) {
-            let stanza: any = this.lyrics.pop();
-            this.voiceForm.removeControl(stanza.controlName);
-        }
-    }
-
-    private prependToCode(code: any, copyFrom: any, instrument: string, template: boolean[], keepSameKey: boolean = true) {
-        this.voices.forEach((v, i) => {
-            if (template[i]) {
-                if (v == "Soprano" || v == "Alto") {
-                    if (keepSameKey) {
-                        code[instrument + v] = "\\clef \"treble\" \\keyTime " + copyFrom[instrument + v];
-                    } else {
-                        code[v] = "\\clef \"treble\" \\keyTime " + copyFrom[instrument + v];
-                    }
-                } else {
-                    if (keepSameKey) {
-                        code[instrument + v] = "\\clef \"bass\" \\keyTime " + copyFrom[instrument + v];
-                    } else {
-                        code[v] = "\\clef \"bass\" \\keyTime " + copyFrom[instrument + v];
-                    }
-                }
-
-                if (keepSameKey) {
-                    code[instrument + v + "Relative"] = copyFrom[instrument + v + "Relative"];
-                } else {
-                    code[v + "Relative"] = copyFrom[instrument + v + "Relative"];
-                }
-            }
+    createTemplateVoices(instrument: string, template: boolean[], templateVoices: Template[]) {
+        template.forEach((t, i) => {
+            templateVoices.push({
+                ControlName: instrument + this.voices[i],
+                ControlNameRelative: instrument + this.voices[i] + "Relative",
+                Instrument: instrument,
+                Name: this.voices[i],
+                Use: t
+            });
         });
     }
 
     createSong(formValues: any) {
         let code = {};
+        let voiceFormValues: any[] = [];
 
+        this.instrumentVoices.forEach(v => {
+            voiceFormValues.push(v.getFormValues());
+        });
+
+        code = { ...voiceFormValues[1]['Code'], ...voiceFormValues[2]['Code'] };
         code["Time"] = formValues.timeNumerator + "/" + formValues.timeDenominator;
         code["Key"] = formValues.Key;
 
-        this.song.Template = this.templateVoices.map(t => t.Use);
+        this.song.Template = [].concat(voiceFormValues[1]['Template'], voiceFormValues[2]['Template']);
+        this.song.Code = JSON.stringify(code);
 
-        this.prependToCode(code, formValues, "Voice", this.song.Template.slice(0, 4));
-        this.prependToCode(code, formValues, "Organ", this.song.Template.slice(4, 8));
-
-        if (this.song.InstrumentalParts != undefined) {
-            this.song.InstrumentalParts.forEach(part => {
-                let newPart: any = {};
-                this.prependToCode(newPart, formValues, part.Position + "Part", part.Template, false);
-                part.Code = JSON.stringify(newPart);
+        if (this.song.InstrumentalParts == undefined) {
+            this.song.InstrumentalParts = [];
+            [0, 3, 4].forEach((n, i) => {
+                if (voiceFormValues[n]['Template'].some((b: boolean) => b)) {
+                    this.song.InstrumentalParts.push({
+                        Id: undefined,
+                        Position: this.partsTemplateVoices[i][0].Instrument.toLocaleLowerCase(),
+                        Type: "hymn",
+                        Code: JSON.stringify(this.mapper(voiceFormValues[n]['Code'], this.partsTemplateVoices[i][0].Instrument)),
+                        Template: voiceFormValues[n]['Template']
+                    });
+                }
             });
         }
         
-        this.song.Code = JSON.stringify(code);
         let stanzas: Stanza[] = [];
 
         this.lyrics.forEach((l, i) => {
@@ -322,12 +205,65 @@ export class HymnEditComponent implements OnInit {
         }
     }
 
+    deleteStanza() {
+        if (this.lyrics.length > 1) {
+            let stanza: any = this.lyrics.pop();
+            this.voiceForm.removeControl(stanza.controlName);
+        }
+    }
+
+    getInstrumentalPartCode(position: string) {
+        if (this.song.InstrumentalParts == undefined) {
+            return undefined;
+        }
+
+        let result: InstrumentalPart = this.song.InstrumentalParts.find(p => p.Position == position.toLocaleLowerCase());
+
+        if (result == undefined) {
+            return undefined;
+        }
+
+        let code = JSON.parse(result.Code);
+
+        return this.mapper(code, position, true);
+    }
+
+    getSongCode() {
+        if (this.song.Code == undefined) {
+            return undefined;
+        }
+
+        return JSON.parse(this.song.Code);
+    }
+
+    getTemplateVoices(instrument: string) {
+        return this.templateVoices.filter(t => t.Instrument == instrument);
+    }
+
     hasError(name: string) {
         return this.voiceForm.controls[name].touched && this.voiceForm.controls[name].invalid;
     }
 
     hasSuccess(name: string) {
         return this.voiceForm.controls[name].value != undefined && this.voiceForm.controls[name].valid;
+    }
+
+    mapper(code: any, instrument: string, back: boolean = false) {
+        let oldKeys: string[] = Object.keys(code);
+        let newKeys: string[];
+        let newObject = {};
+
+        if (back) {
+            newKeys = oldKeys.map(p => instrument + p);
+        } else {
+            newKeys = oldKeys.map(p => p.replace(new RegExp(instrument, 'g'), ''));
+        }
+
+        newKeys.forEach((k, i) => {
+            newObject[k] = code[oldKeys[i]]
+        });
+
+        return newObject;
     }
 
     previewEnabled() {
@@ -343,18 +279,6 @@ export class HymnEditComponent implements OnInit {
             .subscribe((response: Song) => {
                 this.spinner = false;
             });
-    }
-
-    updateTemplate(template: Template) {
-        template.Use = !template.Use;
-
-        if (template.Use) {
-            this.voiceForm.addControl(template.ControlName, new FormControl("", Validators.required));
-            this.voiceForm.addControl(template.ControlNameRelative, new FormControl("", Validators.required));
-        } else {
-            this.voiceForm.removeControl(template.ControlName);
-            this.voiceForm.removeControl(template.ControlNameRelative);
-        }
     }
 
     voicesInvalid() {

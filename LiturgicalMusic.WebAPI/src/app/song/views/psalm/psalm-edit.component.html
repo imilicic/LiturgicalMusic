@@ -1,1 +1,95 @@
-﻿Psalm
+﻿<form autocomplete="off" [formGroup]="voiceForm" (ngSubmit)="createUpdateSong(voiceForm.value)" novalidate>
+    <div class="form-group" [ngClass]="{'has-error': key.touched && key.invalid, 'has-success': key.value!=null && key.valid}">
+        <label class="control-label" for="Key">Tonalitet</label>
+        <select class="form-control" formControlName="Key" id="Key">
+            <option value="ces \major">Ces dur</option>
+            <option value="c \major">C dur</option>
+            <option value="cis \major">Cis dur</option>
+            <option value="des \major">Des dur</option>
+            <option value="d \major">D dur</option>
+            <option value="es \major">Es dur</option>
+            <option value="e \major">E dur</option>
+            <option value="f \major">F dur</option>
+            <option value="fis \major">Fis dur</option>
+            <option value="ges \major">Ges dur</option>
+            <option value="g \major">G dur</option>
+            <option value="aes \major">As dur</option>
+            <option value="a \major">A dur</option>
+            <option value="bes \major">B dur</option>
+            <option value="b \major">H dur</option>
+            <option value="c \minor">c mol</option>
+            <option value="cis \minor">cis mol</option>
+            <option value="d \minor">d mol</option>
+            <option value="dis \minor">dis mol</option>
+            <option value="es \minor">es mol</option>
+            <option value="e \minor">e mol</option>
+            <option value="f \minor">f mol</option>
+            <option value="fis \minor">fis mol</option>
+            <option value="g \minor">g mol</option>
+            <option value="gis \minor">gis mol</option>
+            <option value="a \minor">a mol</option>
+            <option value="bes \minor">b mol</option>
+            <option value="b \minor">h mol</option>
+        </select>
+        <span class="help-block" *ngIf="key.touched && key.invalid">Obavezno!</span>
+    </div>
+    <h1>Antifona</h1>
+    <h2>Orgulje</h2>
+    <div *ngFor="let voice of antiphonaTemplateVoices">
+        <div *ngIf="voice.Instrument == 'Orgulje'">
+            <h4>
+                <label class="control-label">
+                    {{ voice.Name }} <input type="checkbox" [checked]="voice.Use" (change)="updateTemplate(voice)" />
+                </label>
+            </h4>
+            <div *ngIf="voice.Use">
+                <div class="form-group">
+                    <label class="control-label" for="{{voice.ControlNameRelative}}">Relativno</label>
+                    <input class="form-control" type="text" formControlName="{{voice.ControlNameRelative}}" id="{{voice.ControlNameRelative}}" />
+                    <span class="help-block" *ngIf="hasError(voice.ControlNameRelative)">Obavezno!</span>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="{{voice.ControlName}}">Note</label>
+                    <textarea class="form-control" cols="10" formControlName="{{voice.ControlName}}" id="{{voice.ControlName}}" rows="5"></textarea>
+                    <span class="help-block" *ngIf="hasError(voice.ControlName)">Obavezno!</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <h2>Glas</h2>
+    <div *ngFor="let voice of antiphonaTemplateVoices">
+        <div *ngIf="voice.Instrument == 'Glas'">
+            <h4>
+                <label class="control-label">
+                    {{ voice.Name }} <input type="checkbox" [checked]="voice.Use" (change)="updateTemplate(voice)" />
+                </label>
+            </h4>
+            <div *ngIf="voice.Use">
+                <div class="form-group">
+                    <label class="control-label" for="{{voice.ControlNameRelative}}">Relativno</label>
+                    <input class="form-control" type="text" formControlName="{{voice.ControlNameRelative}}" id="{{voice.ControlNameRelative}}" />
+                    <span class="help-block" *ngIf="hasError(voice.ControlNameRelative)">Obavezno!</span>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="{{voice.ControlName}}">Note</label>
+                    <textarea class="form-control" cols="10" formControlName="{{voice.ControlName}}" id="{{voice.ControlName}}" rows="5"></textarea>
+                    <span class="help-block" *ngIf="hasError(voice.ControlName)">Obavezno!</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <h2>Tekst</h2>
+    <div>
+        <div class="form-group" *ngFor="let stanza of lyrics; let i = index" [ngClass]="{'has-error': hasError(stanza.controlName), 'has-success': hasSuccess(stanza.controlName)}">
+            <label class="control-label" for="{{stanza.controlName}}">{{i + 1}}. strofa</label>
+            <textarea rows="5" cols="10" class="form-control" id="{{stanza.controlName}}" formControlName="{{stanza.controlName}}"></textarea>
+            <span class="help-block" *ngIf="hasError(stanza.controlName)">Obavezno!</span>
+        </div>
+        <button type="button" class="btn btn-default" (click)="appendStanza()">
+            <span class="glyphicon glyphicon-plus"></span> Dodaj
+        </button>
+        <button type="button" class="btn btn-default" (click)="deleteStanza()">
+            <span class="glyphicon glyphicon-minus"></span> Obriši zadnju
+        </button>
+    </div>
+</form>

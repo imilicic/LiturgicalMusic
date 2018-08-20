@@ -3,7 +3,6 @@ import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
 
 import { Composer } from "../models/composer.model";
-import { InstrumentalPart } from "../models/instrumentalPart.model";
 import { Song } from "../models/song.model";
 import { SongSessionService } from "../services/song-session.service";
 
@@ -12,9 +11,6 @@ import { SongSessionService } from "../services/song-session.service";
 })
 export class SongEditComponent implements OnInit {
     composers: Composer[] = [];
-    otherParts: boolean[] = [false, false, false];
-    partNames: string[] = ["prelude", "interlude", "coda"];
-    partVoices: boolean[][] = [[false, false, false, false], [false, false, false, false], [false, false, false, false]];
     song: Song = undefined;
 
     arranger: FormControl;
@@ -60,14 +56,6 @@ export class SongEditComponent implements OnInit {
             source = this.song.Source;
             title = this.song.Title;
             type = this.song.Type;
-            
-            if (this.song.InstrumentalParts != undefined) {
-                this.song.InstrumentalParts.forEach(part => {
-                    let i: number = this.partNames.indexOf(part.Position);
-                    this.otherParts[i] = true;
-                    this.partVoices[i] = part.Template;
-                });
-            }
         }
 
         this.arranger = new FormControl(arrangerId);
@@ -92,33 +80,10 @@ export class SongEditComponent implements OnInit {
 
         newSong.Arranger = this.composers.find(c => c.Id == formValues.arranger);
         newSong.Composer = this.composers.find(c => c.Id == formValues.composer);
-        newSong.InstrumentalParts = undefined;
         newSong.OtherInformations = formValues.otherInformations;
         newSong.Source = formValues.source;
         newSong.Title = formValues.title;
         newSong.Type = formValues.type;
-
-        if (this.otherParts.some(b => b)) {
-            newSong.InstrumentalParts = [];
-
-            this.otherParts.forEach((b, i) => {
-                if (b) {
-                    let part: InstrumentalPart;
-
-                    if (this.song) {
-                        part = new InstrumentalPart(this.song.InstrumentalParts.find(p => p.Position == this.partNames[i]));
-                    } else {
-                        part = new InstrumentalPart();
-                    }
-
-                    part.Position = this.partNames[i];
-                    part.Template = this.partVoices[i];
-                    part.Type = newSong.Type;
-
-                    newSong.InstrumentalParts.push(part);
-                }
-            });
-        }
 
         this.songSessionService.songSession = newSong;
 
@@ -127,25 +92,5 @@ export class SongEditComponent implements OnInit {
         } else {
             this.songSessionService.moveTo("songs/edit/" + this.song.Id + "/" + this.song.Type);
         }
-    }
-
-    partsInvalid() {
-        for (let i = 0; i < this.otherParts.length; i++) {
-            if (this.otherParts[i]) {
-                if (!this.partVoices[i].some(b => b)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    otherPartsCheck(id: number) {
-        this.otherParts[id] = !this.otherParts[id];
-    }
-
-    updatePartTemplate(part: number, position: number) {
-        this.partVoices[part][position] = !this.partVoices[part][position];
     }
 }

@@ -1,0 +1,21 @@
+﻿<div [formGroup]="voiceForm">
+    <div *ngFor="let voice of templateVoices">
+        <h4>
+            <label class="control-label">
+                {{ voice.Name }} <input type="checkbox" [checked]="voice.Use" (change)="updateTemplate(voice)" />
+            </label>
+        </h4>
+        <div *ngIf="voice.Use">
+            <div class="form-group" [ngClass]="{'has-error': hasError(voice.ControlNameRelative), 'has-success': hasSuccess(voice.ControlNameRelative)}">
+                <label class="control-label" for="{{voice.ControlNameRelative}}">Relativno</label>
+                <input class="form-control" type="text" formControlName="{{voice.ControlNameRelative}}" id="{{voice.ControlNameRelative}}" />
+                <span class="help-block" *ngIf="hasError(voice.ControlNameRelative)">Obavezno!</span>
+            </div>
+            <div class="form-group" [ngClass]="{'has-error': hasError(voice.ControlName), 'has-success': hasSuccess(voice.ControlName)}">
+                <label class="control-label" for="{{voice.ControlName}}">Note</label>
+                <textarea class="form-control" cols="10" formControlName="{{voice.ControlName}}" id="{{voice.ControlName}}" rows="5"></textarea>
+                <span class="help-block" *ngIf="hasError(voice.ControlName)">Obavezno!</span>
+            </div>
+        </div>
+    </div>
+</div>

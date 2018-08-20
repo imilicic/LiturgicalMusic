@@ -16,6 +16,7 @@ import { SongSearchComponent } from "./views/song-search.component";
 import { SongService } from "./services/song.service";
 import { SongSessionService } from "./services/song-session.service";
 import { SongViewComponent } from "./views/song-view.component";
+import { VoiceComponent } from "./views/voice/voice.component";
 
 @NgModule({
     imports: [
@@ -30,7 +31,8 @@ import { SongViewComponent } from "./views/song-view.component";
         PsalmEditComponent,
         SongEditComponent,
         SongSearchComponent,
-        SongViewComponent
+        SongViewComponent,
+        VoiceComponent
     ],
     providers: [
         ComposerResolverService,

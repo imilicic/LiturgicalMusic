@@ -165,6 +165,7 @@
     <Content Include="src\app\song\views\song-edit.component.html" />
     <Content Include="src\app\song\views\song-search.component.html" />
     <Content Include="src\app\song\views\song-view.component.html" />
+    <Content Include="src\app\song\views\voice\voice.component.html" />
     <Content Include="src\favicon.ico" />
     <Content Include="src\index.html" />
     <Content Include="src\styles.css" />
@@ -236,6 +237,7 @@
     <TypeScriptCompile Include="src\app\app.module.ts" />
     <TypeScriptCompile Include="src\app\home\home.component.ts" />
     <TypeScriptCompile Include="src\app\shared\navbar\navbar.component.ts" />
+    <TypeScriptCompile Include="src\app\song\models\template.model.ts" />
     <TypeScriptCompile Include="src\app\song\services\composer.service.ts" />
     <TypeScriptCompile Include="src\app\song\services\song-session.service.ts" />
     <TypeScriptCompile Include="src\app\song\views\hymn\hymn-edit.component.ts" />
@@ -254,6 +256,7 @@
     <TypeScriptCompile Include="src\app\song\views\song-search.component.ts" />
     <TypeScriptCompile Include="src\app\song\views\song-view.component.ts" />
     <TypeScriptCompile Include="src\app\song\song.module.ts" />
+    <TypeScriptCompile Include="src\app\song\views\voice\voice.component.ts" />
     <TypeScriptCompile Include="src\main.ts" />
   </ItemGroup>
   <ItemGroup>
