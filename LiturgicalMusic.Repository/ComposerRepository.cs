@@ -53,7 +53,7 @@ namespace LiturgicalMusic.Repository
         /// <returns></returns>
         public async Task<IList<IComposer>> GetAsync()
         {
-            IList<ComposerEntity> composers = await Repository.Get().OrderBy(c => c.Surname).ToListAsync();
+            IList<ComposerEntity> composers = await Repository.Get().OrderBy(c => c.Name).ToListAsync();
             return Mapper.Map<IList<IComposer>>(composers);
         }
 

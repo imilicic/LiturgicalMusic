@@ -1,13 +1,15 @@
 ﻿<div [formGroup]="lyricsForm">
     <div class="form-group" *ngFor="let stanza of lyrics; let i = index" [ngClass]="{'has-error': hasError(stanza.controlName), 'has-success': hasSuccess(stanza.controlName)}">
-        <label class="control-label" for="{{stanza.controlName}}">{{i + 1}}. strofa</label>
+        <label class="control-label" for="{{stanza.controlName}}" *ngIf="changeable">{{i + 1}}. strofa</label>
         <textarea rows="5" cols="10" class="form-control" id="{{stanza.controlName}}" formControlName="{{stanza.controlName}}"></textarea>
         <span class="help-block" *ngIf="hasError(stanza.controlName)">Obavezno!</span>
     </div>
-    <button type="button" class="btn btn-default" (click)="appendStanza()">
-        <span class="glyphicon glyphicon-plus"></span> Dodaj
-    </button>
-    <button type="button" class="btn btn-default" (click)="deleteStanza()" [disabled]="lyrics.length==1">
-        <span class="glyphicon glyphicon-minus"></span> Obriši zadnju
-    </button>
+    <div *ngIf="changeable">
+        <button type="button" class="btn btn-default" (click)="appendStanza()" [disabled]="lyrics.length==maxStanzas">
+            <span class="glyphicon glyphicon-plus"></span> Dodaj
+        </button>
+        <button type="button" class="btn btn-default" (click)="deleteStanza()" [disabled]="lyrics.length==1">
+            <span class="glyphicon glyphicon-minus"></span> Obriši zadnju
+        </button>
+    </div>
 </div>

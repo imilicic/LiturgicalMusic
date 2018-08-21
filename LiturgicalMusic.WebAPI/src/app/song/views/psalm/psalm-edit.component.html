@@ -33,63 +33,40 @@
         </select>
         <span class="help-block" *ngIf="key.touched && key.invalid">Obavezno!</span>
     </div>
+
+    <h2>Predigra</h2>
+    <instrument-voices [templateVoices]="partsTemplateVoices[0]"></instrument-voices>
+
     <h1>Antifona</h1>
-    <h2>Orgulje</h2>
-    <div *ngFor="let voice of antiphonaTemplateVoices">
-        <div *ngIf="voice.Instrument == 'Orgulje'">
-            <h4>
-                <label class="control-label">
-                    {{ voice.Name }} <input type="checkbox" [checked]="voice.Use" (change)="updateTemplate(voice)" />
-                </label>
-            </h4>
-            <div *ngIf="voice.Use">
-                <div class="form-group">
-                    <label class="control-label" for="{{voice.ControlNameRelative}}">Relativno</label>
-                    <input class="form-control" type="text" formControlName="{{voice.ControlNameRelative}}" id="{{voice.ControlNameRelative}}" />
-                    <span class="help-block" *ngIf="hasError(voice.ControlNameRelative)">Obavezno!</span>
-                </div>
-                <div class="form-group">
-                    <label class="control-label" for="{{voice.ControlName}}">Note</label>
-                    <textarea class="form-control" cols="10" formControlName="{{voice.ControlName}}" id="{{voice.ControlName}}" rows="5"></textarea>
-                    <span class="help-block" *ngIf="hasError(voice.ControlName)">Obavezno!</span>
-                </div>
-            </div>
-        </div>
-    </div>
     <h2>Glas</h2>
-    <div *ngFor="let voice of antiphonaTemplateVoices">
-        <div *ngIf="voice.Instrument == 'Glas'">
-            <h4>
-                <label class="control-label">
-                    {{ voice.Name }} <input type="checkbox" [checked]="voice.Use" (change)="updateTemplate(voice)" />
-                </label>
-            </h4>
-            <div *ngIf="voice.Use">
-                <div class="form-group">
-                    <label class="control-label" for="{{voice.ControlNameRelative}}">Relativno</label>
-                    <input class="form-control" type="text" formControlName="{{voice.ControlNameRelative}}" id="{{voice.ControlNameRelative}}" />
-                    <span class="help-block" *ngIf="hasError(voice.ControlNameRelative)">Obavezno!</span>
-                </div>
-                <div class="form-group">
-                    <label class="control-label" for="{{voice.ControlName}}">Note</label>
-                    <textarea class="form-control" cols="10" formControlName="{{voice.ControlName}}" id="{{voice.ControlName}}" rows="5"></textarea>
-                    <span class="help-block" *ngIf="hasError(voice.ControlName)">Obavezno!</span>
-                </div>
-            </div>
-        </div>
-    </div>
+    <instrument-voices [templateVoices]="getTemplateVoices('AntiphonaVoice')"></instrument-voices>
+
+    <h2>Orgulje</h2>
+    <instrument-voices [templateVoices]="getTemplateVoices('AntiphonaOrgan')"></instrument-voices>
+    
     <h2>Tekst</h2>
-    <div>
-        <div class="form-group" *ngFor="let stanza of lyrics; let i = index" [ngClass]="{'has-error': hasError(stanza.controlName), 'has-success': hasSuccess(stanza.controlName)}">
-            <label class="control-label" for="{{stanza.controlName}}">{{i + 1}}. strofa</label>
-            <textarea rows="5" cols="10" class="form-control" id="{{stanza.controlName}}" formControlName="{{stanza.controlName}}"></textarea>
-            <span class="help-block" *ngIf="hasError(stanza.controlName)">Obavezno!</span>
-        </div>
-        <button type="button" class="btn btn-default" (click)="appendStanza()">
-            <span class="glyphicon glyphicon-plus"></span> Dodaj
-        </button>
-        <button type="button" class="btn btn-default" (click)="deleteStanza()">
-            <span class="glyphicon glyphicon-minus"></span> Obriši zadnju
-        </button>
+    <song-lyrics [changeable]="false" [maxStanzas]="1"></song-lyrics>
+
+    <h1>Psalam</h1>
+    <h2>Glas</h2>
+    <instrument-voices [templateVoices]="getTemplateVoices('PsalmVoice')"></instrument-voices>
+
+    <h2>Orgulje</h2>
+    <instrument-voices [templateVoices]="getTemplateVoices('PsalmOrgan')"></instrument-voices>
+
+    <h2>Tekst</h2>
+    <song-lyrics></song-lyrics>
+
+    <h2>Međuigra</h2>
+    <instrument-voices [templateVoices]="partsTemplateVoices[1]"></instrument-voices>
+
+    <h2>Završetak</h2>
+    <instrument-voices [templateVoices]="partsTemplateVoices[2]"></instrument-voices>
+
+    <div *ngIf="preview" style="text-align:center;">
+        <embed [src]="domSanitizer.bypassSecurityTrustResourceUrl(pdfFileName)" width="800" height="500" *ngIf="preview && !spinner" />
     </div>
+    <button type="button" class="btn btn-default" (click)="previewSong(voiceForm.value)" [disabled]="previewEnabled() || spinner">Pregledaj</button>
+    <button type="submit" class="btn btn-default" [disabled]="voiceForm.invalid || spinner || voicesInvalid()">Spremi</button>
+    <img src="app/assets/image/spinner.gif" style="width:100px;" *ngIf="spinner" />
 </form>

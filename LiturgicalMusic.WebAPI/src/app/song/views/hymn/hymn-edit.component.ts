@@ -107,20 +107,33 @@ export class HymnEditComponent implements OnInit {
         this.song.Template = [].concat(voiceFormValues[1]['Template'], voiceFormValues[2]['Template']);
         this.song.Code = JSON.stringify(code);
 
-        if (this.song.InstrumentalParts == undefined) {
-            this.song.InstrumentalParts = [];
-            [0, 3, 4].forEach((n, i) => {
+        [0, 3, 4].forEach((n, i) => {
+            let part: InstrumentalPart = undefined;
+
+            if (this.song.InstrumentalParts != undefined) {
+                let position = this.partsTemplateVoices[i][0].Instrument.toLocaleLowerCase();
+                part = this.song.InstrumentalParts.find(p => p.Position == position);
+            } else {
+                this.song.InstrumentalParts = [];
+            }
+
+            if (part == undefined) {
                 if (voiceFormValues[n]['Template'].some((b: boolean) => b)) {
-                    this.song.InstrumentalParts.push({
-                        Id: undefined,
-                        Position: this.partsTemplateVoices[i][0].Instrument.toLocaleLowerCase(),
-                        Type: "hymn",
-                        Code: JSON.stringify(this.mapper(voiceFormValues[n]['Code'], this.partsTemplateVoices[i][0].Instrument)),
-                        Template: voiceFormValues[n]['Template']
-                    });
+                    part = new InstrumentalPart();
+
+                    part.Id = undefined;
+                    part.Position = this.partsTemplateVoices[i][0].Instrument.toLocaleLowerCase();
+                    part.Type = "hymn";
+                    part.Code = JSON.stringify(this.mapper(voiceFormValues[n]['Code'], this.partsTemplateVoices[i][0].Instrument));
+                    part.Template = voiceFormValues[n]['Template'];
+
+                    this.song.InstrumentalParts.push(part);
                 }
-            });
-        }
+            } else {
+                part.Code = JSON.stringify(this.mapper(voiceFormValues[n]['Code'], this.partsTemplateVoices[i][0].Instrument));
+                part.Template = voiceFormValues[n]['Template'];
+            }
+        });
 
         let stanzas: Stanza[] = this.lyrics.getFormValues();
 

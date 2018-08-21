@@ -8,19 +8,21 @@ import { Stanza } from "../../models/stanza.model";
     templateUrl: "./lyrics.component.html"
 })
 export class LyricsComponent implements OnInit {
+    @Input() changeable: boolean = true;
     lyrics: any[] = [];
+    @Input() maxStanzas: number = 20;
     @Input() stanzas: Stanza[];
 
     lyricsForm: FormGroup;
 
     ngOnInit() {
+        this.lyricsForm = new FormGroup({});
+
         if (this.stanzas != undefined && this.stanzas.length > 0) {
-            this.lyricsForm = new FormGroup({});
             this.stanzas.forEach(stanza => {
                 this.appendStanza(stanza.Text);
             });
         } else {
-            this.lyricsForm = new FormGroup({});
             this.appendStanza();
         }
     }

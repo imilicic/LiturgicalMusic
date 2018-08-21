@@ -15,6 +15,23 @@ namespace LiturgicalMusic.Repository
     public class Lilypond
     {
         #region Properties
+        /// <summary>
+        /// Gets or sets antiphona.
+        /// </summary>
+        /// <value>The antiphona.</value>
+        public string Antiphona { get; set; }
+
+        /// <summary>
+        /// Whether antiphona is measured or not.
+        /// </summary>
+        /// <value><c>true</c> if antiphona is measured, <c>false</c> otherwise.</value>
+        public bool AntiphonaMeasured { get; set; }
+
+        /// <summary>
+        /// Whether psalm is measured or not.
+        /// </summary>
+        /// <value><c>true</c> if psalm is measured, <c>false</c> otherwise.</value>
+        public bool PsalmMeasured { get; set; }
 
         /// <summary>
         /// Gets or sets file name for PDF file.
@@ -67,6 +84,8 @@ namespace LiturgicalMusic.Repository
         private const string PRELUDE_PART = "prelude";
         private const string UPPER_STAFF = "upper";
         private const string VOICES = "SATB";
+        private const string ANTIPHONA = "Antiphona";
+        private const string PSALM = "Psalm";
         #endregion Constants
 
         #region Constructors
@@ -87,6 +106,25 @@ namespace LiturgicalMusic.Repository
             dynamic code = JsonConvert.DeserializeObject(Song.Code);
             this.Key = code.Key;
             this.Time = code.Time;
+            this.Antiphona = code.AntiphonaStanza;
+
+            if (code.PsalmMeasured != null)
+            {
+                this.PsalmMeasured = code.PsalmMeasured;
+            }
+            else
+            {
+                this.PsalmMeasured = true;
+            }
+
+            if (code.AntiphonaMeasured != null)
+            {
+                this.AntiphonaMeasured = code.AntiphonaMeasured;
+            }
+            else
+            {
+                this.AntiphonaMeasured = true;
+            }
         }
         #endregion Constructors
 
@@ -97,8 +135,6 @@ namespace LiturgicalMusic.Repository
         /// <returns></returns>
         public async Task<string> CreateFileAsync()
         {
-            IList<ICode> organCode = ExtractCode(Song.Code, INSTRUMENT_PARTS_PROPERTY);
-            IList<ICode> voiceCode = ExtractCode(Song.Code, HUMAN_VOICE_PARTS_PROPERTY);
             IInstrumentalPart prelude = null, interlude = null, coda = null;
 
             if (Song.InstrumentalParts.Count() > 0)
@@ -120,10 +156,46 @@ namespace LiturgicalMusic.Repository
                     await file.WriteLineAsync(CreatePartScore(prelude.Template, PRELUDE_PART, true));
                 }
 
-                await file.WriteLineAsync(CreateVoices(voiceCode, Song.Template.Take(4).ToList(), HUMAN_VOICE_PARTS));
-                await file.WriteLineAsync(CreateVoices(organCode, Song.Template.Skip(4).ToList(), INSTRUMENT_PARTS));
-                await file.WriteLineAsync(CreateLyrics(Song.Stanzas));
-                await file.WriteLineAsync(CreateMainScore());
+                if (Song.Type.Equals("hymn"))
+                {
+                    IList<ICode> voiceCode = ExtractCode(Song.Code, HUMAN_VOICE_PARTS_PROPERTY);
+                    IList<ICode> organCode = ExtractCode(Song.Code, INSTRUMENT_PARTS_PROPERTY);
+
+                    IList<bool> voiceTemplate = Song.Template.Take(4).ToList();
+                    IList<bool> organTemplate = Song.Template.Skip(4).ToList();
+
+                    await file.WriteLineAsync(CreateVoices(voiceCode, voiceTemplate, HUMAN_VOICE_PARTS));
+                    await file.WriteLineAsync(CreateVoices(organCode, organTemplate, INSTRUMENT_PARTS));
+
+                    await file.WriteLineAsync(CreateLyrics(Song.Stanzas));
+
+                    await file.WriteLineAsync(CreateMainScore(HUMAN_VOICE_PARTS, INSTRUMENT_PARTS, voiceTemplate, organTemplate, Song.Stanzas.Count));
+                }
+                else
+                {
+                    IList<IStanza> antiphona = new List<IStanza> { new Stanza { Text = Antiphona, Number = 1 } };
+                    IList<ICode> antiphonaVoiceCode = ExtractCode(Song.Code, String.Concat(ANTIPHONA, HUMAN_VOICE_PARTS_PROPERTY));
+                    IList<ICode> antiphonaOrganCode = ExtractCode(Song.Code, String.Concat(ANTIPHONA, INSTRUMENT_PARTS_PROPERTY));
+                    IList<ICode> psalmVoiceCode = ExtractCode(Song.Code, String.Concat(PSALM, HUMAN_VOICE_PARTS_PROPERTY));
+                    IList<ICode> psalmOrganCode = ExtractCode(Song.Code, String.Concat(PSALM, INSTRUMENT_PARTS_PROPERTY));
+
+                    IList<bool> antiphonaVoiceTemplate = ExtractTemplate(Song.Code, String.Concat(ANTIPHONA, HUMAN_VOICE_PARTS_PROPERTY));
+                    IList<bool> antiphonaOrganTemplate = ExtractTemplate(Song.Code, String.Concat(ANTIPHONA, INSTRUMENT_PARTS_PROPERTY));
+                    IList<bool> psalmVoiceTemplate = ExtractTemplate(Song.Code, String.Concat(PSALM, HUMAN_VOICE_PARTS_PROPERTY));
+                    IList<bool> psalmOrganTemplate = ExtractTemplate(Song.Code, String.Concat(PSALM, INSTRUMENT_PARTS_PROPERTY));
+
+                    await file.WriteLineAsync(CreateVoices(antiphonaVoiceCode, antiphonaVoiceTemplate, String.Concat(ANTIPHONA, HUMAN_VOICE_PARTS)));
+                    await file.WriteLineAsync(CreateVoices(antiphonaOrganCode, antiphonaOrganTemplate, String.Concat(ANTIPHONA, INSTRUMENT_PARTS)));
+
+                    await file.WriteLineAsync(CreateVoices(psalmVoiceCode, psalmVoiceTemplate, String.Concat(PSALM, HUMAN_VOICE_PARTS)));
+                    await file.WriteLineAsync(CreateVoices(psalmOrganCode, psalmOrganTemplate, String.Concat(PSALM, INSTRUMENT_PARTS)));
+
+                    await file.WriteLineAsync(CreateLyrics(Song.Stanzas));
+                    await file.WriteLineAsync(CreateLyrics(antiphona, ANTIPHONA));
+
+                    await file.WriteLineAsync(CreateMainScore(String.Concat(ANTIPHONA, HUMAN_VOICE_PARTS), String.Concat(ANTIPHONA, INSTRUMENT_PARTS), antiphonaVoiceTemplate, antiphonaOrganTemplate, 1, AntiphonaMeasured, ANTIPHONA, true));
+                    await file.WriteLineAsync(CreateMainScore(String.Concat(PSALM, HUMAN_VOICE_PARTS), String.Concat(PSALM, INSTRUMENT_PARTS), psalmVoiceTemplate, psalmOrganTemplate, Song.Stanzas.Count, PsalmMeasured));
+                }
 
                 if (interlude != null)
                 {
@@ -171,23 +243,31 @@ namespace LiturgicalMusic.Repository
         /// <param name="stanzas">The stanzas.</param>
         /// <param name="markedVoice">Whether to mark this voice or not.</param>
         /// <returns></returns>
-        private string CreateGrandStaff(IList<bool> template, string instrument, IList<IStanza> stanzas = null, int markedVoice = -1)
+        private string CreateGrandStaff(IList<bool> template, string instrument, bool measured = true, IList<IStanza> stanzas = null, int markedVoice = -1, string lyricsNamePrefix = "")
         {
             StringBuilder grandStaff = new StringBuilder();
             IList<IList<string>> staffs = GetVoices(template, instrument);
 
-            grandStaff.AppendLine(@"\new GrandStaff <<");
-            grandStaff.AppendLine(CreateStaff(staffs[0], UPPER_STAFF, markedVoice));
+            if (measured)
+            {
+                grandStaff.AppendLine(@"\new GrandStaff <<");
+            }
+            else
+            {
+                grandStaff.AppendLine(@"\new GrandStaff \with { \remove ""Time_signature_engraver"" } <<");
+            }
+
+            grandStaff.AppendLine(CreateStaff(staffs[0], UPPER_STAFF, measured, markedVoice));
 
             if (markedVoice >= 0)
             {
                 foreach (IStanza stanza in stanzas)
                 {
-                    grandStaff.AppendLine(String.Format(@"\new Lyrics \lyricsto ""{0}"" \lyrics{1}", MARKED_VOICE, ALPHABET[stanza.Number - 1]));
+                    grandStaff.AppendLine(String.Format(@"\new Lyrics \lyricsto ""{0}"" \{1}lyrics{2}", MARKED_VOICE, lyricsNamePrefix, ALPHABET[stanza.Number - 1]));
                 }
             }
 
-            grandStaff.AppendLine(CreateStaff(staffs[1], LOWER_STAFF));
+            grandStaff.AppendLine(CreateStaff(staffs[1], LOWER_STAFF, measured));
             grandStaff.AppendLine(@">>");
 
             return grandStaff.ToString();
@@ -225,6 +305,10 @@ namespace LiturgicalMusic.Repository
             {
                 header.AppendLine(String.Format(@"keyTime = {{ \key {0} \time {1} }}", Key, Time));
             }
+            else
+            {
+                header.AppendLine(String.Format(@"keyTime = {{ \key {0} }}", Key));
+            }
 
             return header.ToString();
         }
@@ -234,13 +318,13 @@ namespace LiturgicalMusic.Repository
         /// </summary>
         /// <param name="stanzas">The stanzas.</param>
         /// <returns></returns>
-        private string CreateLyrics(IList<IStanza> stanzas)
+        private string CreateLyrics(IList<IStanza> stanzas, string lyricsNamePrefix = "")
         {
             StringBuilder lyrics = new StringBuilder();
 
             foreach (IStanza stanza in stanzas)
             {
-                lyrics.AppendLine(String.Format(@"lyrics{0} = \lyricmode {{", ALPHABET[stanza.Number - 1]));
+                lyrics.AppendLine(String.Format(@"{0}lyrics{1} = \lyricmode {{", lyricsNamePrefix, ALPHABET[stanza.Number - 1]));
                 lyrics.AppendLine(stanza.Text);
                 lyrics.AppendLine("}");
             }
@@ -252,11 +336,15 @@ namespace LiturgicalMusic.Repository
         /// Creates lilypond score for main part of song.
         /// </summary>
         /// <returns></returns>
-        private string CreateMainScore()
+        private string CreateMainScore(string humanVoiceName, string instrumentVoiceName, IList<bool> voiceTemplate, IList<bool> organTemplate, int numberOfStanzas, bool measured = true, string lyricsNamePrefix = "", bool alignRight = false)
         {
             StringBuilder score = new StringBuilder();
-            IList<bool> voiceTemplate = Song.Template.Take(4).ToList();
-            IList<bool> organTemplate = Song.Template.Skip(4).ToList();
+
+            if (alignRight)
+            {
+                score.AppendLine(@"\markup \fill-line {");
+                score.AppendLine(@"\hspace #1");
+            }
 
             score.AppendLine(@"\score {");
             score.AppendLine(@"<<");
@@ -273,10 +361,17 @@ namespace LiturgicalMusic.Repository
                 markOrgan = organTemplate.IndexOf(true) % 2;
             }
 
-            score.AppendLine(CreateStavesForScore(voiceTemplate, markVoice, HUMAN_VOICE_PARTS));
-            score.AppendLine(CreateStavesForScore(organTemplate, markOrgan, INSTRUMENT_PARTS));
+            score.AppendLine(CreateStavesForScore(voiceTemplate, markVoice, humanVoiceName, numberOfStanzas, measured, lyricsNamePrefix));
+            score.AppendLine(CreateStavesForScore(organTemplate, markOrgan, instrumentVoiceName, numberOfStanzas, measured, lyricsNamePrefix));
 
             score.AppendLine(@">>");
+
+            if (alignRight)
+            {
+                score.AppendLine(@"\layout {}");
+                score.AppendLine(@"}");
+            }
+
             score.AppendLine(@"}");
 
             return score.ToString();
@@ -337,13 +432,20 @@ namespace LiturgicalMusic.Repository
         /// <param name="position">The staff position, upper or lower.</param>
         /// <param name="markedVoice">Whether to mark a voice.</param>
         /// <returns></returns>
-        private string CreateStaff(IList<string> voices, string position, int markedVoice = -1)
+        private string CreateStaff(IList<string> voices, string position, bool measured = true, int markedVoice = -1)
         {
             StringBuilder staff = new StringBuilder();
             int i = 0;
             IList<string> numbers = new List<string> { "One", "Two" };
 
-            staff.AppendLine(String.Format(@"\new Staff = ""{0}"" <<", position));
+            if (measured)
+            {
+                staff.AppendLine(String.Format(@"\new Staff = ""{0}"" <<", position));
+            }
+            else
+            {
+                staff.AppendLine(String.Format(@"\new Staff = ""{0}"" \with {{ \remove ""Time_signature_engraver"" }} <<", position));
+            }
 
             foreach (string voice in voices)
             {
@@ -383,7 +485,7 @@ namespace LiturgicalMusic.Repository
         /// <param name="markVoice">Whether to mark a voice.</param>
         /// <param name="voiceName">The name of a voice.</param>
         /// <returns></returns>
-        private string CreateStavesForScore(IList<bool> template, int markVoice, string voiceName)
+        private string CreateStavesForScore(IList<bool> template, int markVoice, string voiceName, int numberOfStanzas, bool measured, string lyricsNamePrefix = "")
         {
             StringBuilder staves = new StringBuilder();
 
@@ -391,7 +493,7 @@ namespace LiturgicalMusic.Repository
             {
                 if (template.Take(2).Any(s => s) && template.Skip(2).Any(s => s)) // there is upper and lower parts, ie grandstaff must be used
                 {
-                    staves.AppendLine(CreateGrandStaff(template, voiceName, Song.Stanzas, markVoice));
+                    staves.AppendLine(CreateGrandStaff(template, voiceName, measured, Song.Stanzas, markVoice, lyricsNamePrefix));
                 }
                 else // use only one staff
                 {
@@ -399,18 +501,18 @@ namespace LiturgicalMusic.Repository
 
                     if (staffs[0].Count() == 0)
                     {
-                        staves.AppendLine(CreateStaff(staffs[1], LOWER_STAFF, markVoice));
+                        staves.AppendLine(CreateStaff(staffs[1], LOWER_STAFF, measured, markVoice));
                     }
                     else
                     {
-                        staves.AppendLine(CreateStaff(staffs[0], UPPER_STAFF, markVoice));
+                        staves.AppendLine(CreateStaff(staffs[0], UPPER_STAFF, measured, markVoice));
                     }
 
                     if (markVoice >= 0)
                     {
-                        foreach (IStanza stanza in Song.Stanzas)
+                        for (int i = 0; i < numberOfStanzas; i++)
                         {
-                            staves.AppendLine(String.Format(@"\new Lyrics \lyricsto ""{0}"" \lyrics{1}", MARKED_VOICE, ALPHABET[stanza.Number - 1]));
+                            staves.AppendLine(String.Format(@"\new Lyrics \lyricsto ""{0}"" \{1}lyrics{2}", MARKED_VOICE, lyricsNamePrefix, ALPHABET[i]));
                         }
                     }
                 }
@@ -509,6 +611,38 @@ namespace LiturgicalMusic.Repository
             }
 
             return codeList;
+        }
+
+        /// <summary>
+        /// Extracts template from code.
+        /// </summary>
+        /// <param name="codeString">The string which represents code.</param>
+        /// <param name="mustContain">Whether key must contain a string.</param>
+        /// <returns></returns>
+        private IList<bool> ExtractTemplate(string codeString, string mustContain = null)
+        {
+            Dictionary<string, string> codeRaw = JsonConvert.DeserializeObject<Dictionary<string, string>>(codeString);
+            IList<bool> template = new List<bool> { false, false, false, false };
+            IList<string> keys;
+
+            if (mustContain != null)
+            {
+                keys = codeRaw.Keys.Where(n => n.Contains(mustContain)).ToList();
+            }
+            else
+            {
+                keys = codeRaw.Keys.ToList();
+            }
+
+            foreach (string key in keys)
+            {
+                if (key.Contains("Soprano")) template[0] = true;
+                else if (key.Contains("Alto")) template[1] = true;
+                else if (key.Contains("Tenor")) template[2] = true;
+                else if (key.Contains("Bass")) template[3] = true;
+            }
+
+            return template;
         }
 
         /// <summary>
