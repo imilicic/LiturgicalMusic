@@ -57,22 +57,22 @@
     </div>
 
     <h2>Predigra</h2>
-    <instrument-voices [templateVoices]="partsTemplateVoices[0]" [code]="getInstrumentalPartCode('Prelude')"></instrument-voices>
+    <instrument-voices [templateVoices]="partsTemplateVoices[0]" [code]="songCommonService.getInstrumentalPartCode(song, 'Prelude')"></instrument-voices>
 
     <h2>Glas</h2>
-    <instrument-voices [templateVoices]="getTemplateVoices('Voice')" [code]="getSongCode()"></instrument-voices>
+    <instrument-voices [templateVoices]="getTemplateVoices('Voice')" [code]="songCommonService.getSongCode(song)"></instrument-voices>
 
     <h2>Orgulje</h2>
-    <instrument-voices [templateVoices]="getTemplateVoices('Organ')" [code]="getSongCode()"></instrument-voices>
+    <instrument-voices [templateVoices]="getTemplateVoices('Organ')" [code]="songCommonService.getSongCode(song)"></instrument-voices>
 
     <h2>Tekst</h2>
     <song-lyrics [stanzas]="song.Stanzas"></song-lyrics>
 
     <h2>Međuigra</h2>
-    <instrument-voices [templateVoices]="partsTemplateVoices[1]" [code]="getInstrumentalPartCode('Interlude')"></instrument-voices>
+    <instrument-voices [templateVoices]="partsTemplateVoices[1]" [code]="songCommonService.getInstrumentalPartCode(song, 'Interlude')"></instrument-voices>
 
     <h2>Završetak</h2>
-    <instrument-voices [templateVoices]="partsTemplateVoices[2]" [code]="getInstrumentalPartCode('Coda')"></instrument-voices>
+    <instrument-voices [templateVoices]="partsTemplateVoices[2]" [code]="songCommonService.getInstrumentalPartCode(song, 'Coda')"></instrument-voices>
 
     <div *ngIf="preview" style="text-align:center;">
         <embed [src]="domSanitizer.bypassSecurityTrustResourceUrl(pdfFileName)" width="800" height="500" *ngIf="preview && !spinner"/>

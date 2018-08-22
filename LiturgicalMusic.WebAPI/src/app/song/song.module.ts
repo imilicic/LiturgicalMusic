@@ -9,6 +9,7 @@ import { ComposerService } from "./services/composer.service";
 import { HymnEditComponent } from "./views/hymn/hymn-edit.component";
 import { LyricsComponent } from "./views/lyrics/lyrics.component";
 import { PsalmEditComponent } from "./views/psalm/psalm-edit.component";
+import { SongCommonService } from "./services/song-common.service";
 import { SongEditComponent } from "./views/song-edit.component";
 import { SongResolverService } from "./services/song-resolver.service";
 import { SongRouteActivatorService } from "./services/song-route-activator.service";
@@ -39,6 +40,7 @@ import { VoiceComponent } from "./views/voice/voice.component";
     providers: [
         ComposerResolverService,
         ComposerService,
+        SongCommonService,
         SongSessionService,
         SongResolverService,
         SongRouteActivatorService,

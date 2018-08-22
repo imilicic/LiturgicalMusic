@@ -240,6 +240,7 @@
     <TypeScriptCompile Include="src\app\shared\navbar\navbar.component.ts" />
     <TypeScriptCompile Include="src\app\song\models\template.model.ts" />
     <TypeScriptCompile Include="src\app\song\services\composer.service.ts" />
+    <TypeScriptCompile Include="src\app\song\services\song-common.service.ts" />
     <TypeScriptCompile Include="src\app\song\services\song-session.service.ts" />
     <TypeScriptCompile Include="src\app\song\views\hymn\hymn-edit.component.ts" />
     <TypeScriptCompile Include="src\app\song\models\composer.model.ts" />

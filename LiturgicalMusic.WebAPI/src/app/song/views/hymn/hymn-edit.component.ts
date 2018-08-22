@@ -5,6 +5,7 @@ import { DomSanitizer } from "@angular/platform-browser";
 import { InstrumentalPart } from "../../models/instrumentalPart.model";
 import { LyricsComponent } from "../lyrics/lyrics.component";
 import { Song } from "../../models/song.model";
+import { SongCommonService } from "../../services/song-common.service";
 import { SongService } from "../../services/song.service";
 import { SongSessionService } from "../../services/song-session.service";
 import { Stanza } from "../../models/stanza.model";
@@ -24,7 +25,6 @@ export class HymnEditComponent implements OnInit {
     song: Song;
     spinner: boolean = false;
     templateVoices: Template[] = [];
-    voices: string[] = ["Soprano", "Alto", "Tenor", "Bass"];
 
     key: FormControl;
     template: FormControl;
@@ -32,7 +32,11 @@ export class HymnEditComponent implements OnInit {
     timeDenominator: FormControl;
     voiceForm: FormGroup;
 
-    constructor(private domSanitizer: DomSanitizer, private songService: SongService, private songSessionService: SongSessionService) { }
+    constructor(
+        private domSanitizer: DomSanitizer,
+        private songCommonService: SongCommonService,
+        private songService: SongService,
+        private songSessionService: SongSessionService) { }
 
     ngOnInit() {
         window.scrollTo(0, 0);
@@ -56,11 +60,11 @@ export class HymnEditComponent implements OnInit {
             });
         }
 
-        this.createTemplateVoices('Voice', this.song.Template.slice(0, 4), this.templateVoices);
-        this.createTemplateVoices('Organ', this.song.Template.slice(4, 8), this.templateVoices);
-        this.createTemplateVoices('Prelude', partVoices[0], this.partsTemplateVoices[0]);
-        this.createTemplateVoices('Interlude', partVoices[1], this.partsTemplateVoices[1]);
-        this.createTemplateVoices('Coda', partVoices[2], this.partsTemplateVoices[2]);
+        this.songCommonService.createTemplateVoices('Voice', this.song.Template.slice(0, 4), this.templateVoices);
+        this.songCommonService.createTemplateVoices('Organ', this.song.Template.slice(4, 8), this.templateVoices);
+        this.songCommonService.createTemplateVoices('Prelude', partVoices[0], this.partsTemplateVoices[0]);
+        this.songCommonService.createTemplateVoices('Interlude', partVoices[1], this.partsTemplateVoices[1]);
+        this.songCommonService.createTemplateVoices('Coda', partVoices[2], this.partsTemplateVoices[2]);
 
         if (this.song.Code != undefined) {
             code = JSON.parse(this.song.Code);
@@ -70,16 +74,8 @@ export class HymnEditComponent implements OnInit {
             timeDenominator = parseInt(time[1]);
             key = code.Key;
         }
-        
-        this.pdfFileName = "app/assets/pdf/" + this.song.Title;
 
-        if (this.song.Composer != undefined) {
-            this.pdfFileName += this.song.Composer.Name + this.song.Composer.Surname;
-        } else if (this.song.Arranger != undefined) {
-            this.pdfFileName += this.song.Arranger.Name + this.song.Arranger.Surname;
-        }
-
-        this.pdfFileName += ".pdf";
+        this.pdfFileName = this.songCommonService.createPdfFileName(this.song);
 
         this.key = new FormControl(key, Validators.required);
         this.timeNumerator = new FormControl(timeNumerator, Validators.required);
@@ -124,13 +120,13 @@ export class HymnEditComponent implements OnInit {
                     part.Id = undefined;
                     part.Position = this.partsTemplateVoices[i][0].Instrument.toLocaleLowerCase();
                     part.Type = "hymn";
-                    part.Code = JSON.stringify(this.mapper(voiceFormValues[n]['Code'], this.partsTemplateVoices[i][0].Instrument));
+                    part.Code = JSON.stringify(this.songCommonService.mapper(voiceFormValues[n]['Code'], this.partsTemplateVoices[i][0].Instrument));
                     part.Template = voiceFormValues[n]['Template'];
 
                     this.song.InstrumentalParts.push(part);
                 }
             } else {
-                part.Code = JSON.stringify(this.mapper(voiceFormValues[n]['Code'], this.partsTemplateVoices[i][0].Instrument));
+                part.Code = JSON.stringify(this.songCommonService.mapper(voiceFormValues[n]['Code'], this.partsTemplateVoices[i][0].Instrument));
                 part.Template = voiceFormValues[n]['Template'];
             }
         });
@@ -152,18 +148,6 @@ export class HymnEditComponent implements OnInit {
         this.song.Stanzas = stanzas;
     }
 
-    createTemplateVoices(instrument: string, template: boolean[], templateVoices: Template[]) {
-        template.forEach((t, i) => {
-            templateVoices.push({
-                ControlName: instrument + this.voices[i],
-                ControlNameRelative: instrument + this.voices[i] + "Relative",
-                Instrument: instrument,
-                Name: this.voices[i],
-                Use: t
-            });
-        });
-    }
-
     createUpdateSong(formValues: any) {
         this.spinner = true;
         this.createSong(formValues);
@@ -181,50 +165,8 @@ export class HymnEditComponent implements OnInit {
         }
     }
 
-    getInstrumentalPartCode(position: string) {
-        if (this.song.InstrumentalParts == undefined) {
-            return undefined;
-        }
-
-        let result: InstrumentalPart = this.song.InstrumentalParts.find(p => p.Position == position.toLocaleLowerCase());
-
-        if (result == undefined) {
-            return undefined;
-        }
-
-        let code = JSON.parse(result.Code);
-
-        return this.mapper(code, position, true);
-    }
-
-    getSongCode() {
-        if (this.song.Code == undefined) {
-            return undefined;
-        }
-
-        return JSON.parse(this.song.Code);
-    }
-
     getTemplateVoices(instrument: string) {
         return this.templateVoices.filter(t => t.Instrument == instrument);
-    }
-
-    mapper(code: any, instrument: string, back: boolean = false) {
-        let oldKeys: string[] = Object.keys(code);
-        let newKeys: string[];
-        let newObject = {};
-
-        if (back) {
-            newKeys = oldKeys.map(p => instrument + p);
-        } else {
-            newKeys = oldKeys.map(p => p.replace(new RegExp(instrument, 'g'), ''));
-        }
-
-        newKeys.forEach((k, i) => {
-            newObject[k] = code[oldKeys[i]]
-        });
-
-        return newObject;
     }
 
     previewEnabled() {
