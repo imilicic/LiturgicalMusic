@@ -11,13 +11,6 @@ namespace LiturgicalMusic.DAL
     [Table("ThemeCategories")]
     public class ThemeEntity
     {
-        #region Constructors
-        public ThemeEntity()
-        {
-            this.Songs = new HashSet<SongEntity>();
-        }
-        #endregion Constructors
-
         #region Properties
         /// <summary>
         /// Gets or sets the identifier.
@@ -36,7 +29,7 @@ namespace LiturgicalMusic.DAL
         /// Gets or sets songs having this category.
         /// </summary>
         /// <value>The songs.</value>
-        public ICollection<SongEntity> Songs { get; set; }
+        public ICollection<SongThemeEntity> Songs { get; set; }
         #endregion Properties
     }
 }

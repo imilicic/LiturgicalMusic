@@ -21,7 +21,9 @@ namespace LiturgicalMusic.Model.Mapping
         {
             CreateMap<ISong, SongEntity>()
                 .ForMember(dest => dest.Template, opt => opt.MapFrom(s => Convert.ToInt32(s.Template.Select(c => Convert.ToInt32(c).ToString()).Aggregate((x, y) => x + y), 2)))
-                .ForMember(dest => dest.OtherParts, opt => opt.MapFrom(s => s.Stanzas.Count() > 0));
+                .ForMember(dest => dest.OtherParts, opt => opt.MapFrom(s => s.Stanzas.Count() > 0))
+                .ForMember(dest => dest.LiturgyCategories, opt => opt.Ignore())
+                .ForMember(dest => dest.ThemeCategories, opt => opt.Ignore());
             CreateMap<SongEntity, ISong>()
                 .ForMember(dest => dest.Template, opt => opt.MapFrom(s => Convert.ToString(s.Template, 2).PadLeft(8, '0').Select(c => c.ToString() == "1").ToList()));
             CreateMap<IStanza, StanzaEntity>().ReverseMap();
@@ -30,9 +32,10 @@ namespace LiturgicalMusic.Model.Mapping
                 .ForMember(dest => dest.Template, opt => opt.MapFrom(s => Convert.ToInt32(s.Template.Select(c => Convert.ToInt32(c).ToString()).Aggregate((x, y) => x + y), 2)));
             CreateMap<InstrumentalPartEntity, IInstrumentalPart>()
                 .ForMember(dest => dest.Template, opt => opt.MapFrom(s => Convert.ToString(s.Template, 2).PadLeft(4, '0').Select(c => c.ToString() == "1").ToList()));
-            CreateMap<int, LiturgyEntity>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(s => s));
-            CreateMap<LiturgyEntity, int>();
+            CreateMap<SongLiturgyEntity, int>()
+                .ConvertUsing(source => source.LiturgyId);
+            CreateMap<SongThemeEntity, int>()
+                .ConvertUsing(source => source.ThemeId);
         }
         #endregion Constructors
     }

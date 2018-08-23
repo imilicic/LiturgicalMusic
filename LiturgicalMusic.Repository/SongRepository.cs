@@ -9,7 +9,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using LiturgicalMusic.Common;
 using X.PagedList;
-using System.Data.Entity;
 
 namespace LiturgicalMusic.Repository
 {
@@ -164,6 +163,22 @@ namespace LiturgicalMusic.Repository
             await SongHelper.CreatePdfAsync(song, Path.GetRandomFileName(), true);
 
             SongEntity songEntity = Mapper.Map<SongEntity>(song);
+
+            foreach (int liturgy in song.LiturgyCategories)
+            {
+                SongLiturgyEntity songLiturgy = new SongLiturgyEntity();
+                songLiturgy.SongId = songEntity.Id;
+                songLiturgy.LiturgyId = liturgy;
+                await UnitOfWork.InsertAsync<SongLiturgyEntity>(songLiturgy);
+            }
+
+            foreach (int theme in song.ThemeCategories)
+            {
+                SongThemeEntity songTheme = new SongThemeEntity();
+                songTheme.SongId = songEntity.Id;
+                songTheme.ThemeId = theme;
+                await UnitOfWork.InsertAsync<SongThemeEntity>(songTheme);
+            }
 
             if (song.Arranger != null)
             {

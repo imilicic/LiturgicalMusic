@@ -19,6 +19,22 @@
         <td>Druge informacije</td>
         <td>{{song.OtherInformations}}</td>
     </tr>
+    <tr>
+        <td>Liturgijske kategorije</td>
+        <td>
+            <ul *ngFor="let liturgy of song.LiturgyCategories">
+                <li>{{ songCommonService.liturgyCategories[liturgy-1] }}</li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>Tematske kategorije</td>
+        <td>
+            <ul *ngFor="let theme of song.ThemeCategories">
+                <li>{{ songCommonService.themeCategories[theme-1] }}</li>
+            </ul>
+        </td>
+    </tr>
 </table>
 <div style="text-align:center;">
     <embed [src]="domSanitizer.bypassSecurityTrustResourceUrl(pdfFileName)" width="800" height="500"/>

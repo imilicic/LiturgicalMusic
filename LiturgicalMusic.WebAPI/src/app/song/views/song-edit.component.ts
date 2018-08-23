@@ -4,6 +4,7 @@ import { ActivatedRoute } from "@angular/router";
 
 import { Composer } from "../models/composer.model";
 import { Song } from "../models/song.model";
+import { SongCommonService } from "../services/song-common.service";
 import { SongSessionService } from "../services/song-session.service";
 
 @Component({
@@ -12,6 +13,8 @@ import { SongSessionService } from "../services/song-session.service";
 export class SongEditComponent implements OnInit {
     composers: Composer[] = [];
     song: Song = undefined;
+    liturgyCategories: boolean[] = [false, false, false, false, false, false, false, false, false];
+    themeCategories: boolean[] = [false, false, false, false, false, false];
 
     arranger: FormControl;
     composer: FormControl;
@@ -21,10 +24,7 @@ export class SongEditComponent implements OnInit {
     type: FormControl;
     songForm: FormGroup;
 
-    themeCategories: FormControl;
-    liturgyCategories: FormControl;
-
-    constructor(private route: ActivatedRoute, private songSessionService: SongSessionService) { }
+    constructor(private route: ActivatedRoute, private songCommonService: SongCommonService, private songSessionService: SongSessionService) { }
 
     ngOnInit() {
         this.composers = this.route.snapshot.data["composers"];
@@ -84,6 +84,20 @@ export class SongEditComponent implements OnInit {
         newSong.Source = formValues.source;
         newSong.Title = formValues.title;
         newSong.Type = formValues.type;
+        newSong.LiturgyCategories = [];
+        newSong.ThemeCategories = [];
+
+        this.liturgyCategories.forEach((l, i) => {
+            if (l) {
+                newSong.LiturgyCategories.push(i + 1);
+            }
+        });
+
+        this.themeCategories.forEach((l, i) => {
+            if (l) {
+                newSong.ThemeCategories.push(i + 1);
+            }
+        });
 
         this.songSessionService.songSession = newSong;
 
@@ -91,6 +105,18 @@ export class SongEditComponent implements OnInit {
             this.songSessionService.moveTo("songs/edit/" + newSong.Type);
         } else {
             this.songSessionService.moveTo("songs/edit/" + this.song.Id + "/" + this.song.Type);
+        }
+    }
+
+    invalidCategories() {
+        return !(this.liturgyCategories.some(b => b) && this.themeCategories.some(b => b));
+    }
+
+    updateCategory(category: string, i: number) {
+        if (category == "liturgy") {
+            this.liturgyCategories[i] = !this.liturgyCategories[i];
+        } else if (category == "theme") {
+            this.themeCategories[i] = !this.themeCategories[i];
         }
     }
 }

@@ -36,7 +36,29 @@
             <option *ngFor="let cmp of composers" [value]="cmp.Id">{{cmp.Name}} {{cmp.Surname}}</option>
         </select>
     </div>
+    <div class="row">
+        <div class="form-group col-md-6">
+            <h4>Liturgijske*</h4>
+            <div *ngFor="let liturgy of songCommonService.liturgyCategories; let i = index">
+                <div class="check-box">
+                    <label class="control-label">
+                        <input type="checkbox" [checked]="liturgyCategories[i]" (click)="updateCategory('liturgy', i)"/> {{liturgy}}
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-md-6">
+            <h4>Tematika*</h4>
+            <div *ngFor="let theme of songCommonService.themeCategories; let i = index">
+                <div class="check-box">
+                    <label class="control-label">
+                        <input type="checkbox" [checked]="themeCategories[i]" (click)="updateCategory('theme', i)" /> {{theme}}
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
     <div>
-        <button type="submit" class="btn btn-default" [disabled]="songForm.invalid">Spremi</button>
+        <button type="submit" class="btn btn-default" [disabled]="songForm.invalid || invalidCategories()">Spremi</button>
     </div>
 </form>

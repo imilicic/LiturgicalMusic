@@ -12,14 +12,6 @@ namespace LiturgicalMusic.DAL
     [Table("Songs")]
     public class SongEntity : IEntity
     {
-        #region Constructors
-        public SongEntity()
-        {
-            this.ThemeCategories = new HashSet<ThemeEntity>();
-            this.LiturgyCategories = new HashSet<LiturgyEntity>();
-        }
-        #endregion Constructors
-
         #region Properties
         /// <summary>
         /// Gets or sets the identifier.
@@ -99,22 +91,22 @@ namespace LiturgicalMusic.DAL
         public ComposerEntity Arranger { get; set; }
 
         /// <summary>
-        /// Gets or sets theme categories.
+        /// Gets or sets instrumental parts.
         /// </summary>
-        /// <value>The theme categories.</value>
-        public ICollection<ThemeEntity> ThemeCategories { get; set; }
+        /// <value>The instrumental parts.</value>
+        public ICollection<InstrumentalPartEntity> InstrumentalParts { get; set; }
 
         /// <summary>
         /// Gets or sets liturgy categories.
         /// </summary>
         /// <value>The liturgy categories.</value>
-        public ICollection<LiturgyEntity> LiturgyCategories { get; set; }
+        public ICollection<SongLiturgyEntity> LiturgyCategories { get; set; }
 
         /// <summary>
-        /// Gets or sets instrumental parts.
+        /// Gets or sets theme categories.
         /// </summary>
-        /// <value>The instrumental parts.</value>
-        public ICollection<InstrumentalPartEntity> InstrumentalParts { get; set; }
+        /// <value>The theme categories.</value>
+        public ICollection<SongThemeEntity> ThemeCategories { get; set; }
 
         /// <summary>
         /// Gets or sets stanzas.

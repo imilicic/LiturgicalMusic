@@ -3,6 +3,7 @@ import { ActivatedRoute } from "@angular/router";
 import { DomSanitizer } from "@angular/platform-browser";
 
 import { Song } from "../models/song.model";
+import { SongCommonService } from "../services/song-common.service";
 
 @Component({
     templateUrl: "./song-view.component.html"
@@ -11,18 +12,10 @@ export class SongViewComponent implements OnInit {
     pdfFileName: string;
     song: Song;
 
-    constructor(private activatedRoute: ActivatedRoute, private domSanitizer: DomSanitizer) { }
+    constructor(private activatedRoute: ActivatedRoute, private domSanitizer: DomSanitizer, private songCommonService: SongCommonService) { }
 
     ngOnInit() {
         this.song = this.activatedRoute.snapshot.data.song;
-        this.pdfFileName = "app/assets/pdf/" + this.song.Title;
-
-        if (this.song.Composer != null) {
-            this.pdfFileName += this.song.Composer.Name + this.song.Composer.Surname;
-        } else if (this.song.Arranger != null) {
-            this.pdfFileName += this.song.Arranger.Name + this.song.Arranger.Surname;
-        }
-
-        this.pdfFileName += ".pdf";
+        this.pdfFileName = this.songCommonService.createPdfFileName(this.song);
     }
 }

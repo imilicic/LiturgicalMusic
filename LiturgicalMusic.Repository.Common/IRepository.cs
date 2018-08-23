@@ -29,6 +29,13 @@ namespace LiturgicalMusic.Repository.Common
         /// </summary>
         /// <param name="entityId">The entity ID.</param>
         /// <returns></returns>
+        Task<E> GetById<E>(int entityId) where E : class, IEntity;
+
+        /// <summary>
+        /// Gets entity by Id.
+        /// </summary>
+        /// <param name="entityId">The entity ID.</param>
+        /// <returns></returns>
         Task<T> GetById(int entityId, string include = "");
         #endregion Methods
     }

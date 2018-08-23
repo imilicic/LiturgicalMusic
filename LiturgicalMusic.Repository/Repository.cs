@@ -84,6 +84,16 @@ namespace LiturgicalMusic.Repository
         /// </summary>
         /// <param name="entityId">The entity ID.</param>
         /// <returns></returns>
+        public virtual Task<E> GetById<E>(int entityId) where E : class, IEntity
+        {
+            return DbContext.Set<E>().SingleOrDefaultAsync(e => e.Id.Equals(entityId));
+        }
+
+        /// <summary>
+        /// Gets entity by Id.
+        /// </summary>
+        /// <param name="entityId">The entity ID.</param>
+        /// <returns></returns>
         public virtual Task<T> GetById(int entityId, string include = "")
         {
             return GetQueryable(include).SingleOrDefaultAsync(e => e.Id.Equals(entityId));

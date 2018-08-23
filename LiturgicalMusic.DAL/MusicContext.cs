@@ -36,6 +36,16 @@ namespace LiturgicalMusic.DAL
         public DbSet<InstrumentalPartEntity> InstrumentalParts { get; set; }
 
         /// <summary>
+        /// Gets or sets song and liturgy categories.
+        /// </summary>
+        public DbSet<SongLiturgyEntity> SongLiturgyCategories { get; set; }
+
+        /// <summary>
+        /// Gets or sets song and theme categories.
+        /// </summary>
+        public DbSet<SongThemeEntity> SongThemeCategories { get; set; }
+
+        /// <summary>
         /// Gets or sets stanzas.
         /// </summary>
         /// <value>The stanzas.</value>

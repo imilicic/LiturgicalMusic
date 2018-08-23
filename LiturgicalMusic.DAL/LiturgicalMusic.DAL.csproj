@@ -70,12 +70,18 @@
     <Compile Include="Entities\ComposerEntity.cs" />
     <Compile Include="Entities\InstrumentalPartEntity.cs" />
     <Compile Include="Entities\LiturgyEntity.cs" />
+    <Compile Include="Entities\SongThemeEntity.cs" />
+    <Compile Include="Entities\SongLiturgyEntity.cs" />
     <Compile Include="Entities\StanzaEntity.cs" />
     <Compile Include="Entities\SongEntity.cs" />
     <Compile Include="Entities\ThemeEntity.cs" />
     <Compile Include="Migrations\201807311017441_InitialCreate.cs" />
     <Compile Include="Migrations\201807311017441_InitialCreate.Designer.cs">
       <DependentUpon>201807311017441_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201808231405488_FixedManyToManyRelationships.cs" />
+    <Compile Include="Migrations\201808231405488_FixedManyToManyRelationships.Designer.cs">
+      <DependentUpon>201808231405488_FixedManyToManyRelationships.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="MusicContext.cs" />
@@ -88,6 +94,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201807311017441_InitialCreate.resx">
       <DependentUpon>201807311017441_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201808231405488_FixedManyToManyRelationships.resx">
+      <DependentUpon>201808231405488_FixedManyToManyRelationships.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

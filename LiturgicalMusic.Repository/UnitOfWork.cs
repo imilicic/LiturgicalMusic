@@ -10,6 +10,7 @@ using System.Transactions;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using LiturgicalMusic.Common;
+using System.Data.Entity.Validation;
 
 namespace LiturgicalMusic.Repository
 {

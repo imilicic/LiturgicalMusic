@@ -136,7 +136,9 @@ namespace LiturgicalMusic.WebAPI.Controllers
                 Arranger = true,
                 Composer = true,
                 Stanzas = true,
-                InstrumentalParts = true
+                InstrumentalParts = true,
+                LiturgyCategories = true,
+                ThemeCategories = true
             };
 
             ISong s = await Service.GetByIdAsync(songId, options);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using LiturgicalMusic.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,17 +10,9 @@ using System.Threading.Tasks;
 namespace LiturgicalMusic.DAL
 {
     [Table("LiturgyCategories")]
-    public class LiturgyEntity
+    public class LiturgyEntity : IEntity
     {
-        #region Constructors
-        public LiturgyEntity()
-        {
-            this.Songs = new HashSet<SongEntity>();
-        }
-        #endregion Constructors
-
         #region Properties
-
         /// <summary>
         /// Gets or sets the identifier.
         /// </summary>
@@ -37,7 +30,7 @@ namespace LiturgicalMusic.DAL
         /// Gets or sets the songs having this category.
         /// </summary>
         /// <value>This songs.</value>
-        public ICollection<SongEntity> Songs { get; set; }
+        public ICollection<SongLiturgyEntity> Songs { get; set; }
         #endregion Properties
     }
 }
