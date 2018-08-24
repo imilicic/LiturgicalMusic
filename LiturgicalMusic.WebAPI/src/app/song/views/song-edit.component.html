@@ -37,8 +37,9 @@
         </select>
     </div>
     <div class="row">
+        <h3>Kategorije*</h3>
         <div class="form-group col-md-6">
-            <h4>Liturgijske*</h4>
+            <h4>Liturgijske</h4>
             <div *ngFor="let liturgy of songCommonService.liturgyCategories; let i = index">
                 <div class="check-box">
                     <label class="control-label">
@@ -48,7 +49,7 @@
             </div>
         </div>
         <div class="form-group col-md-6">
-            <h4>Tematika*</h4>
+            <h4>Tematika</h4>
             <div *ngFor="let theme of songCommonService.themeCategories; let i = index">
                 <div class="check-box">
                     <label class="control-label">

@@ -199,6 +199,8 @@ namespace LiturgicalMusic.Repository
             UnitOfWork.ClearLocal<StanzaEntity>();
             UnitOfWork.ClearLocal<InstrumentalPartEntity>();
             UnitOfWork.ClearLocal<ComposerEntity>();
+            UnitOfWork.ClearLocal<SongLiturgyEntity>();
+            UnitOfWork.ClearLocal<SongThemeEntity>();
 
             return Mapper.Map<ISong>(songEntity);
         }
@@ -229,7 +231,9 @@ namespace LiturgicalMusic.Repository
                 Arranger = true,
                 Composer = true,
                 Stanzas = true,
-                InstrumentalParts = true
+                InstrumentalParts = true,
+                LiturgyCategories = true,
+                ThemeCategories = true
             };
             string include = SongHelper.CreateIncludeString(options);
             SongEntity songDb = await Repository.GetById(song.Id, include);
@@ -295,6 +299,60 @@ namespace LiturgicalMusic.Repository
                 }
             }
 
+            // updating liturgy categories
+            for (int i = songDb.LiturgyCategories.Count - 1; i >= 0; i--)
+            {
+                SongLiturgyEntity songLiturgyDb = songDb.LiturgyCategories.ElementAt(i);
+
+                if (song.LiturgyCategories.SingleOrDefault(l => l.Equals(songLiturgyDb.LiturgyId)) == 0)
+                {
+                    await UnitOfWork.DeleteAsync<SongLiturgyEntity>(songLiturgyDb);
+                }
+            }
+
+            foreach (int liturgy in song.LiturgyCategories)
+            {
+                SongLiturgyEntity songLiturgyDb = songDb.LiturgyCategories.SingleOrDefault(l => l.LiturgyId.Equals(liturgy));
+
+                if (songLiturgyDb == null)
+                {
+                    SongLiturgyEntity songLiturgy = new SongLiturgyEntity
+                    {
+                        LiturgyId = liturgy,
+                        SongId = song.Id
+                    };
+
+                    await UnitOfWork.InsertAsync<SongLiturgyEntity>(songLiturgy);
+                } 
+            }
+
+            // updating theme categories
+            for (int i = songDb.ThemeCategories.Count - 1; i >= 0; i--)
+            {
+                SongThemeEntity songThemeDb = songDb.ThemeCategories.ElementAt(i);
+
+                if (song.ThemeCategories.SingleOrDefault(l => l.Equals(songThemeDb.ThemeId)) == 0)
+                {
+                    await UnitOfWork.DeleteAsync<SongThemeEntity>(songThemeDb);
+                }
+            }
+
+            foreach (int theme in song.ThemeCategories)
+            {
+                SongThemeEntity songThemeDb = songDb.ThemeCategories.SingleOrDefault(l => l.ThemeId.Equals(theme));
+
+                if (songThemeDb == null)
+                {
+                    SongThemeEntity songTheme = new SongThemeEntity
+                    {
+                        ThemeId = theme,
+                        SongId = song.Id
+                    };
+
+                    await UnitOfWork.InsertAsync<SongThemeEntity>(songTheme);
+                }
+            }
+
             songDb.Code = songEntity.Code;
             songDb.OtherInformations = songEntity.OtherInformations;
             songDb.Source = songEntity.Source;
@@ -335,6 +393,8 @@ namespace LiturgicalMusic.Repository
             UnitOfWork.ClearLocal<StanzaEntity>();
             UnitOfWork.ClearLocal<InstrumentalPartEntity>();
             UnitOfWork.ClearLocal<ComposerEntity>();
+            UnitOfWork.ClearLocal<SongLiturgyEntity>();
+            UnitOfWork.ClearLocal<SongThemeEntity>();
 
             return Mapper.Map<ISong>(songDb);
         }

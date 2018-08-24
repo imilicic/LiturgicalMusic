@@ -22,8 +22,8 @@
     <tr>
         <td>Liturgijske kategorije</td>
         <td>
-            <ul *ngFor="let liturgy of song.LiturgyCategories">
-                <li>{{ songCommonService.liturgyCategories[liturgy-1] }}</li>
+            <ul>
+                <li *ngFor="let liturgy of song.LiturgyCategories">{{ songCommonService.liturgyCategories[liturgy-1] }}</li>
             </ul>
         </td>
     </tr>

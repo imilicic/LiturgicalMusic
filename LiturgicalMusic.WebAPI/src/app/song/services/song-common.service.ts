@@ -6,8 +6,8 @@ import { Template } from "../models/template.model";
 
 @Injectable()
 export class SongCommonService {
-    liturgyCategories: string[] = ["Ulazna", "Darovna", "Pričesna", "Gospodine", "Slava", "Svet", "Jaganjče", "Misa", "Psalam"];
-    themeCategories: string[] = ["Slavljenje", "Zahvala", "Kajanje", "Klanjanje", "Prigodna", "Marijanske"];
+    liturgyCategories: string[] = ["Ulazna", "Darovna", "Pričesna", "Gospodine", "Slava", "Svet", "Jaganjče", "Misa", "Psalam", "Misne", "Posljednica"];
+    themeCategories: string[] = ["Slavljenje", "Zahvala", "Kajanje", "Klanjanje", "Prigodna", "Marijanske", "Srce Isusovo"];
     voices: string[] = ["Soprano", "Alto", "Tenor", "Bass"];
 
     createPdfFileName(song: Song) {

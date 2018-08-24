@@ -34,6 +34,9 @@ export class SongEditComponent implements OnInit {
             this.songSessionService.action = "create";
         } else {
             this.songSessionService.action = "edit";
+
+            this.song.LiturgyCategories.forEach(l => this.liturgyCategories[l - 1] = true);
+            this.song.ThemeCategories.forEach(t => this.themeCategories[t - 1] = true);
         }
 
         let arrangerId: number = undefined;
@@ -109,7 +112,7 @@ export class SongEditComponent implements OnInit {
     }
 
     invalidCategories() {
-        return !(this.liturgyCategories.some(b => b) && this.themeCategories.some(b => b));
+        return !(this.liturgyCategories.some(b => b) || this.themeCategories.some(b => b));
     }
 
     updateCategory(category: string, i: number) {
