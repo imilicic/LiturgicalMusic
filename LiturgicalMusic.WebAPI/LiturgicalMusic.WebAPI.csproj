@@ -158,21 +158,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
-    <Content Include="src\app\home\home.component.html" />
-    <Content Include="src\app\shared\navbar\navbar.component.html" />
-    <Content Include="src\app\song\views\hymn\hymn-edit.component.html" />
-    <Content Include="src\app\song\views\lyrics\lyrics.component.html" />
-    <Content Include="src\app\song\views\psalm\psalm-edit.component.html" />
-    <Content Include="src\app\song\views\song-edit.component.html" />
-    <Content Include="src\app\song\views\song-search.component.html" />
-    <Content Include="src\app\song\views\song-view.component.html" />
-    <Content Include="src\app\song\views\voice\voice.component.html" />
-    <Content Include="src\favicon.ico" />
-    <Content Include="src\index.html" />
-    <Content Include="src\styles.css" />
-    <Content Include="src\systemjs-angular-loader.js" />
-    <Content Include="src\systemjs.config.extras.js" />
-    <Content Include="src\systemjs.config.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -189,8 +174,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
-    <Content Include="src\tsconfig.json" />
-    <Content Include="package.json" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -200,7 +183,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="src\app\assets\pdf\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LiturgicalMusic.Common\LiturgicalMusic.Common.csproj">
@@ -233,36 +215,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="src\app\app-routing.module.ts" />
-    <TypeScriptCompile Include="src\app\app.component.ts" />
-    <TypeScriptCompile Include="src\app\app.module.ts" />
-    <TypeScriptCompile Include="src\app\home\home.component.ts" />
-    <TypeScriptCompile Include="src\app\shared\navbar\navbar.component.ts" />
-    <TypeScriptCompile Include="src\app\song\models\template.model.ts" />
-    <TypeScriptCompile Include="src\app\song\services\composer.service.ts" />
-    <TypeScriptCompile Include="src\app\song\services\song-common.service.ts" />
-    <TypeScriptCompile Include="src\app\song\services\song-session.service.ts" />
-    <TypeScriptCompile Include="src\app\song\views\hymn\hymn-edit.component.ts" />
-    <TypeScriptCompile Include="src\app\song\models\composer.model.ts" />
-    <TypeScriptCompile Include="src\app\song\models\filter.model.ts" />
-    <TypeScriptCompile Include="src\app\song\models\instrumentalPart.model.ts" />
-    <TypeScriptCompile Include="src\app\song\models\song.model.ts" />
-    <TypeScriptCompile Include="src\app\song\models\stanza.model.ts" />
-    <TypeScriptCompile Include="src\app\song\services\composer-resolver.service.ts" />
-    <TypeScriptCompile Include="src\app\song\views\lyrics\lyrics.component.ts" />
-    <TypeScriptCompile Include="src\app\song\views\psalm\psalm-edit.component.ts" />
-    <TypeScriptCompile Include="src\app\song\views\song-edit.component.ts" />
-    <TypeScriptCompile Include="src\app\song\services\song-resolver.service.ts" />
-    <TypeScriptCompile Include="src\app\song\services\song-route-activator.service.ts" />
-    <TypeScriptCompile Include="src\app\song\services\song.service.ts" />
-    <TypeScriptCompile Include="src\app\song\song-routing.module.ts" />
-    <TypeScriptCompile Include="src\app\song\views\song-search.component.ts" />
-    <TypeScriptCompile Include="src\app\song\views\song-view.component.ts" />
-    <TypeScriptCompile Include="src\app\song\song.module.ts" />
-    <TypeScriptCompile Include="src\app\song\views\voice\voice.component.ts" />
-    <TypeScriptCompile Include="src\main.ts" />
-  </ItemGroup>
-  <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <PropertyGroup>
@@ -281,7 +233,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>60597</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:59560/</IISUrl>
+          <IISUrl>http://localhost:55000/api/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

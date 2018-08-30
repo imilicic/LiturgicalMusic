@@ -1,4 +1,3 @@
-%%% global.ily
 \version "2.18.2"
 
 DSfine = {

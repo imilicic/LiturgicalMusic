@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace LiturgicalMusic.WebAPI.Controllers
 {
-    [RoutePrefix("api/composers")]
+    [RoutePrefix("composers")]
     public class ComposerController : ApiController
     {
         #region Properties

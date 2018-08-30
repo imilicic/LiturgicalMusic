@@ -12,7 +12,7 @@ namespace LiturgicalMusic.Repository
     public class SongHelper
     {
         #region Constants
-        private const string PATH_TO_WEB_API = @"E:\vs projects\LiturgicalMusic\LiturgicalMusic.WebAPI";
+        private const string PATH_TO_PDF_FILES = @"E:\vs projects\LiturgicalMusic\LiturgicalMusic.Angular";
         private const string PDF_ASSETS_DIR = @"app\assets\pdf";
         private const string SOURCE_DIR = "src";
         private const string TEMP_DIR = "temp";
@@ -28,8 +28,8 @@ namespace LiturgicalMusic.Repository
         /// <returns></returns>
         public async static Task CreatePdfAsync(ISong song, string tempFileName, bool deleteTempFiles)
         {
-            string tempDir = String.Format(@"{0}\{1}", PATH_TO_WEB_API, TEMP_DIR);
-            string srcDir = String.Format(@"{0}\{1}", PATH_TO_WEB_API, SOURCE_DIR);
+            string tempDir = String.Format(@"{0}\{1}", PATH_TO_PDF_FILES, TEMP_DIR);
+            string srcDir = String.Format(@"{0}\{1}", PATH_TO_PDF_FILES, SOURCE_DIR);
             Lilypond lyGenerator = new Lilypond(song, tempDir, tempFileName, deleteTempFiles);
             string filePath = await lyGenerator.CreateFileAsync();
             string songFileName = SongFileName(song);
@@ -66,7 +66,7 @@ namespace LiturgicalMusic.Repository
         /// <returns></returns>
         public static bool DeletePdf(ISong song)
         {
-            string srcDir = String.Format(@"{0}\{1}", PATH_TO_WEB_API, SOURCE_DIR);
+            string srcDir = String.Format(@"{0}\{1}", PATH_TO_PDF_FILES, SOURCE_DIR);
             string songFileName = SongFileName(song);
             string pdfFilePath = String.Format(@"{0}\{1}\{2}.pdf", srcDir, PDF_ASSETS_DIR, songFileName);
 
@@ -136,7 +136,7 @@ namespace LiturgicalMusic.Repository
 
             if (oldSongFileName != newSongFileName)
             {
-                string delete = String.Format(@"{0}\{1}\{2}\{3}.pdf", PATH_TO_WEB_API, SOURCE_DIR, PDF_ASSETS_DIR, oldSongFileName);
+                string delete = String.Format(@"{0}\{1}\{2}\{3}.pdf", PATH_TO_PDF_FILES, SOURCE_DIR, PDF_ASSETS_DIR, oldSongFileName);
                 File.Delete(delete);
             }
 

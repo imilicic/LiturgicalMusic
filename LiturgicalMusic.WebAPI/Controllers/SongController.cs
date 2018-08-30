@@ -12,7 +12,7 @@ using System;
 
 namespace LiturgicalMusic.WebAPI.Controllers
 {
-    [RoutePrefix("api/songs")]
+    [RoutePrefix("songs")]
     public class SongController : ApiController
     {
         #region Properties
