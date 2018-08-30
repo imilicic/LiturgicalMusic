@@ -26,12 +26,6 @@ namespace LiturgicalMusic.Repository
         /// </summary>
         /// <value>The repository.</value>
         protected IRepository<SongEntity> Repository { get; private set; }
-
-        /// <summary>
-        /// Gets or sets the unit of work.
-        /// </summary>
-        /// <value>The unit of work.</value>
-        protected IUnitOfWork UnitOfWork { get; private set; }
         #endregion Properties
 
         #region Constructors
@@ -45,7 +39,6 @@ namespace LiturgicalMusic.Repository
         {
             this.Mapper = mapper;
             this.Repository = repository;
-            this.UnitOfWork = Repository.CreateUnitOfWork();
         }
         #endregion Constructors
 
@@ -57,30 +50,14 @@ namespace LiturgicalMusic.Repository
         /// <returns></returns>
         public async Task DeleteAsync(int songId)
         {
-            IOptions options = new Options()
-            {
-                Stanzas = true,
-                InstrumentalParts = true
-            };
-            SongEntity songEntity = await Repository.GetById(songId, SongHelper.CreateIncludeString(options));
+            SongEntity songEntity = await Repository.GetById(songId);
             SongHelper.DeletePdf(Mapper.Map<ISong>(songEntity));
 
-            for (int i = songEntity.Stanzas.Count - 1; i >= 0; i--)
+            using (IUnitOfWork unitOfWork = Repository.CreateUnitOfWork())
             {
-                StanzaEntity stanza = songEntity.Stanzas.ElementAt(i);
-
-                await UnitOfWork.DeleteAsync<StanzaEntity>(stanza.Id);
+                await unitOfWork.DeleteAsync<SongEntity>(songId);
+                await unitOfWork.CommitAsync();
             }
-
-            for (int i = songEntity.InstrumentalParts.Count - 1; i >= 0; i--)
-            {
-                InstrumentalPartEntity part = songEntity.InstrumentalParts.ElementAt(i);
-
-                await UnitOfWork.DeleteAsync<InstrumentalPartEntity>(part.Id);
-            }
-
-            await UnitOfWork.DeleteAsync<SongEntity>(songId);
-            await UnitOfWork.CommitAsync();
         }
 
         /// <summary>
@@ -93,10 +70,9 @@ namespace LiturgicalMusic.Repository
         /// <param name="pageNumber">The current page number.</param>
         /// <param name="pageSize">The page size.</param>
         /// <returns></returns>
-        public async Task<IPagedList<ISong>> GetAsync(IFilter filter, IOptions options, ISorting sortingOptions, IPaging pageOptions)
+        public async Task<IPagedList<ISong>> GetAsync(IFilter filter, string[] options, ISorting sortingOptions, IPaging pageOptions)
         {
-            string include = SongHelper.CreateIncludeString(options);
-            IQueryable<SongEntity> query = Repository.Get(include);
+            IQueryable<SongEntity> query = Repository.Get(options);
             IOrderedEnumerable<SongEntity> orderedQuery;
             Func<SongEntity, string> order;
 
@@ -145,10 +121,9 @@ namespace LiturgicalMusic.Repository
         /// <param name="songId">The song ID.</param>
         /// <param name="options">The options.</param>
         /// <returns></returns>
-        public async Task<ISong> GetByIdAsync(int songId, IOptions options)
+        public async Task<ISong> GetByIdAsync(int songId, string[] options)
         {
-            string include = SongHelper.CreateIncludeString(options);
-            SongEntity songEntity = await Repository.GetById(songId, include);
+            SongEntity songEntity = await Repository.GetById(songId, options);
 
             return Mapper.Map<ISong>(songEntity);
         }
@@ -164,43 +139,39 @@ namespace LiturgicalMusic.Repository
 
             SongEntity songEntity = Mapper.Map<SongEntity>(song);
 
-            foreach (int liturgy in song.LiturgyCategories)
+            using (IUnitOfWork unitOfWork = Repository.CreateUnitOfWork())
             {
-                SongLiturgyEntity songLiturgy = new SongLiturgyEntity();
-                songLiturgy.SongId = songEntity.Id;
-                songLiturgy.LiturgyId = liturgy;
-                await UnitOfWork.InsertAsync<SongLiturgyEntity>(songLiturgy);
+                foreach (int liturgy in song.LiturgyCategories)
+                {
+                    SongLiturgyEntity songLiturgy = new SongLiturgyEntity();
+                    songLiturgy.SongId = songEntity.Id;
+                    songLiturgy.LiturgyId = liturgy;
+                    await unitOfWork.InsertAsync<SongLiturgyEntity>(songLiturgy);
+                }
+
+                foreach (int theme in song.ThemeCategories)
+                {
+                    SongThemeEntity songTheme = new SongThemeEntity();
+                    songTheme.SongId = songEntity.Id;
+                    songTheme.ThemeId = theme;
+                    await unitOfWork.InsertAsync<SongThemeEntity>(songTheme);
+                }
+
+                if (song.Arranger != null)
+                {
+                    songEntity.Arranger = null;
+                    songEntity.ArrangerId = song.Arranger.Id;
+                }
+
+                if (song.Composer != null)
+                {
+                    songEntity.Composer = null;
+                    songEntity.ComposerId = song.Composer.Id;
+                }
+
+                songEntity = await unitOfWork.InsertAsync<SongEntity>(songEntity);
+                await unitOfWork.CommitAsync();
             }
-
-            foreach (int theme in song.ThemeCategories)
-            {
-                SongThemeEntity songTheme = new SongThemeEntity();
-                songTheme.SongId = songEntity.Id;
-                songTheme.ThemeId = theme;
-                await UnitOfWork.InsertAsync<SongThemeEntity>(songTheme);
-            }
-
-            if (song.Arranger != null)
-            {
-                songEntity.Arranger = null;
-                songEntity.ArrangerId = song.Arranger.Id;
-            }
-
-            if (song.Composer != null)
-            {
-                songEntity.Composer = null;
-                songEntity.ComposerId = song.Composer.Id;
-            }
-
-            songEntity = await UnitOfWork.InsertAsync<SongEntity>(songEntity);
-            await UnitOfWork.CommitAsync();
-
-            UnitOfWork.ClearLocal<SongEntity>();
-            UnitOfWork.ClearLocal<StanzaEntity>();
-            UnitOfWork.ClearLocal<InstrumentalPartEntity>();
-            UnitOfWork.ClearLocal<ComposerEntity>();
-            UnitOfWork.ClearLocal<SongLiturgyEntity>();
-            UnitOfWork.ClearLocal<SongThemeEntity>();
 
             return Mapper.Map<ISong>(songEntity);
         }
@@ -226,175 +197,148 @@ namespace LiturgicalMusic.Repository
         /// <returns></returns>
         public async Task<ISong> UpdateAsync(ISong song)
         {
-            IOptions options = new Options
-            {
-                Arranger = true,
-                Composer = true,
-                Stanzas = true,
-                InstrumentalParts = true,
-                LiturgyCategories = true,
-                ThemeCategories = true
-            };
-            string include = SongHelper.CreateIncludeString(options);
-            SongEntity songDb = await Repository.GetById(song.Id, include);
+            string[] options = new String[4] { "Stanzas", "InstrumentalParts", "LiturgyCategories", "ThemeCategories" };
+            SongEntity songDb = await Repository.GetById(song.Id, options);
             SongEntity songEntity = Mapper.Map<SongEntity>(song);
 
             await SongHelper.UpdatePdfAsync(song, Path.GetRandomFileName(), SongHelper.SongFileName(Mapper.Map<ISong>(songDb)), true);
 
-            // updating stanzas
-            for (int i = songDb.Stanzas.Count - 1; i >= 0; i--)
+            using (IUnitOfWork unitOfWork = Repository.CreateUnitOfWork())
             {
-                StanzaEntity stanzaDb = songDb.Stanzas.ElementAt(i);
-
-                if (songEntity.Stanzas.SingleOrDefault(s => s.Id.Equals(stanzaDb.Id)) == null)
+                // updating stanzas
+                for (int i = songDb.Stanzas.Count - 1; i >= 0; i--)
                 {
-                    await UnitOfWork.DeleteAsync<StanzaEntity>(stanzaDb);
-                }
-            }
+                    StanzaEntity stanzaDb = songDb.Stanzas.ElementAt(i);
 
-            foreach (StanzaEntity stanza in songEntity.Stanzas)
-            {
-                StanzaEntity stanzaDb = songDb.Stanzas.SingleOrDefault(s => s.Id.Equals(stanza.Id));
-
-                if (stanzaDb == null)
-                {
-                    stanza.SongId = song.Id;
-                    await UnitOfWork.InsertAsync<StanzaEntity>(stanza);
-                }
-                else
-                {
-                    stanzaDb.Number = stanza.Number;
-                    stanzaDb.Text = stanza.Text;
-                    await UnitOfWork.UpdateAsync<StanzaEntity>(stanzaDb);
-                }
-            }
-
-            // updating instrumental parts
-            for (int i = songDb.InstrumentalParts.Count - 1; i >= 0; i--)
-            {
-                InstrumentalPartEntity partDb = songDb.InstrumentalParts.ElementAt(i);
-
-                if (songEntity.InstrumentalParts.SingleOrDefault(p => p.Id.Equals(partDb.Id)) == null)
-                {
-                    await UnitOfWork.DeleteAsync<InstrumentalPartEntity>(partDb);
-                }
-            }
-
-            foreach (InstrumentalPartEntity part in songEntity.InstrumentalParts)
-            {
-                InstrumentalPartEntity partDb = songDb.InstrumentalParts.SingleOrDefault(p => p.Id.Equals(part.Id));
-
-                if (partDb == null)
-                {
-                    part.SongId = song.Id;
-                    await UnitOfWork.InsertAsync<InstrumentalPartEntity>(part);
-                }
-                else
-                {
-                    partDb.Code = part.Code;
-                    partDb.Position = part.Position;
-                    partDb.Template = part.Template;
-                    partDb.Type = part.Type;
-                    await UnitOfWork.UpdateAsync<InstrumentalPartEntity>(partDb);
-                }
-            }
-
-            // updating liturgy categories
-            for (int i = songDb.LiturgyCategories.Count - 1; i >= 0; i--)
-            {
-                SongLiturgyEntity songLiturgyDb = songDb.LiturgyCategories.ElementAt(i);
-
-                if (song.LiturgyCategories.SingleOrDefault(l => l.Equals(songLiturgyDb.LiturgyId)) == 0)
-                {
-                    await UnitOfWork.DeleteAsync<SongLiturgyEntity>(songLiturgyDb);
-                }
-            }
-
-            foreach (int liturgy in song.LiturgyCategories)
-            {
-                SongLiturgyEntity songLiturgyDb = songDb.LiturgyCategories.SingleOrDefault(l => l.LiturgyId.Equals(liturgy));
-
-                if (songLiturgyDb == null)
-                {
-                    SongLiturgyEntity songLiturgy = new SongLiturgyEntity
+                    if (songEntity.Stanzas.SingleOrDefault(s => s.Id.Equals(stanzaDb.Id)) == null)
                     {
-                        LiturgyId = liturgy,
-                        SongId = song.Id
-                    };
-
-                    await UnitOfWork.InsertAsync<SongLiturgyEntity>(songLiturgy);
-                } 
-            }
-
-            // updating theme categories
-            for (int i = songDb.ThemeCategories.Count - 1; i >= 0; i--)
-            {
-                SongThemeEntity songThemeDb = songDb.ThemeCategories.ElementAt(i);
-
-                if (song.ThemeCategories.SingleOrDefault(l => l.Equals(songThemeDb.ThemeId)) == 0)
-                {
-                    await UnitOfWork.DeleteAsync<SongThemeEntity>(songThemeDb);
+                        await unitOfWork.DeleteAsync<StanzaEntity>(stanzaDb);
+                    }
                 }
-            }
 
-            foreach (int theme in song.ThemeCategories)
-            {
-                SongThemeEntity songThemeDb = songDb.ThemeCategories.SingleOrDefault(l => l.ThemeId.Equals(theme));
-
-                if (songThemeDb == null)
+                foreach (StanzaEntity stanza in songEntity.Stanzas)
                 {
-                    SongThemeEntity songTheme = new SongThemeEntity
+                    StanzaEntity stanzaDb = songDb.Stanzas.SingleOrDefault(s => s.Id.Equals(stanza.Id));
+
+                    if (stanzaDb == null)
                     {
-                        ThemeId = theme,
-                        SongId = song.Id
-                    };
-
-                    await UnitOfWork.InsertAsync<SongThemeEntity>(songTheme);
+                        stanza.SongId = song.Id;
+                        await unitOfWork.InsertAsync<StanzaEntity>(stanza);
+                    }
+                    else
+                    {
+                        stanzaDb.Number = stanza.Number;
+                        stanzaDb.Text = stanza.Text;
+                        await unitOfWork.UpdateAsync<StanzaEntity>(stanzaDb);
+                    }
                 }
-            }
 
-            songDb.Code = songEntity.Code;
-            songDb.OtherInformations = songEntity.OtherInformations;
-            songDb.Source = songEntity.Source;
-            songDb.Template = songEntity.Template;
-            songDb.Title = songEntity.Title;
-            songDb.Type = songEntity.Type;
-
-            if (songEntity.Arranger == null)
-            {
-                songDb.Arranger = null;
-            }
-            else
-            {
-                if (songDb.ArrangerId != songEntity.Arranger.Id)
+                // updating instrumental parts
+                for (int i = songDb.InstrumentalParts.Count - 1; i >= 0; i--)
                 {
-                    songDb.Arranger = null;
+                    InstrumentalPartEntity partDb = songDb.InstrumentalParts.ElementAt(i);
+
+                    if (songEntity.InstrumentalParts.SingleOrDefault(p => p.Id.Equals(partDb.Id)) == null)
+                    {
+                        await unitOfWork.DeleteAsync<InstrumentalPartEntity>(partDb);
+                    }
+                }
+
+                foreach (InstrumentalPartEntity part in songEntity.InstrumentalParts)
+                {
+                    InstrumentalPartEntity partDb = songDb.InstrumentalParts.SingleOrDefault(p => p.Id.Equals(part.Id));
+
+                    if (partDb == null)
+                    {
+                        part.SongId = song.Id;
+                        await unitOfWork.InsertAsync<InstrumentalPartEntity>(part);
+                    }
+                    else
+                    {
+                        partDb.Code = part.Code;
+                        partDb.Position = part.Position;
+                        partDb.Template = part.Template;
+                        partDb.Type = part.Type;
+                        await unitOfWork.UpdateAsync<InstrumentalPartEntity>(partDb);
+                    }
+                }
+
+                // updating liturgy categories
+                for (int i = songDb.LiturgyCategories.Count - 1; i >= 0; i--)
+                {
+                    SongLiturgyEntity songLiturgyDb = songDb.LiturgyCategories.ElementAt(i);
+
+                    if (song.LiturgyCategories.SingleOrDefault(l => l.Equals(songLiturgyDb.LiturgyId)) == 0)
+                    {
+                        await unitOfWork.DeleteAsync<SongLiturgyEntity>(songLiturgyDb);
+                    }
+                }
+
+                foreach (int liturgy in song.LiturgyCategories)
+                {
+                    SongLiturgyEntity songLiturgyDb = songDb.LiturgyCategories.SingleOrDefault(l => l.LiturgyId.Equals(liturgy));
+
+                    if (songLiturgyDb == null)
+                    {
+                        SongLiturgyEntity songLiturgy = new SongLiturgyEntity
+                        {
+                            LiturgyId = liturgy,
+                            SongId = song.Id
+                        };
+
+                        await unitOfWork.InsertAsync<SongLiturgyEntity>(songLiturgy);
+                    }
+                }
+
+                // updating theme categories
+                for (int i = songDb.ThemeCategories.Count - 1; i >= 0; i--)
+                {
+                    SongThemeEntity songThemeDb = songDb.ThemeCategories.ElementAt(i);
+
+                    if (song.ThemeCategories.SingleOrDefault(l => l.Equals(songThemeDb.ThemeId)) == 0)
+                    {
+                        await unitOfWork.DeleteAsync<SongThemeEntity>(songThemeDb);
+                    }
+                }
+
+                foreach (int theme in song.ThemeCategories)
+                {
+                    SongThemeEntity songThemeDb = songDb.ThemeCategories.SingleOrDefault(l => l.ThemeId.Equals(theme));
+
+                    if (songThemeDb == null)
+                    {
+                        SongThemeEntity songTheme = new SongThemeEntity
+                        {
+                            ThemeId = theme,
+                            SongId = song.Id
+                        };
+
+                        await unitOfWork.InsertAsync<SongThemeEntity>(songTheme);
+                    }
+                }
+
+                songDb.ArrangerId = null;
+                songDb.Code = songEntity.Code;
+                songDb.ComposerId = null;
+                songDb.OtherInformations = songEntity.OtherInformations;
+                songDb.Source = songEntity.Source;
+                songDb.Template = songEntity.Template;
+                songDb.Title = songEntity.Title;
+                songDb.Type = songEntity.Type;
+
+                if (songEntity.Arranger != null)
+                {
                     songDb.ArrangerId = songEntity.Arranger.Id;
                 }
-            }
 
-            if (songEntity.Composer == null)
-            {
-                songDb.Composer = null;
-            }
-            else
-            {
-                if (songDb.ComposerId != songEntity.Composer.Id)
+                if (songEntity.Composer != null)
                 {
-                    songDb.Composer = null;
                     songDb.ComposerId = songEntity.Composer.Id;
                 }
+
+                songDb = await unitOfWork.UpdateAsync(songDb);
+                await unitOfWork.CommitAsync();
             }
-
-            songDb = await UnitOfWork.UpdateAsync(songDb);
-            await UnitOfWork.CommitAsync();
-
-            UnitOfWork.ClearLocal<SongEntity>();
-            UnitOfWork.ClearLocal<StanzaEntity>();
-            UnitOfWork.ClearLocal<InstrumentalPartEntity>();
-            UnitOfWork.ClearLocal<ComposerEntity>();
-            UnitOfWork.ClearLocal<SongLiturgyEntity>();
-            UnitOfWork.ClearLocal<SongThemeEntity>();
 
             return Mapper.Map<ISong>(songDb);
         }

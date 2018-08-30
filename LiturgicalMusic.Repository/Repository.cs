@@ -57,14 +57,16 @@ namespace LiturgicalMusic.Repository
             return this.UowFactory.CreateUnitOfWork();
         }
 
-        protected virtual IQueryable<T> GetQueryable(string include = "")
+        protected virtual IQueryable<T> GetQueryable(string[] options)
         {
             IQueryable<T> query = DbSet;
 
-            foreach (var includeProperty in include.Split
-                (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            if (options != null)
             {
-                query = query.Include(includeProperty);
+                foreach (string option in options)
+                {
+                    query = query.Include(option);
+                }
             }
 
             return query;
@@ -74,9 +76,9 @@ namespace LiturgicalMusic.Repository
         /// Gets entities.
         /// </summary>
         /// <returns></returns>
-        public virtual IQueryable<T> Get(string include = "")
+        public virtual IQueryable<T> Get(string[] options = null)
         {
-            return GetQueryable(include);
+            return GetQueryable(options);
         }
 
         /// <summary>
@@ -94,9 +96,9 @@ namespace LiturgicalMusic.Repository
         /// </summary>
         /// <param name="entityId">The entity ID.</param>
         /// <returns></returns>
-        public virtual Task<T> GetById(int entityId, string include = "")
+        public virtual Task<T> GetById(int entityId, string[] options = null)
         {
-            return GetQueryable(include).SingleOrDefaultAsync(e => e.Id.Equals(entityId));
+            return GetQueryable(options).SingleOrDefaultAsync(e => e.Id.Equals(entityId));
         }
         #endregion Methods
     }

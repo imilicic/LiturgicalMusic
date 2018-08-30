@@ -60,48 +60,6 @@ namespace LiturgicalMusic.Repository
         }
 
         /// <summary>
-        /// Creates string from options which denotes all properties which will be included when geting an entity.
-        /// </summary>
-        /// <param name="options">The options.</param>
-        /// <returns></returns>
-        public static string CreateIncludeString(IOptions options)
-        {
-            string include = "";
-
-            if (options.Composer)
-            {
-                include = String.Concat(include, "Composer,");
-            }
-
-            if (options.Arranger)
-            {
-                include = String.Concat(include, "Arranger,");
-            }
-
-            if (options.Stanzas)
-            {
-                include = String.Concat(include, "Stanzas,");
-            }
-
-            if (options.InstrumentalParts)
-            {
-                include = String.Concat(include, "InstrumentalParts,");
-            }
-
-            if (options.LiturgyCategories)
-            {
-                include = String.Concat(include, "LiturgyCategories,");
-            }
-
-            if (options.ThemeCategories)
-            {
-                include = String.Concat(include, "ThemeCategories,");
-            }
-
-            return include;
-        }
-
-        /// <summary>
         /// Deletes PDF score file of a song.
         /// </summary>
         /// <param name="song">The song.</param>

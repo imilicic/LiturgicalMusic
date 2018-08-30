@@ -72,7 +72,7 @@ namespace LiturgicalMusic.Service
         /// <param name="pageNumber">The current page number.</param>
         /// <param name="pageSize">The page size.</param>
         /// <returns></returns>
-        public async Task<IPagedList<ISong>> GetAsync(IFilter filter, IOptions options, ISorting sortingOptions, IPaging pageOptions)
+        public async Task<IPagedList<ISong>> GetAsync(IFilter filter, string[] options, ISorting sortingOptions, IPaging pageOptions)
         {
             return await SongRepository.GetAsync(filter, options, sortingOptions, pageOptions);
         }
@@ -83,7 +83,7 @@ namespace LiturgicalMusic.Service
         /// <param name="songId">The song ID.</param>
         /// <param name="options">The options.</param>
         /// <returns></returns>
-        public async Task<ISong> GetByIdAsync(int songId, IOptions options)
+        public async Task<ISong> GetByIdAsync(int songId, string[] options)
         {
             return await SongRepository.GetByIdAsync(songId, options);
         }

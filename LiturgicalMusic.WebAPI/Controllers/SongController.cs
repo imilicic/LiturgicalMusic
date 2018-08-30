@@ -8,6 +8,7 @@ using System.Net;
 using System.Threading.Tasks;
 using LiturgicalMusic.Common;
 using X.PagedList;
+using System;
 
 namespace LiturgicalMusic.WebAPI.Controllers
 {
@@ -91,13 +92,8 @@ namespace LiturgicalMusic.WebAPI.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("get")]
-        public async Task<HttpResponseMessage> GetAsync(string searchQuery, string orderBy = "title", bool ascending = true, int pageNumber = 1, int pageSize = 20)
+        public async Task<HttpResponseMessage> GetAsync(string searchQuery, [FromUri] string[] options, string orderBy = "title", bool ascending = true, int pageNumber = 1, int pageSize = 20)
         {
-            IOptions options = new Options()
-            {
-                Arranger = true,
-                Composer = true
-            };
             IFilter filter = new Filter()
             {
                 Title = searchQuery
@@ -129,18 +125,8 @@ namespace LiturgicalMusic.WebAPI.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("get")]
-        public async Task<HttpResponseMessage> GetByIdAsync(int songId)
+        public async Task<HttpResponseMessage> GetByIdAsync(int songId, [FromUri] string[] options)
         {
-            IOptions options = new Options()
-            {
-                Arranger = true,
-                Composer = true,
-                Stanzas = true,
-                InstrumentalParts = true,
-                LiturgyCategories = true,
-                ThemeCategories = true
-            };
-
             ISong s = await Service.GetByIdAsync(songId, options);
             SongModel result = Mapper.Map<SongModel>(s);
             return Request.CreateResponse(HttpStatusCode.OK, result);

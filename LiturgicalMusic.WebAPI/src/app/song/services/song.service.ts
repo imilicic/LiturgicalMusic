@@ -31,13 +31,25 @@ export class SongService {
 
     getSongById(songId: number): Observable<Song> {
         let query = "/api/songs/get?songId=" + songId;
+
+        query += "&&options=Arranger";
+        query += "&&options=Composer";
+        query += "&&options=Stanzas";
+        query += "&&options=InstrumentalParts";
+        query += "&&options=LiturgyCategories";
+        query += "&&options=ThemeCategories";
+
         return this.http.get(query)
             .map((response: Response) => <Song>response.json())
             .catch(this.handleError);
     }
 
     searchSongs(filter: Filter, orderBy: string, ascending: boolean, pageNumber: number, pageSize: number): Observable<Response> {
-        let query = "/api/songs/get?searchQuery=" + filter.Title + "&&orderBy=" + orderBy + "&&ascending=" + ascending + "&&pageNumber=" + pageNumber + "&&pageSize=" + pageSize;
+        let query = "/api/songs/get?searchQuery=" + filter.Title;
+
+        query += "&&options=Composer&&options=Arranger"
+
+        query += "&&orderBy=" + orderBy + "&&ascending=" + ascending + "&&pageNumber=" + pageNumber + "&&pageSize=" + pageSize;
 
         return this.http.get(query)
             .catch(this.handleError);

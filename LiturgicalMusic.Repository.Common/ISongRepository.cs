@@ -26,7 +26,7 @@ namespace LiturgicalMusic.Repository.Common
         /// <param name="songId">The song ID.</param>
         /// <param name="options">The options.</param>
         /// <returns></returns>
-        Task<ISong> GetByIdAsync(int songId, IOptions options);
+        Task<ISong> GetByIdAsync(int songId, string[] options);
 
         /// <summary>
         /// Gets all songs filtered, ordered, using pages
@@ -38,7 +38,7 @@ namespace LiturgicalMusic.Repository.Common
         /// <param name="pageNumber">The current page number.</param>
         /// <param name="pageSize">The page size.</param>
         /// <returns></returns>
-        Task<IPagedList<ISong>> GetAsync(IFilter filter, IOptions options, ISorting sortingOptions, IPaging pageOptions);
+        Task<IPagedList<ISong>> GetAsync(IFilter filter, string[] options, ISorting sortingOptions, IPaging pageOptions);
 
         /// <summary>
         /// Inserts a song.

@@ -35,15 +35,6 @@ namespace LiturgicalMusic.Repository
 
         #region Methods
         /// <summary>
-        /// Clears all entities from local.
-        /// </summary>
-        /// <typeparam name="T">The type of entity to clear.</typeparam>
-        public void ClearLocal<T>() where T : class
-        {
-            DbContext.Set<T>().Local.ToList().ForEach(f => DbContext.Entry(f).State = EntityState.Detached);
-        }
-
-        /// <summary>
         /// Commits changes made in database.
         /// </summary>
         /// <returns></returns>
@@ -144,7 +135,7 @@ namespace LiturgicalMusic.Repository
         }
 
         /// <summary>
-        /// Runs Dispose method.
+        /// Disposes database context.
         /// </summary>
         public void Dispose()
         {

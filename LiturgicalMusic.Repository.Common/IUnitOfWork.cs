@@ -11,12 +11,6 @@ namespace LiturgicalMusic.Repository.Common
     {
         #region Methods
         /// <summary>
-        /// Clears all entities from local.
-        /// </summary>
-        /// <typeparam name="T">The type of entity to clear.</typeparam>
-        void ClearLocal<T>() where T : class;
-
-        /// <summary>
         /// Commits changes made in database.
         /// </summary>
         /// <returns></returns>

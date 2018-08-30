@@ -21,7 +21,7 @@ namespace LiturgicalMusic.Repository
             Bind<ISongRepository>().To<SongRepository>();
             Bind(typeof(IRepository<>)).To(typeof(Repository<>));
             Bind<IUnitOfWorkFactory>().ToFactory();
-            Bind<IUnitOfWork>().To<UnitOfWork>().InSingletonScope();
+            Bind<IUnitOfWork>().To<UnitOfWork>();
         }
         #endregion Methods
     }

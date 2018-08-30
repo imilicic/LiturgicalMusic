@@ -22,7 +22,7 @@ namespace LiturgicalMusic.Repository.Common
         /// Gets entities.
         /// </summary>
         /// <returns></returns>
-        IQueryable<T> Get(string include = "");
+        IQueryable<T> Get(string[] include = null);
 
         /// <summary>
         /// Gets entity by Id.
@@ -36,7 +36,7 @@ namespace LiturgicalMusic.Repository.Common
         /// </summary>
         /// <param name="entityId">The entity ID.</param>
         /// <returns></returns>
-        Task<T> GetById(int entityId, string include = "");
+        Task<T> GetById(int entityId, string[] include = null);
         #endregion Methods
     }
 }
