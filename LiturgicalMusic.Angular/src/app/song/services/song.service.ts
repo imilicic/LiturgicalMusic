@@ -3,35 +3,40 @@ import { Http, Response, Headers, RequestOptions } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 import "rxjs/add/operator/catch";
 import "rxjs/add/operator/map";
-import "rxjs/add/observable/throw";
 
 import { Filter } from "../models/filter.model";
 import { Song } from "../models/song.model";
+import { CommonService } from "./common.service";
 
 @Injectable()
 export class SongService {
-    constructor(private http: Http) { }
+    headers: Headers;
+    options: RequestOptions;
+    url: string;
+
+    constructor(private commonService: CommonService, private http: Http) {
+        this.initialize();
+    }
+
+    private initialize() {
+        this.headers = new Headers({ 'Content-Type': 'application/json' });
+        this.options = new RequestOptions({ headers: this.headers });
+        this.url = "/api/songs/";
+    }
 
     createSong(song: Song): Observable<Song> {
-        let headers = new Headers({ 'Content-Type': 'application/json' });
-        let options = new RequestOptions({ headers: headers });
-
-        return this.http.post("/api/songs/create", JSON.stringify(song), options)
+        return this.http.post(this.url + "create", JSON.stringify(song), this.options)
             .map((response: Response) => <Song>response.json())
-            .catch(this.handleError);
+            .catch(this.commonService.handleError);
     }
 
     deleteSong(songId: number) {
-        let headers = new Headers({ 'Content-Type': 'application/json' });
-        let options = new RequestOptions({ headers: headers });
-
-        return this.http.delete("/api/songs/delete/" + songId, options)
-            .catch(this.handleError);
+        return this.http.delete(this.url + "delete/" + songId, this.options)
+            .catch(this.commonService.handleError);
     }
 
     getSongById(songId: number): Observable<Song> {
-        let query = "/api/songs/get?songId=" + songId;
-
+        let query = this.url + "get?songId=" + songId;
         query += "&&options=Arranger";
         query += "&&options=Composer";
         query += "&&options=Stanzas";
@@ -41,40 +46,31 @@ export class SongService {
 
         return this.http.get(query)
             .map((response: Response) => <Song>response.json())
-            .catch(this.handleError);
+            .catch(this.commonService.handleError);
     }
 
     searchSongs(filter: Filter, orderBy: string, ascending: boolean, pageNumber: number, pageSize: number): Observable<Response> {
-        let query = "/api/songs/get?searchQuery=" + filter.Title;
-
-        query += "&&options=Composer&&options=Arranger"
-
-        query += "&&orderBy=" + orderBy + "&&ascending=" + ascending + "&&pageNumber=" + pageNumber + "&&pageSize=" + pageSize;
+        let query = this.url + "get?searchQuery=" + filter.Title;
+        query += "&&options=Composer";
+        query += "&&options=Arranger";
+        query += "&&orderBy=" + orderBy;
+        query += "&&ascending=" + ascending;
+        query += "&&pageNumber=" + pageNumber;
+        query += "&&pageSize=" + pageSize;
 
         return this.http.get(query)
-            .catch(this.handleError);
-    }
-
-    handleError(error: Response) {
-        console.error(error);
-        return Observable.throw(error);
+            .catch(this.commonService.handleError);
     }
 
     previewSong(song: Song) {
-        let headers = new Headers({ 'Content-Type': 'application/json'});
-        let options = new RequestOptions({ headers: headers });
-
-        return this.http.post("/api/songs/preview/", JSON.stringify(song), options)
+        return this.http.post(this.url + "preview/", JSON.stringify(song), this.options)
             .map((response: Response) => <Song>response.json())
-            .catch(this.handleError);
+            .catch(this.commonService.handleError);
     }
 
     updateSong(song: Song) {
-        let headers = new Headers({ 'Content-Type': 'application/json' });
-        let options = new RequestOptions({ headers: headers });
-
-        return this.http.put("/api/songs/update/" + song.Id, JSON.stringify(song), options)
+        return this.http.put(this.url + "update/" + song.Id, JSON.stringify(song), this.options)
             .map((response: Response) => <Song>response.json())
-            .catch(this.handleError);
+            .catch(this.commonService.handleError);
     }
 }

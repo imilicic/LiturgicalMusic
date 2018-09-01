@@ -3,23 +3,21 @@ import { Http, Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 import "rxjs/add/operator/catch";
 import "rxjs/add/operator/map";
-import "rxjs/add/observable/throw";
 
+import { CommonService } from "./common.service";
 import { Composer } from "../models/composer.model";
 
 @Injectable()
 export class ComposerService {
-    constructor(private http: Http) { }
+    url: string;
 
-    getComposers(): Observable<Composer[]> {
-        let query = "/api/composers/get";
-        return this.http.get(query)
-            .map((response: Response) => <Composer[]>response.json())
-            .catch(this.handleError);
+    constructor(private commonService: CommonService, private http: Http) {
+        this.url = "/api/composers/";
     }
 
-    handleError(error: Response) {
-        console.error(error);
-        return Observable.throw(error);
+    getComposers(): Observable<Composer[]> {
+        return this.http.get(this.url + "get")
+            .map((response: Response) => <Composer[]>response.json())
+            .catch(this.commonService.handleError);
     }
 }

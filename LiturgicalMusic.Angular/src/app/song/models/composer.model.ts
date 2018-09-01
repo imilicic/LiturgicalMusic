@@ -1,5 +1,5 @@
 ﻿export class Composer {
-    Id: number;
+    Id: number = undefined;
     Name: string;
     Surname: string;
 

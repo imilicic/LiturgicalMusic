@@ -198,8 +198,8 @@ namespace LiturgicalMusic.Repository
         public async Task<ISong> UpdateAsync(ISong song)
         {
             string[] options = new String[4] { "Stanzas", "InstrumentalParts", "LiturgyCategories", "ThemeCategories" };
-            SongEntity songDb = await Repository.GetById(song.Id, options);
             SongEntity songEntity = Mapper.Map<SongEntity>(song);
+            SongEntity songDb = await Repository.GetById(song.Id, options);
 
             await SongHelper.UpdatePdfAsync(song, Path.GetRandomFileName(), SongHelper.SongFileName(Mapper.Map<ISong>(songDb)), true);
 
@@ -209,8 +209,9 @@ namespace LiturgicalMusic.Repository
                 for (int i = songDb.Stanzas.Count - 1; i >= 0; i--)
                 {
                     StanzaEntity stanzaDb = songDb.Stanzas.ElementAt(i);
+                    StanzaEntity foundStanza = songEntity.Stanzas.SingleOrDefault(s => s.Id.Equals(stanzaDb.Id));
 
-                    if (songEntity.Stanzas.SingleOrDefault(s => s.Id.Equals(stanzaDb.Id)) == null)
+                    if (object.Equals(foundStanza, default(StanzaEntity)))
                     {
                         await unitOfWork.DeleteAsync<StanzaEntity>(stanzaDb);
                     }
@@ -218,15 +219,15 @@ namespace LiturgicalMusic.Repository
 
                 foreach (StanzaEntity stanza in songEntity.Stanzas)
                 {
-                    StanzaEntity stanzaDb = songDb.Stanzas.SingleOrDefault(s => s.Id.Equals(stanza.Id));
-
-                    if (stanzaDb == null)
+                    if (stanza.Id == 0)
                     {
                         stanza.SongId = song.Id;
                         await unitOfWork.InsertAsync<StanzaEntity>(stanza);
                     }
                     else
                     {
+                        StanzaEntity stanzaDb = songDb.Stanzas.SingleOrDefault(s => s.Id.Equals(stanza.Id));
+
                         stanzaDb.Number = stanza.Number;
                         stanzaDb.Text = stanza.Text;
                         await unitOfWork.UpdateAsync<StanzaEntity>(stanzaDb);
@@ -237,8 +238,9 @@ namespace LiturgicalMusic.Repository
                 for (int i = songDb.InstrumentalParts.Count - 1; i >= 0; i--)
                 {
                     InstrumentalPartEntity partDb = songDb.InstrumentalParts.ElementAt(i);
+                    InstrumentalPartEntity foundPart = songEntity.InstrumentalParts.SingleOrDefault(p => p.Id.Equals(partDb.Id));
 
-                    if (songEntity.InstrumentalParts.SingleOrDefault(p => p.Id.Equals(partDb.Id)) == null)
+                    if (object.Equals(foundPart, default(InstrumentalPartEntity)))
                     {
                         await unitOfWork.DeleteAsync<InstrumentalPartEntity>(partDb);
                     }
@@ -246,15 +248,15 @@ namespace LiturgicalMusic.Repository
 
                 foreach (InstrumentalPartEntity part in songEntity.InstrumentalParts)
                 {
-                    InstrumentalPartEntity partDb = songDb.InstrumentalParts.SingleOrDefault(p => p.Id.Equals(part.Id));
-
-                    if (partDb == null)
+                    if (part.Id == 0)
                     {
                         part.SongId = song.Id;
                         await unitOfWork.InsertAsync<InstrumentalPartEntity>(part);
                     }
                     else
                     {
+                        InstrumentalPartEntity partDb = songDb.InstrumentalParts.SingleOrDefault(p => p.Id.Equals(part.Id));
+
                         partDb.Code = part.Code;
                         partDb.Position = part.Position;
                         partDb.Template = part.Template;
@@ -267,8 +269,9 @@ namespace LiturgicalMusic.Repository
                 for (int i = songDb.LiturgyCategories.Count - 1; i >= 0; i--)
                 {
                     SongLiturgyEntity songLiturgyDb = songDb.LiturgyCategories.ElementAt(i);
+                    int foundLiturgy = song.LiturgyCategories.SingleOrDefault(l => l.Equals(songLiturgyDb.LiturgyId));
 
-                    if (song.LiturgyCategories.SingleOrDefault(l => l.Equals(songLiturgyDb.LiturgyId)) == 0)
+                    if (object.Equals(foundLiturgy, default(int)))
                     {
                         await unitOfWork.DeleteAsync<SongLiturgyEntity>(songLiturgyDb);
                     }
@@ -294,8 +297,9 @@ namespace LiturgicalMusic.Repository
                 for (int i = songDb.ThemeCategories.Count - 1; i >= 0; i--)
                 {
                     SongThemeEntity songThemeDb = songDb.ThemeCategories.ElementAt(i);
+                    int foundTheme = song.LiturgyCategories.SingleOrDefault(t => t.Equals(songThemeDb.ThemeId));
 
-                    if (song.ThemeCategories.SingleOrDefault(l => l.Equals(songThemeDb.ThemeId)) == 0)
+                    if (object.Equals(foundTheme, default(int)))
                     {
                         await unitOfWork.DeleteAsync<SongThemeEntity>(songThemeDb);
                     }

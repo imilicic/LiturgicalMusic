@@ -69,6 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
+    <Content Include="src\app\song\shared\keyTime\key-time.component.html" />
     <Content Include="src\tsconfig.json" />
     <Content Include="package.json" />
     <Content Include="package-lock.json" />
@@ -89,12 +90,12 @@
     <Content Include="src\app\home\home.component.html" />
     <Content Include="src\app\shared\navbar\navbar.component.html" />
     <Content Include="src\app\song\views\hymn\hymn-edit.component.html" />
-    <Content Include="src\app\song\views\lyrics\lyrics.component.html" />
+    <Content Include="src\app\song\shared\lyrics\lyrics.component.html" />
     <Content Include="src\app\song\views\psalm\psalm-edit.component.html" />
     <Content Include="src\app\song\views\song-edit.component.html" />
     <Content Include="src\app\song\views\song-search.component.html" />
     <Content Include="src\app\song\views\song-view.component.html" />
-    <Content Include="src\app\song\views\voice\voice.component.html" />
+    <Content Include="src\app\song\shared\voice\voice.component.html" />
     <Content Include="src\favicon.ico" />
     <Content Include="src\index.html" />
     <Content Include="src\styles.css" />
@@ -118,6 +119,7 @@
     <TypeScriptCompile Include="src\app\song\models\song.model.ts" />
     <TypeScriptCompile Include="src\app\song\models\stanza.model.ts" />
     <TypeScriptCompile Include="src\app\song\models\template.model.ts" />
+    <TypeScriptCompile Include="src\app\song\services\common.service.ts" />
     <TypeScriptCompile Include="src\app\song\services\composer-resolver.service.ts" />
     <TypeScriptCompile Include="src\app\song\services\composer.service.ts" />
     <TypeScriptCompile Include="src\app\song\services\song-common.service.ts" />
@@ -125,15 +127,16 @@
     <TypeScriptCompile Include="src\app\song\services\song-route-activator.service.ts" />
     <TypeScriptCompile Include="src\app\song\services\song-session.service.ts" />
     <TypeScriptCompile Include="src\app\song\services\song.service.ts" />
+    <TypeScriptCompile Include="src\app\song\shared\keyTime\key-time.component.ts" />
     <TypeScriptCompile Include="src\app\song\song-routing.module.ts" />
     <TypeScriptCompile Include="src\app\song\song.module.ts" />
     <TypeScriptCompile Include="src\app\song\views\hymn\hymn-edit.component.ts" />
-    <TypeScriptCompile Include="src\app\song\views\lyrics\lyrics.component.ts" />
+    <TypeScriptCompile Include="src\app\song\shared\lyrics\lyrics.component.ts" />
     <TypeScriptCompile Include="src\app\song\views\psalm\psalm-edit.component.ts" />
     <TypeScriptCompile Include="src\app\song\views\song-edit.component.ts" />
     <TypeScriptCompile Include="src\app\song\views\song-search.component.ts" />
     <TypeScriptCompile Include="src\app\song\views\song-view.component.ts" />
-    <TypeScriptCompile Include="src\app\song\views\voice\voice.component.ts" />
+    <TypeScriptCompile Include="src\app\song\shared\voice\voice.component.ts" />
     <TypeScriptCompile Include="src\main.ts" />
   </ItemGroup>
   <ItemGroup>

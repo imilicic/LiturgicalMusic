@@ -47,7 +47,13 @@
         </thead>
         <tbody>
             <tr *ngFor="let song of songs | paginate: { itemsPerPage: pageSize, currentPage: pageNumber, totalItems: songCount}">
-                <td class="col-md-2">{{song.Title}}</td>
+                <td class="col-md-2">
+                    {{song.Title}}<br />
+                    <span [ngSwitch]="song.Type">
+                        <small *ngSwitchCase="'hymn'">himan</small>
+                        <small *ngSwitchCase="'psalm'">psalam</small>
+                    </span>
+                </td>
                 <td class="col-md-2">{{song.Composer?.Name}} {{song.Composer?.Surname}}</td>
                 <td class="col-md-2">{{song.Arranger?.Name}} {{song.Arranger?.Surname}}</td>
                 <td class="col-md-2">{{song.Source}}</td>

@@ -11,10 +11,10 @@ import { SongSessionService } from "../services/song-session.service";
     templateUrl: "./song-edit.component.html"
 })
 export class SongEditComponent implements OnInit {
-    composers: Composer[] = [];
-    song: Song = undefined;
-    liturgyCategories: boolean[] = [false, false, false, false, false, false, false, false, false];
-    themeCategories: boolean[] = [false, false, false, false, false, false];
+    composers: Composer[];
+    existingSong: Song;
+    liturgyCategories: boolean[];
+    themeCategories: boolean[];
 
     arranger: FormControl;
     composer: FormControl;
@@ -28,45 +28,32 @@ export class SongEditComponent implements OnInit {
 
     ngOnInit() {
         this.composers = this.route.snapshot.data["composers"];
-        this.song = this.route.snapshot.data["song"];
+        this.existingSong = this.route.snapshot.data["song"];
 
-        if (this.song == undefined) {
+        this.liturgyCategories = Array(this.songCommonService.liturgyCategories.length).fill(false);
+        this.themeCategories = Array(this.songCommonService.themeCategories.length).fill(false);
+
+        if (this.existingSong == undefined) {
             this.songSessionService.action = "create";
+            this.songSessionService.song = new Song();
         } else {
+            this.songSessionService.song = new Song(this.existingSong);
             this.songSessionService.action = "edit";
 
-            this.song.LiturgyCategories.forEach(l => this.liturgyCategories[l - 1] = true);
-            this.song.ThemeCategories.forEach(t => this.themeCategories[t - 1] = true);
+            this.existingSong.LiturgyCategories.forEach(l => this.liturgyCategories[l - 1] = true);
+            this.existingSong.ThemeCategories.forEach(t => this.themeCategories[t - 1] = true);
         }
 
-        let arrangerId: number = undefined;
-        let composerId: number = undefined;
-        let otherInformations: string = undefined;
-        let source: string = undefined;
-        let title: string = undefined;
-        let type: string = undefined;
+        this.buildForm();
+    }
 
-        if (this.song != undefined) {
-            if (this.song.Arranger) {
-                arrangerId = this.song.Arranger.Id;
-            }
-
-            if (this.song.Composer) {
-                composerId = this.song.Composer.Id;
-            }
-
-            otherInformations = this.song.OtherInformations;
-            source = this.song.Source;
-            title = this.song.Title;
-            type = this.song.Type;
-        }
-
-        this.arranger = new FormControl(arrangerId);
-        this.composer = new FormControl(composerId);
-        this.otherInformations = new FormControl(otherInformations);
-        this.source = new FormControl(source);
-        this.title = new FormControl(title, Validators.required);
-        this.type = new FormControl(type, Validators.required);
+    private buildForm() {
+        this.arranger = new FormControl(this.songSessionService.song.Arranger.Id);
+        this.composer = new FormControl(this.songSessionService.song.Composer.Id);
+        this.otherInformations = new FormControl(this.songSessionService.song.OtherInformations);
+        this.source = new FormControl(this.songSessionService.song.Source);
+        this.title = new FormControl(this.songSessionService.song.Title, Validators.required);
+        this.type = new FormControl(this.songSessionService.song.Type, Validators.required);
 
         this.songForm = new FormGroup({
             arranger: this.arranger,
@@ -78,36 +65,32 @@ export class SongEditComponent implements OnInit {
         });
     }
 
-    createSong(formValues: any) {
-        let newSong: Song = new Song(this.song);
-
-        newSong.Arranger = this.composers.find(c => c.Id == formValues.arranger);
-        newSong.Composer = this.composers.find(c => c.Id == formValues.composer);
-        newSong.OtherInformations = formValues.otherInformations;
-        newSong.Source = formValues.source;
-        newSong.Title = formValues.title;
-        newSong.Type = formValues.type;
-        newSong.LiturgyCategories = [];
-        newSong.ThemeCategories = [];
+    createUpdateSong(formValues: any) {
+        this.songSessionService.song.Arranger = this.composers.find(c => c.Id == formValues.arranger);
+        this.songSessionService.song.Composer = this.composers.find(c => c.Id == formValues.composer);
+        this.songSessionService.song.OtherInformations = formValues.otherInformations;
+        this.songSessionService.song.Source = formValues.source;
+        this.songSessionService.song.Title = formValues.title;
+        this.songSessionService.song.Type = formValues.type;
+        this.songSessionService.song.LiturgyCategories = [];
+        this.songSessionService.song.ThemeCategories = [];
 
         this.liturgyCategories.forEach((l, i) => {
             if (l) {
-                newSong.LiturgyCategories.push(i + 1);
+                this.songSessionService.song.LiturgyCategories.push(i + 1);
             }
         });
 
         this.themeCategories.forEach((l, i) => {
             if (l) {
-                newSong.ThemeCategories.push(i + 1);
+                this.songSessionService.song.ThemeCategories.push(i + 1);
             }
         });
 
-        this.songSessionService.songSession = newSong;
-
         if (this.songSessionService.action == "create") {
-            this.songSessionService.moveTo("songs/edit/" + newSong.Type);
+            this.songSessionService.moveTo("songs/edit/" + this.songSessionService.song.Type);
         } else {
-            this.songSessionService.moveTo("songs/edit/" + this.song.Id + "/" + this.song.Type);
+            this.songSessionService.moveTo("songs/edit/" + this.existingSong.Id + "/" + this.existingSong.Type);
         }
     }
 

@@ -1,0 +1,20 @@
+﻿<div [formGroup]="keyTimeGroup">
+    <div class="form-group" [ngClass]="{'has-error': key.touched && key.invalid, 'has-success': key.value!=null && key.valid}">
+        <label class="control-label" for="key">Tonalitet</label>
+        <select class="form-control" formControlName="key" id="key">
+            <option *ngFor="let key of keyNamesMajor" value="{{ key.Code + ' \\major' }}">{{ key.Name + ' dur' }}</option>
+            <option *ngFor="let key of keyNamesMinor" value="{{ key.Code + ' \\minor' }}">{{ key.Name + ' mol' }}</option>
+        </select>
+        <span class="help-block" *ngIf="key.touched && key.invalid">Obavezno!</span>
+    </div>
+    <div class="form-group" *ngIf="!keyOnly" [ngClass]="{'has-error': (timeNumerator.touched && timeNumerator.invalid) || (timeDenominator.touched && timeDenominator.invalid), 'has-success': (timeNumerator.value!=null && timeNumerator.valid && timeDenominator.value!=null && timeDenominator.valid)}">
+        <label class="control-label">Mjera</label>
+        <select class="form-control" formControlName="timeNumerator">
+            <option *ngFor="let tn of timeNumerators" value="{{ tn }}">{{ tn }}</option>
+        </select>/
+        <select class="form-control" formControlName="timeDenominator">
+            <option *ngFor="let td of timeDenominators" value="{{ td }}">{{ td }}</option>
+        </select>
+        <span class="help-block" *ngIf="(timeNumerator.touched && timeNumerator.invalid) || (timeDenominator.touched && timeDenominator.invalid)">Obavezno!</span>
+    </div>
+</div>

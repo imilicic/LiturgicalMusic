@@ -1,16 +1,16 @@
-﻿import { Component, ViewChildren, OnInit, QueryList } from "@angular/core";
-import { FormControl, FormGroup, Validators } from "@angular/forms";
+﻿import { Component, ViewChild, ViewChildren, OnInit, QueryList } from "@angular/core";
 import { DomSanitizer } from "@angular/platform-browser";
 
 import { InstrumentalPart } from "../../models/instrumentalPart.model";
-import { LyricsComponent } from "../lyrics/lyrics.component";
+import { LyricsComponent } from "../../shared/lyrics/lyrics.component";
 import { Song } from "../../models/song.model";
 import { SongCommonService } from "../../services/song-common.service";
 import { SongService } from "../../services/song.service";
 import { SongSessionService } from "../../services/song-session.service";
 import { Stanza } from "../../models/stanza.model";
 import { Template } from "../../models/template.model";
-import { VoiceComponent } from "../voice/voice.component";
+import { VoiceComponent } from "../../shared/voice/voice.component";
+import { KeyTimeComponent } from "../../shared/keyTime/key-time.component";
 
 @Component({
     templateUrl: "./psalm-edit.component.html"
@@ -18,19 +18,16 @@ import { VoiceComponent } from "../voice/voice.component";
 export class PsalmEditComponent implements OnInit {
     @ViewChildren(VoiceComponent) instrumentVoices: QueryList<VoiceComponent>;
     @ViewChildren(LyricsComponent) lyrics: QueryList<LyricsComponent>;
+    @ViewChild(KeyTimeComponent) keyTime: KeyTimeComponent;
     antiphonaTemplate: boolean[] = [false, false, false, false, true, true, true, true];
     antiphonaTemplateVoices: Template[] = [];
-    partPositions: string[] = ["prelude", "interlude", "coda"];
     partsTemplateVoices: Template[][] = [[], [], []];
     pdfFileName: string;
     preview: boolean = false;
     psalamTemplate: boolean[] = [false, false, false, false, true, true, true, true];
     psalamTemplateVoices: Template[] = [];
-    song: Song;
     spinner: boolean = false;
-
-    key: FormControl;
-    voiceForm: FormGroup;
+    key: string;
 
     constructor(
         private domSanitizer: DomSanitizer,
@@ -39,24 +36,18 @@ export class PsalmEditComponent implements OnInit {
         private songSessionService: SongSessionService) { }
 
     ngOnInit() {
-        this.song = this.songSessionService.songSession;
-
-        let key: string = "";
+        window.scrollTo(0, 0);
         let code: any = undefined;
-        let controls: any = {};
-        let partVoices: boolean[][] = [[false, false, false, false], [false, false, false, false], [false, false, false, false]];
+        let partVoices: boolean[][] = Array(3).fill(Array(4).fill(false));
+        this.pdfFileName = this.songCommonService.createPdfFileName(this.songSessionService.song);
 
-        if (this.song.Template == undefined) {
-            this.song.Template = [false, false, false, false, true, true, true, true];
-        }
-
-        if (this.song.InstrumentalParts != undefined) {
-            this.song.InstrumentalParts.forEach(p => {
-                let i = this.partPositions.indexOf(p.Position);
+        if (this.songSessionService.song.InstrumentalParts != undefined) {
+            this.songSessionService.song.InstrumentalParts.forEach(p => {
+                let i = this.songCommonService.partPositions.indexOf(p.Position);
                 partVoices[i] = p.Template;
             });
 
-            let code = JSON.parse(this.song.Code);
+            let code = JSON.parse(this.songSessionService.song.Code);
             let keys: string[] = Object.keys(code);
 
             let avtemplate = this.songCommonService.extractTemplate(keys.filter(k => k.indexOf("AntiphonaVoice") >= 0));
@@ -76,21 +67,14 @@ export class PsalmEditComponent implements OnInit {
         this.songCommonService.createTemplateVoices('Interlude', partVoices[1], this.partsTemplateVoices[1]);
         this.songCommonService.createTemplateVoices('Coda', partVoices[2], this.partsTemplateVoices[2]);
 
-        if (this.song.Code != undefined) {
-            code = JSON.parse(this.song.Code);
+        if (this.songSessionService.song.Code != undefined) {
+            code = JSON.parse(this.songSessionService.song.Code);
 
-            key = code.Key;
+            this.key = code.Key;
         }
-
-        this.pdfFileName = this.songCommonService.createPdfFileName(this.song);
-
-        this.key = new FormControl(key, Validators.required);
-        controls["Key"] = this.key;
-
-        this.voiceForm = new FormGroup(controls);
     }
 
-    createSong(formValues: any) {
+    createSong() {
         let code = {};
         let voiceFormValues: any[] = [];
         let stanzaFormValues: any[] = [];
@@ -103,7 +87,7 @@ export class PsalmEditComponent implements OnInit {
             stanzaFormValues.push(l.getFormValues());
         });
 
-        code = { ...voiceFormValues[1]['Code'], ...voiceFormValues[2]['Code'], ...voiceFormValues[3]['Code'], ...voiceFormValues[4]['Code'] };
+        code = { ...voiceFormValues[1]['Code'], ...voiceFormValues[2]['Code'], ...voiceFormValues[3]['Code'], ...voiceFormValues[4]['Code'], ...this.keyTime.getKeyTime() };
 
         let psalmKey = Object.keys(code).find(k => k.indexOf("PsalmOrgan") >= 0);
         let antiphonaKey = Object.keys(code).find(k => k.indexOf("AntiphonaOrgan") >= 0);
@@ -120,68 +104,25 @@ export class PsalmEditComponent implements OnInit {
             code["AntiphonaMeasured"] = false;
         }
 
-        code["Key"] = formValues.Key;
         code["AntiphonaStanza"] = stanzaFormValues[0][0]['Text'];
 
-        this.song.Template = [].concat(voiceFormValues[3]['Template'], voiceFormValues[4]['Template']);
-        this.song.Code = JSON.stringify(code);
-
-        [0, 5, 6].forEach((n, i) => {
-            let part: InstrumentalPart = undefined;
-
-            if (this.song.InstrumentalParts != undefined) {
-                let position = this.partsTemplateVoices[i][0].Instrument.toLocaleLowerCase();
-                part = this.song.InstrumentalParts.find(p => p.Position == position);
-            } else {
-                this.song.InstrumentalParts = [];
-            }
-
-            if (part == undefined) {
-                if (voiceFormValues[n]['Template'].some((b: boolean) => b)) {
-                    part = new InstrumentalPart();
-
-                    part.Id = undefined;
-                    part.Position = this.partsTemplateVoices[i][0].Instrument.toLocaleLowerCase();
-                    part.Type = "hymn";
-                    part.Code = JSON.stringify(voiceFormValues[n]['Code']);
-                    part.Template = voiceFormValues[n]['Template'];
-
-                    this.song.InstrumentalParts.push(part);
-                }
-            } else {
-                part.Code = JSON.stringify(voiceFormValues[n]['Code']);
-                part.Template = voiceFormValues[n]['Template'];
-            }
-        });
-
-        let stanzas: Stanza[] = stanzaFormValues[1];
-
-        stanzas.forEach((stanza, i) => {
-            let foundStanza: Stanza = undefined;
-
-            if (this.song.Stanzas != undefined) {
-                foundStanza = this.song.Stanzas.find(s => s.Number == i + 1);
-            }
-
-            if (foundStanza != undefined) {
-                stanza.Id = foundStanza.Id;
-            }
-        });
-
-        this.song.Stanzas = stanzas;
+        this.songSessionService.song.Template = [].concat(voiceFormValues[3]['Template'], voiceFormValues[4]['Template']);
+        this.songSessionService.song.Code = JSON.stringify(code);
+        this.songSessionService.song.Stanzas = stanzaFormValues[1];
+        this.songCommonService.createInstrumentalParts([0, 5, 6], this.partsTemplateVoices, voiceFormValues);
     }
 
-    createUpdateSong(formValues: any) {
+    createUpdateSong() {
         this.spinner = true;
-        this.createSong(formValues);
+        this.createSong();
 
         if (this.songSessionService.action == "create") {
-            this.songService.createSong(this.song).subscribe((response: Song) => {
+            this.songService.createSong(this.songSessionService.song).subscribe((response: Song) => {
                 this.spinner = false;
                 this.songSessionService.moveTo("songs/view/" + response.Id);
             });
         } else {
-            this.songService.updateSong(this.song).subscribe((response: Song) => {
+            this.songService.updateSong(this.songSessionService.song).subscribe((response: Song) => {
                 this.spinner = false;
                 this.songSessionService.moveTo("songs/view/" + response.Id);
             });
@@ -189,11 +130,11 @@ export class PsalmEditComponent implements OnInit {
     }
 
     getAntiphonaStanza() {
-        if (this.song.Code == undefined) {
+        if (this.songSessionService.song.Code == undefined) {
             return undefined;
         }
 
-        let song = JSON.parse(this.song.Code);
+        let song = JSON.parse(this.songSessionService.song.Code);
         let antiphona: Stanza = new Stanza();
 
         antiphona.Text = song["AntiphonaStanza"];
@@ -210,16 +151,12 @@ export class PsalmEditComponent implements OnInit {
         }
     }
 
-    previewEnabled() {
-        return this.voiceForm.controls["Key"].invalid;
-    }
-
-    previewSong(formValues: any) {
+    previewSong() {
         this.preview = true;
         this.spinner = true;
-        this.createSong(formValues);
+        this.createSong();
 
-        this.songService.previewSong(this.song)
+        this.songService.previewSong(this.songSessionService.song)
             .subscribe((response: Song) => {
                 this.spinner = false;
             });

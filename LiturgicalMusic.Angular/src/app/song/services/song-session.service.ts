@@ -5,8 +5,8 @@ import { Song } from "../models/song.model";
 
 @Injectable()
 export class SongSessionService {
-    songSession: Song = undefined;
     action: string;
+    song: Song;
 
     constructor(private router: Router) { }
 

@@ -1,72 +1,39 @@
-﻿<form autocomplete="off" [formGroup]="voiceForm" (ngSubmit)="createUpdateSong(voiceForm.value)" novalidate>
-    <div class="form-group" [ngClass]="{'has-error': key.touched && key.invalid, 'has-success': key.value!=null && key.valid}">
-        <label class="control-label" for="Key">Tonalitet</label>
-        <select class="form-control" formControlName="Key" id="Key">
-            <option value="ces \major">Ces dur</option>
-            <option value="c \major">C dur</option>
-            <option value="cis \major">Cis dur</option>
-            <option value="des \major">Des dur</option>
-            <option value="d \major">D dur</option>
-            <option value="es \major">Es dur</option>
-            <option value="e \major">E dur</option>
-            <option value="f \major">F dur</option>
-            <option value="fis \major">Fis dur</option>
-            <option value="ges \major">Ges dur</option>
-            <option value="g \major">G dur</option>
-            <option value="aes \major">As dur</option>
-            <option value="a \major">A dur</option>
-            <option value="bes \major">B dur</option>
-            <option value="b \major">H dur</option>
-            <option value="c \minor">c mol</option>
-            <option value="cis \minor">cis mol</option>
-            <option value="d \minor">d mol</option>
-            <option value="dis \minor">dis mol</option>
-            <option value="es \minor">es mol</option>
-            <option value="e \minor">e mol</option>
-            <option value="f \minor">f mol</option>
-            <option value="fis \minor">fis mol</option>
-            <option value="g \minor">g mol</option>
-            <option value="gis \minor">gis mol</option>
-            <option value="a \minor">a mol</option>
-            <option value="bes \minor">b mol</option>
-            <option value="b \minor">h mol</option>
-        </select>
-        <span class="help-block" *ngIf="key.touched && key.invalid">Obavezno!</span>
-    </div>
+﻿<div>
+    <key-time [keyOnly]="true" [existingKey]="key"></key-time>
 
     <h2>Predigra</h2>
-    <instrument-voices [templateVoices]="partsTemplateVoices[0]" [code]="songCommonService.getInstrumentalPartCode(song, 'Prelude')"></instrument-voices>
+    <instrument-voices [templateVoices]="partsTemplateVoices[0]" [code]="songCommonService.getInstrumentalPartCode(songSessionService.song, 'Prelude')"></instrument-voices>
 
     <h1>Antifona</h1>
     <h2>Glas</h2>
-    <instrument-voices [templateVoices]="getTemplateVoices('AntiphonaVoice')" [code]="songCommonService.getSongCode(song)"></instrument-voices>
+    <instrument-voices [templateVoices]="getTemplateVoices('AntiphonaVoice')" [code]="songCommonService.getSongCode(songSessionService.song)"></instrument-voices>
 
     <h2>Orgulje</h2>
-    <instrument-voices [templateVoices]="getTemplateVoices('AntiphonaOrgan')" [code]="songCommonService.getSongCode(song)"></instrument-voices>
+    <instrument-voices [templateVoices]="getTemplateVoices('AntiphonaOrgan')" [code]="songCommonService.getSongCode(songSessionService.song)"></instrument-voices>
     
     <h2>Tekst</h2>
     <song-lyrics [changeable]="false" [maxStanzas]="1" [stanzas]="getAntiphonaStanza()"></song-lyrics>
 
     <h1>Psalam</h1>
     <h2>Glas</h2>
-    <instrument-voices [templateVoices]="getTemplateVoices('PsalmVoice')" [code]="songCommonService.getSongCode(song)"></instrument-voices>
+    <instrument-voices [templateVoices]="getTemplateVoices('PsalmVoice')" [code]="songCommonService.getSongCode(songSessionService.song)"></instrument-voices>
 
     <h2>Orgulje</h2>
-    <instrument-voices [templateVoices]="getTemplateVoices('PsalmOrgan')" [code]="songCommonService.getSongCode(song)"></instrument-voices>
+    <instrument-voices [templateVoices]="getTemplateVoices('PsalmOrgan')" [code]="songCommonService.getSongCode(songSessionService.song)"></instrument-voices>
 
     <h2>Tekst</h2>
-    <song-lyrics [stanzas]="song.Stanzas"></song-lyrics>
+    <song-lyrics [stanzas]="songSessionService.song.Stanzas"></song-lyrics>
 
     <h2>Međuigra</h2>
-    <instrument-voices [templateVoices]="partsTemplateVoices[1]" [code]="songCommonService.getInstrumentalPartCode(song, 'Interlude')"></instrument-voices>
+    <instrument-voices [templateVoices]="partsTemplateVoices[1]" [code]="songCommonService.getInstrumentalPartCode(songSessionService.song, 'Interlude')"></instrument-voices>
 
     <h2>Završetak</h2>
-    <instrument-voices [templateVoices]="partsTemplateVoices[2]" [code]="songCommonService.getInstrumentalPartCode(song, 'Coda')"></instrument-voices>
+    <instrument-voices [templateVoices]="partsTemplateVoices[2]" [code]="songCommonService.getInstrumentalPartCode(songSessionService.song, 'Coda')"></instrument-voices>
 
     <div *ngIf="preview" style="text-align:center;">
         <embed [src]="domSanitizer.bypassSecurityTrustResourceUrl(pdfFileName)" width="800" height="500" *ngIf="preview && !spinner" />
     </div>
-    <button type="button" class="btn btn-default" (click)="previewSong(voiceForm.value)" [disabled]="previewEnabled() || spinner">Pregledaj</button>
-    <button type="submit" class="btn btn-default" [disabled]="voiceForm.invalid || spinner || voicesInvalid()">Spremi</button>
+    <button type="button" class="btn btn-default" (click)="previewSong()" [disabled]="keyTime.previewEnabled() || spinner">Pregledaj</button>
+    <button type="submit" class="btn btn-default" (click)="createUpdateSong()" [disabled]="keyTime.previewEnabled() || spinner || voicesInvalid()">Spremi</button>
     <img src="app/assets/image/spinner.gif" style="width:100px;" *ngIf="spinner" />
-</form>
+</div>

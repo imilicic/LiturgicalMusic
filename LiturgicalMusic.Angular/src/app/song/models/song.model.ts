@@ -4,20 +4,22 @@ import { Composer } from "./composer.model";
 
 export class Song {
     Arranger: Composer;
-    Code: string;
+    Code: string = undefined;
     Composer: Composer;
-    Id: number;
+    Id: number = undefined;
     InstrumentalParts: InstrumentalPart[];
-    LiturgyCategories: number[];
-    OtherInformations: string;
-    Source: string;
+    LiturgyCategories: number[] = [];
+    OtherInformations: string = undefined;
+    Source: string = undefined;
     Stanzas: Stanza[];
     Template: boolean[];
-    ThemeCategories: number[];
-    Title: string;
-    Type: string;
+    ThemeCategories: number[] = [];
+    Title: string = undefined;
+    Type: string = undefined;
 
     constructor(song?: Song) {
+        this.Template = Array(4).fill(false).concat(Array(4).fill(true));
+
         if (song) {
             this.Arranger = new Composer(song.Arranger);
             this.Code = song.Code;
@@ -52,6 +54,9 @@ export class Song {
             this.ThemeCategories = Array.from(song.ThemeCategories);
             this.Title = song.Title;
             this.Type = song.Type;
+        } else {
+            this.Arranger = new Composer();
+            this.Composer = new Composer();
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿<h2 *ngIf="song==undefined">Dodaj pjesmu</h2>
 <h2 *ngIf="song!=undefined">Izmjeni pjesmu</h2>
-<form [formGroup]="songForm" (ngSubmit)="createSong(songForm.value)" autocomplete="off" novalidate>
+<form [formGroup]="songForm" (ngSubmit)="createUpdateSong(songForm.value)" autocomplete="off" novalidate>
     <div class="form-group" [ngClass]="{'has-error': title.touched && title.invalid, 'has-success': title.value!=null && title.valid}">
         <label for="title" class="control-label">Naziv *</label>
         <input type="text" formControlName="title" class="form-control" id="title" placeholder="Naziv..." required/>

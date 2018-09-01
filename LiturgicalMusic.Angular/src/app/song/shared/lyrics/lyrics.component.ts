@@ -48,12 +48,21 @@ export class LyricsComponent implements OnInit {
 
         this.lyrics.forEach((l, i) => {
             let stanza: Stanza = new Stanza();
+            let foundStanza: Stanza = undefined;
+
+            if (this.stanzas != undefined) {
+                foundStanza = this.stanzas.find(s => s.Number == i + 1);
+            }
 
             stanza = {
                 Id: undefined,
                 Number: i + 1,
                 Text: this.lyricsForm.controls[l.controlName].value
             };
+
+            if (foundStanza != undefined) {
+                stanza.Id = foundStanza.Id;
+            }
 
             stanzas.push(stanza);
         });
